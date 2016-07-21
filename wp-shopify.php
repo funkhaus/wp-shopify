@@ -13,7 +13,7 @@
  */
 
     // get funkstagram core and settings
-    // require_once('wshop-core.php');
+    require_once('wshop-core.php');
     require_once('wshop-settings.php');
 
     // add metadata to attachments
