@@ -44,15 +44,14 @@ Once you have at least one product set up, and the Shopify ID saved, then you're
 
 When writing the markup for an individual product, be it in a grid or on a detail page, you need to first identify the product using the data-attribute `data-product-id`. You can then fill whatever markup you need to within that element, and when you need to pull data about the product from Shopify, just specify the type of data using the data-attribute `data-product`.
 
-### Data-attribute Reference
+### Product data-attribute Reference
 
-- `data-product="title"`: The Shopify title of the product.
-- `data-product="price"`: The price of the product, does not include symbol of currency.
-- `data-product="description"`: The Shopify description of the product.
-- `data-product="image"`: The featured image of the product from Shopify. Image will be inserted into the element as an img tag.
-- `data-product="select"`: If the product has any variants, this element will be filled with a `<select>` that when changed by the user will switch out which variant of the product is being selected.
-- `data-product="add-to-cart"`: When clicked, the element with this data-attribute will add the product (or currently selected variant of the product) to the current user's cart.
-
+- __`data-product="title"`__: The Shopify title of the product.
+- __`data-product="price"`__: The price of the product, does not include symbol of currency.
+- __`data-product="description"`__: The Shopify description of the product.
+- __`data-product="image"`__: The featured image of the product from Shopify. Image will be inserted into the element as an img tag.
+- __`data-product="select"`__: If the product has any variants, this element will be filled with a `<select>` that when changed by the user will switch out which variant of the product is being selected.
+- __`data-product="add-to-cart"`__: When clicked, the element with this data-attribute will add the product (or currently selected variant of the product) to the current user's cart.
 
 Using the above list of attributes, you can fill in whatever product information you need. Here is an example:
 
@@ -78,6 +77,35 @@ Let's add some basic data to the product:
       <div class="description" data-product="description"></div>
 
       <button data-product="add-to-cart">Add To Cart</button>
+
 </div>
 ```
 
+That's all that we need for the information to be filled in. When this markup is rendered on the front end, wp-shopify will automatically fill in the necessary information and set up some javascript listeners to handle user interactions.
+
+### What's Going on Behind the Scenes
+
+First, wp-shopify includes the javascript buy SDK off of Shopify's servers. It waits for the document ready event, and then looks for any elements on the page with `data-product-id` set. If it finds any, it fetches all the necessary data from Shopify's servers and saves all of the information. It then searches through child elements of each product and fills in any necessary data based on the data-attributes.
+
+The process of filling in the data for an individual product is wrapped in the function `wshop.renderProduct`. With this information, manually re-rendering the data in any single product is trivial:
+
+```js
+jQuery('.single-product').each(wshop.renderProduct);
+```
+
+Once all the data has been added, wp-shopify will set listeners on `<select>` elements, `add-to-cart` elements, and anything else that will need to interact with the state of the product.
+
+## Cart Markup
+
+Any carts on the page will work much in the same way as the products do. The main difference is that the information within a cart is primarily determined by the user, rather than an individual product. For that reason we don't necessarily have to specify a cart ID.
+
+### Cart data-attribute Reference
+
+* __`data-cart="subtotal"`__: The subtotal of the current user's cart
+* __`data-cart="line-item-count"`__: The total number of items within the current cart. Defaults to 0
+* __`data-cart="checkout"`__: This attribute must exist on an `<a>` tag. The href of the tag will be automatically set to be the checkout URL for the current cart. If you'd like to get the user to the checkout location by some other mechanism, you can use `wshop.cart.checkoutUrl` at any time to get the checkout URL.
+* __`data-cart="line-items"`__: The element with this attribute will be popuated with an html element for each line item within the cart. To modify the html that is rendered here, see [Line Item Markup](google.com)
+
+Using these attributes, you can build any carts you may need throughout the page. Here is an example:
+
+First
