@@ -196,8 +196,6 @@ var wshop = {
         // do nothing if no product
         if ( ! product ) return;
 
-        console.log(product);
-
         // add class if need be
         if ( product.variants && product.variants.length > 1 ){
             $productBlock.addClass('has-variants');
@@ -212,7 +210,7 @@ var wshop = {
             // set title, price, description
             if ( jQuery(this).attr('data-product') == 'title' ) jQuery(this).text( product.title );
             if ( jQuery(this).attr('data-product') == 'price' ) jQuery(this).text( '$' + product.selectedVariant.price );
-            if ( jQuery(this).attr('data-product') == 'description' ) jQuery(this).text( product.description );
+            if ( jQuery(this).attr('data-product') == 'description' ) jQuery(this).html( product.description );
 
             // set images
             if ( jQuery(this).attr('data-product') == 'image' ){
@@ -241,7 +239,7 @@ var wshop = {
 
                 // build html for select
                 var selectElem = product.options.map(function(option) {
-                    return '<select name="' + option.name + '">' + option.values.map(function(value) {
+                    return '<select name="' + option.name + '"><option selected disabled>' + option.name + '</option>' + option.values.map(function(value) {
                         return '<option value="' + value + '">' + value + '</option>';
                     }) + '</select>';
                 })[0];
@@ -290,6 +288,8 @@ var wshop = {
 
                 // re-render any carts
                 wshop.renderCarts();
+
+                jQuery(document).trigger('wshop-product-added');
 
             });
 
