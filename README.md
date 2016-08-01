@@ -115,7 +115,9 @@ Using these attributes, you can build any carts you may need throughout the page
 ```php
 <div data-cart-id="">
 
-    <div data-cart="line-items"></div>
+    <div data-cart="line-items">
+        <!--Each item in the cart will be rendered using /wshop-templates/cart-line-item.php here-->
+    </div>
 
     <div class="cart-meta">
         <div class="table">
@@ -132,5 +134,7 @@ Using these attributes, you can build any carts you may need throughout the page
     </div>
 
 </div>
-<div class="cart-overlay"></div>
 ```
+
+Remember that tags marked with data attributes like `data-cart="line-items"` and `data-cart="line-item-count"` will fill themselves automatically.
+
