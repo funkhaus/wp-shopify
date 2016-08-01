@@ -108,17 +108,19 @@ Any carts on the page will work much in the same way as the products do. The mai
 * __`data-cart="subtotal"`__: The subtotal of the current user's cart
 * __`data-cart="line-item-count"`__: The total number of items within the current cart. Defaults to 0
 * __`data-cart="checkout"`__: This attribute must exist on an `<a>` tag. The href of the tag will be automatically set to be the checkout URL for the current cart. If you'd like to get the user to the checkout location by some other mechanism, you can use `wshop.cart.checkoutUrl` at any time to get the checkout URL.
-* __`data-cart="line-items"`__: The element with this attribute will be popuated with an html element for each line item within the cart. To modify the html that is rendered here, see [Line Item Markup](wshop-templates).
+* __`data-cart="line-items"`__: The element with this attribute will be populated with an html element for each line item within the cart. To modify the html that is rendered here, see [Line Item Markup](wshop-templates).
 
-Using these attributes, you can build any carts you may need throughout the page. Here is an example:
+Using these attributes, you can build any carts you may need throughout the page. Here is an example cart:
 
 ```php
 <div data-cart-id="">
 
+    <!--The individual items-->
     <div data-cart="line-items">
         <!--Each item in the cart will be rendered using /wshop-templates/cart-line-item.php here-->
     </div>
-
+    
+    <!--The cart summary-->
     <div class="cart-meta">
         <div class="table">
             <div>
