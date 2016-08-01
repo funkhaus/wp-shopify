@@ -42,7 +42,9 @@ Once you have at least one product set up, and the Shopify ID saved, then you're
 
 ## Product Markup
 
-When writing the markup for an individual product, be it in a grid or on a detail page, you need to first identify the product using the data-attribute `data-product-id`. You can use the wrapper functions `get_the_product_id($post)` (which returns the product ID, if any, attached to a post) and `the_product_id($post)` (which echoes the product ID attached to a post). Note that `$post` is optional in both these wrappers and defaults to the current post.
+When writing the markup for an individual product, be it in a grid or on a detail page, you need to first identify the product using the data-attribute `data-product-id`. 
+
+You can use the wrapper functions `get_the_product_id($post)` (which returns the product ID, if any, attached to a post) and `the_product_id($post)` (which echoes the product ID attached to a post) to get a product ID. Note that `$post` is optional in both these wrappers and defaults to the current post.
 
 You can then fill whatever markup you need to within that element, and when you need to pull data about the product from Shopify, just specify the type of data using the data-attribute `data-product`.
 
@@ -106,8 +108,29 @@ Any carts on the page will work much in the same way as the products do. The mai
 * __`data-cart="subtotal"`__: The subtotal of the current user's cart
 * __`data-cart="line-item-count"`__: The total number of items within the current cart. Defaults to 0
 * __`data-cart="checkout"`__: This attribute must exist on an `<a>` tag. The href of the tag will be automatically set to be the checkout URL for the current cart. If you'd like to get the user to the checkout location by some other mechanism, you can use `wshop.cart.checkoutUrl` at any time to get the checkout URL.
-* __`data-cart="line-items"`__: The element with this attribute will be popuated with an html element for each line item within the cart. To modify the html that is rendered here, see [Line Item Markup](google.com)
+* __`data-cart="line-items"`__: The element with this attribute will be popuated with an html element for each line item within the cart. To modify the html that is rendered here, see [Line Item Markup](wshop-templates).
 
 Using these attributes, you can build any carts you may need throughout the page. Here is an example:
 
-First
+```php
+<div data-cart-id="">
+
+    <div data-cart="line-items"></div>
+
+    <div class="cart-meta">
+        <div class="table">
+            <div>
+                <span>Total Items: </span>
+                <span data-cart="line-item-count"></span>
+            </div>
+            <div>
+                <span>Subtotal: </span>
+                <span>$<span data-cart="subtotal"></span></span>
+            </div>
+        </div>
+        <a href="#" class="checkout-button" data-cart="checkout">Checkout</a>
+    </div>
+
+</div>
+<div class="cart-overlay"></div>
+```
