@@ -151,7 +151,12 @@ Using these attributes, you can build any carts you may need throughout the page
 
 Remember that tags marked with data attributes like `data-cart="line-items"` and `data-cart="line-item-count"` will fill themselves automatically - all you need to do is make sure the product ID metadata is set on the product's Page.
 
+--------
+
 __wp-shopify__
+
 http://funkhaus.us
+
 Version: 1.0
+
 Requires at least WP 3.8
