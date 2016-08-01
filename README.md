@@ -42,7 +42,9 @@ Once you have at least one product set up, and the Shopify ID saved, then you're
 
 ## Product Markup
 
-When writing the markup for an individual product, be it in a grid or on a detail page, you need to first identify the product using the data-attribute `data-product-id`. You can then fill whatever markup you need to within that element, and when you need to pull data about the product from Shopify, just specify the type of data using the data-attribute `data-product`.
+When writing the markup for an individual product, be it in a grid or on a detail page, you need to first identify the product using the data-attribute `data-product-id`. You can use the wrapper functions `get_the_product_id($post)` (which returns the product ID, if any, attached to a post) and `the_product_id($post)` (which echoes the product ID attached to a post). Note that `$post` is optional in both these wrappers and defaults to the current post.
+
+You can then fill whatever markup you need to within that element, and when you need to pull data about the product from Shopify, just specify the type of data using the data-attribute `data-product`.
 
 ### Product data-attribute Reference
 
@@ -58,15 +60,15 @@ Using the above list of attributes, you can fill in whatever product information
 Starting with the containing element of the product, we need to tell wp-shopify which product we are working with. Assuming you are in the loop, this is how you start: 
 
 ```html
-<div class="single-product" data-product-id="<?php echo $post->_wshop_product_id; ?>"></div>
+<div class="single-product" data-product-id="<?php the_product_id(); ?>"></div>
 ```
 
-The ID you saved to the product in Wordpress was saved with the key `_wshop_product_id`, so the line above will tell wp-shopify that everything within this div will be in reference to this product, by ID.
+The ID you saved to the product in Wordpress was saved with the key `_wshop_product_id`, which was accessed and echoed with `the_product_id()`, so the line above will tell wp-shopify that everything within this div will be in reference to this product, by ID.
 
 Let's add some basic data to the product:
 
 ```html
-<div class="single-product" data-product-id="<?php echo $post->_wshop_product_id; ?>">
+<div class="single-product" data-product-id="<?php the_product_id(); ?>">
 
       <div class="image" data-product="image"></div>
 
