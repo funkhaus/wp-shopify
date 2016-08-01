@@ -12,16 +12,12 @@
  *
  */
 
-    // get funkstagram core and settings
+    // get wp-shopify core and settings
     require_once('wshop-core.php');
     require_once('wshop-settings.php');
 
     // add metadata to attachments
     require_once('wshop-meta.php');
-
-    // Link function to admin-ajax
-    // add_action( 'wp_ajax_funkstagram_import', 'funkstagram_import' );
-    // add_action( 'wp_ajax_nopriv_funkstagram_import', 'funkstagram_import' );
 
     // Helper function to get this directory
     if ( ! function_exists( 'pp' ) ) {

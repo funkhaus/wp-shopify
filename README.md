@@ -24,10 +24,21 @@ The basic workflow looks like this:
         * Product 1
         * Product 2
         * Product 3
-1. Link each product page in Wordpress to a Shopify product using the page metadata
-1. Route and template your theme just like you normally would. When you want to display information from Shopify about a product, you can easily do so using a combination of [the page metadata and custom data-attributes.](google.com)
+1. Link each product page in Wordpress to a Shopify product using the page metadata.
+1. Route and template your theme just like you normally would. When you want to display information from Shopify about a product, you can easily do so using a combination of the page metadata and custom data-attributes. For example:
+```html
+<?php // First, associate the div with a product, using the_product_id() ?>
+<div data-product-id="<?php the_product_id(); ?>">
+    <?php // Next, use a custom data attribute to autopopulate the product's title ?>
+    <div data-product="title"></div>
+</div>
+```
 1. Add a cart (or carts) to your theme wherever you want. Just like information for individual products, carts are templated with regular html and given specific data-attributes to tell this plugin to fill them with Shopify data.
-1. Add a [checkout link](google.com) to your site. When the user clicks this, they will be sent off to the checkout section of Shopify with all of their cart data. Shopify will handle the rest.
+1. Add a checkout link to your site. When the user clicks this, they will be sent off to the checkout section of Shopify with all of their cart data. Shopify will handle the rest. For example:
+```html
+<?php // Make sure this is an <a> element and contained within a div with data-product-id set ?>
+<a href="#" data-cart="checkout">Checkout</a>
+```
 
 ## Setting Up
 To set up the plugin, download this repo and drop it into your plugins folder. Enable it through the settings and then navigate to __Tools > Shopify__. 
@@ -65,7 +76,7 @@ Starting with the containing element of the product, we need to tell wp-shopify 
 <div class="single-product" data-product-id="<?php the_product_id(); ?>"></div>
 ```
 
-The ID you saved to the product in Wordpress was saved with the key `_wshop_product_id`, which was accessed and echoed with `the_product_id()`, so the line above will tell wp-shopify that everything within this div will be in reference to this product, by ID.
+The ID you saved to the product in Wordpress was saved with the key `_wshop_product_id`, which was accessed and echoed with `the_product_id()`, so the line above will tell wp-shopify that everything within this div will be in reference to this product's ID.
 
 Let's add some basic data to the product:
 
@@ -112,15 +123,15 @@ Any carts on the page will work much in the same way as the products do. The mai
 
 Using these attributes, you can build any carts you may need throughout the page. Here is an example cart:
 
-```php
+```html
 <div data-cart-id="">
 
-    <!--The individual items-->
+    <?php // The individual items ?>
     <div data-cart="line-items">
-        <!--Each item in the cart will be rendered using /wshop-templates/cart-line-item.php here-->
+        <?php // Each item in the cart will be rendered using /wshop-templates/cart-line-item.php here ?>
     </div>
     
-    <!--The cart summary-->
+    <?php // The cart summary ?>
     <div class="cart-meta">
         <div class="table">
             <div>
@@ -139,3 +150,8 @@ Using these attributes, you can build any carts you may need throughout the page
 ```
 
 Remember that tags marked with data attributes like `data-cart="line-items"` and `data-cart="line-item-count"` will fill themselves automatically - all you need to do is make sure the product ID metadata is set on the product's Page.
+
+__wp-shopify__
+http://funkhaus.us
+Version: 1.0
+Requires at least WP 3.8
