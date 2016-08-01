@@ -138,5 +138,4 @@ Using these attributes, you can build any carts you may need throughout the page
 </div>
 ```
 
-Remember that tags marked with data attributes like `data-cart="line-items"` and `data-cart="line-item-count"` will fill themselves automatically.
-
+Remember that tags marked with data attributes like `data-cart="line-items"` and `data-cart="line-item-count"` will fill themselves automatically - all you need to do is make sure the product ID metadata is set on the product's Page.
