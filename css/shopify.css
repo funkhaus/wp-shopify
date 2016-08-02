@@ -1,0 +1,44 @@
+/* Custom styling goes here! */
+
+html, body {
+
+}
+a {
+
+}
+a:hover {
+
+}
+.btn {
+
+}
+.btn:hover {
+
+}
+.site-header {
+
+}
+.main-content {
+
+}
+
+a,
+.btn{
+    transition: all 0.4s;
+}
+
+
+
+/* Funkhaus default styling is here! */
+.header-bar,
+.site-footer{
+    display: none;
+}
+
+/*
+* This is the 'Return to Store' link -
+* we don't want that available
+*/
+form > a:last-of-type {
+    display: none;
+}
