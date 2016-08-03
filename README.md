@@ -131,6 +131,9 @@ Any carts on the page will work much in the same way as the products do. The mai
 * __`data-cart="line-item-count"`__: The total number of items within the current cart. Defaults to 0
 * __`data-cart="checkout"`__: This attribute must exist on an `<a>` tag. The href of the tag will be automatically set to be the checkout URL for the current cart. If you'd like to get the user to the checkout location by some other mechanism, you can use `wshop.cart.checkoutUrl` at any time to get the checkout URL.
 * __`data-cart="line-items"`__: The element with this attribute will be populated with an html element for each line item within the cart. To modify the html that is rendered here, see [Line Item Markup](wshop-templates).
+* __`data-cart="add"`__: A button that increments one of the quantity of the given item in the cart
+* __`data-cart="subtract"`__: A button that decrements the quantity of one of the given item in the cart
+* __`data-cart="remove"`__: A button that removes an item from the cart entirely
 
 Using these attributes, you can build any carts you may need throughout the page. Here is an example cart:
 

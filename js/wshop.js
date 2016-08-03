@@ -138,6 +138,9 @@ var wshop = {
                         $lineItem.find('*[data-cart="add"]').on('click', wshop.handleIncrement.bind($lineItem));
                         $lineItem.find('*[data-cart="subtract"]').on('click', wshop.handleDecrement.bind($lineItem));
 
+                        // bind 'remove' button to function
+                        $lineItem.find('*[data-cart="remove"]').on('click', wshop.handleRemove.bind($lineItem));
+
                     });
 
                 }
@@ -179,6 +182,20 @@ var wshop = {
         // decrement, then re-render cart
         wshop.cart.updateLineItem(lineitemId, (qty - 1))
             .then(wshop.renderCarts)
+
+    },
+
+    handleRemove: function(e){
+
+        // get ID
+        var lineitemId = jQuery(this).data('lineitemId');
+
+        // no ID? abort
+        if ( !lineitemId ) return;
+
+        // remove item and re-render cart
+        wshop.cart.updateLineItem(lineitemId, 0)
+            .then(wshop.renderCarts);
 
     },
 
