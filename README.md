@@ -52,7 +52,11 @@ i.e. If when editing the product your url is: *example.myshopify.com/admin/produ
 Once you have at least one product set up, and the Shopify ID saved, then you're ready to start building templates.
 
 ### Setting Up External Custom Styling
-If you want custom styling on the Shopify side of the site, you'll need to set up a couple files on your Shopify account.
+If you want custom styling on the Shopify side of the site, you'll need to set up a couple files on your Shopify account. _Remember that you'll still have to edit any email notifications by hand in your Shopify account settings._
+
+__If you just want to be able to edit the CSS in the Shopify editor__, you can upload `/shopify/wp-shopify-theme` at your store's `admin/themes` page.
+
+__If you want to set up custom external styling (say, from a CSS file hosted on your own server)__, the process is a little more complicated:
 
 Go to your Shopify themes page (`https://YOUR-STORE-NAME.myshopify.com/admin/themes`), click the ellipsis to the left of 'Customize Theme', and click 'Edit HTML/CSS.' Copy the contents of `/shopify/theme.liquid` from this repo to the `theme.liquid` file in your Shopify theme, replacing the contents of the original `theme.liquid` file entirely.
 
