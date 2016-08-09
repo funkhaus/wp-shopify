@@ -126,22 +126,34 @@ var wshop = {
                     // empty any existing line-items
                     $dataLine.empty();
 
-                    // loop through any line items in cart
-                    _.each(wshop.cart.lineItems, function(lineItem){
+                    if( wshop.cart.lineItems.length ){
 
-                        var $lineItem = jQuery(lineItemTemplate(lineItem));
+                        // loop through any line items in cart
+                        _.each(wshop.cart.lineItems, function(lineItem){
 
-                        // render this line item using template
-                        $dataLine.append( $lineItem );
+                            var $lineItem = jQuery(lineItemTemplate(lineItem));
 
-                        // bind any incremenet/decremenet buttons to corresponding functions
-                        $lineItem.find('*[data-cart="add"]').on('click', wshop.handleIncrement.bind($lineItem));
-                        $lineItem.find('*[data-cart="subtract"]').on('click', wshop.handleDecrement.bind($lineItem));
+                            // render this line item using template
+                            $dataLine.append( $lineItem );
 
-                        // bind 'remove' button to function
-                        $lineItem.find('*[data-cart="remove"]').on('click', wshop.handleRemove.bind($lineItem));
+                            // bind any incremenet/decremenet buttons to corresponding functions
+                            $lineItem.find('*[data-cart="add"]').on('click', wshop.handleIncrement.bind($lineItem));
+                            $lineItem.find('*[data-cart="subtract"]').on('click', wshop.handleDecrement.bind($lineItem));
 
-                    });
+                            // bind 'remove' button to function
+                            $lineItem.find('*[data-cart="remove"]').on('click', wshop.handleRemove.bind($lineItem));
+
+
+                        });
+                    } else {
+                        // if we don't have any items, append 'cart empty' message
+                        var noItemTemplate = jQuery('script.wshop-line-cart-empty');
+                        var noItemHtml = noItemTemplate.length ? noItemTemplate.html() : '<div class="empty-alert">Cart is empty.</div>';
+
+                        var $noItemHtml = jQuery(noItemHtml);
+
+                        $dataLine.append( $noItemHtml );
+                    }
 
                 }
 
