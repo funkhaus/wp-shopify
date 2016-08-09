@@ -98,6 +98,9 @@ var wshop = {
         // if we don't have any items, add 'empty-cart' class
         if( ! wshop.cart.lineItems.length ){
             $carts.addClass('empty-cart');
+        } else {
+            // remove empty-cart class (required to render properly)
+            $carts.removeClass('empty-cart');
         }
 
         // set main variable name in underscore
