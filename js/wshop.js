@@ -95,6 +95,11 @@ var wshop = {
         // no cart? abort
         if ( ! $carts.length ) return;
 
+        // if we don't have any items, add 'empty-cart' class
+        if( ! wshop.cart.lineItems.length ){
+            $carts.addClass('empty-cart');
+        }
+
         // set main variable name in underscore
         _.templateSettings.variable = 'data';
 
@@ -111,6 +116,8 @@ var wshop = {
 
             $cart = jQuery(this);
 
+
+
             $cart.find('*[data-cart]').each(function(){
 
                 $dataLine = jQuery(this);
@@ -126,34 +133,23 @@ var wshop = {
                     // empty any existing line-items
                     $dataLine.empty();
 
-                    if( wshop.cart.lineItems.length ){
+                    // loop through any line items in cart
+                    _.each(wshop.cart.lineItems, function(lineItem){
 
-                        // loop through any line items in cart
-                        _.each(wshop.cart.lineItems, function(lineItem){
+                        var $lineItem = jQuery(lineItemTemplate(lineItem));
 
-                            var $lineItem = jQuery(lineItemTemplate(lineItem));
+                        // render this line item using template
+                        $dataLine.append( $lineItem );
 
-                            // render this line item using template
-                            $dataLine.append( $lineItem );
+                        // bind any incremenet/decremenet buttons to corresponding functions
+                        $lineItem.find('*[data-cart="add"]').on('click', wshop.handleIncrement.bind($lineItem));
+                        $lineItem.find('*[data-cart="subtract"]').on('click', wshop.handleDecrement.bind($lineItem));
 
-                            // bind any incremenet/decremenet buttons to corresponding functions
-                            $lineItem.find('*[data-cart="add"]').on('click', wshop.handleIncrement.bind($lineItem));
-                            $lineItem.find('*[data-cart="subtract"]').on('click', wshop.handleDecrement.bind($lineItem));
-
-                            // bind 'remove' button to function
-                            $lineItem.find('*[data-cart="remove"]').on('click', wshop.handleRemove.bind($lineItem));
+                        // bind 'remove' button to 'decrement' function
+                        $lineItem.find('*[data-cart="remove"]').on('click', wshop.handleDecrement.bind($lineItem));
 
 
-                        });
-                    } else {
-                        // if we don't have any items, append 'cart empty' message
-                        var noItemTemplate = jQuery('script.wshop-line-cart-empty');
-                        var noItemHtml = noItemTemplate.length ? noItemTemplate.html() : '<div class="empty-alert">Cart is empty.</div>';
-
-                        var $noItemHtml = jQuery(noItemHtml);
-
-                        $dataLine.append( $noItemHtml );
-                    }
+                    });
 
                 }
 
@@ -238,7 +234,7 @@ var wshop = {
 
             // set title, price, description
             if ( jQuery(this).attr('data-product') == 'title' ) jQuery(this).text( product.title );
-            if ( jQuery(this).attr('data-product') == 'price' ) jQuery(this).text( '$' + product.selectedVariant.price );
+            if ( jQuery(this).attr('data-product') == 'price' ) jQuery(this).text( product.selectedVariant.price );
             if ( jQuery(this).attr('data-product') == 'description' ) jQuery(this).html( product.description );
 
             // set images
@@ -255,7 +251,7 @@ var wshop = {
                     $image.attr('src', targetImage.src);
 
                     // add image into this element
-                    jQuery(this).append( $image );
+                    jQuery(this).append($image);
 
                     // increment
                     currentImage++;
