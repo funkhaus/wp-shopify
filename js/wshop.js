@@ -243,7 +243,7 @@ var wshop = {
                     $image.attr('src', targetImage.src);
 
                     // add image into this element
-                    jQuery(this).html( $image );
+                    jQuery(this).append( $image );
 
                     // increment
                     currentImage++;
