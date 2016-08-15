@@ -264,14 +264,20 @@ var wshop = {
                 if ( product.images.length ){
 
                     // get image from product object
-                    var targetImage = product.images[currentImage];
+                    var img = new Image();
+                    img.onload = function() {
+                        var $image = jQuery(img);
 
-                    // build image
-                    var $image = jQuery('<img />');
-                    $image.attr('src', targetImage.src);
+                        // add image into this element
+                        jQuery(this).append($image);
 
-                    // add image into this element
-                    jQuery(this).append($image);
+                        // trigger image-loaded event
+                        jQuery(this).trigger('wshop-image-loaded');
+
+                    }.bind(this);
+
+                    var targetImage = product.images[currentImage].src;
+                    img.src = targetImage;
 
                     // increment
                     currentImage++;
