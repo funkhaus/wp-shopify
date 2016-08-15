@@ -45,10 +45,18 @@
  */
     function get_the_product_id($post = 0){
         $post = get_post($post);
-        $product_id = isset( $post->_wshop_product_id ) ? '' : $post->_wshop_product_id;
+        $product_id = has_product() ? $post->_wshop_product_id : '';
         return $product_id;
     }
 
     function the_product_id($post = 0){
         echo get_the_product_id($post);
+    }
+
+/*
+ * Convenience function for checking if a product exists on a page
+ */
+    function has_product($post = 0){
+        $post = get_post($post);
+        return isset( $post->_wshop_product_id ) and strlen( $post->_wshop_product_id );
     }

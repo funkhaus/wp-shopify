@@ -51,6 +51,24 @@ var wshop = {
 
     },
 
+    resetCart: function(){
+
+        // if localstorage is supported
+        if ( localStorage ){
+
+            // remove the current cart from storage
+            localStorage.removeItem('lastCartId');
+
+            // clear out old cart
+            wshop.cart = null;
+
+            // re-init with blank cart
+            this.initCart();
+
+        }
+
+    },
+
     initProducts: function(){
 
         // find any products on the page
@@ -95,11 +113,10 @@ var wshop = {
         // no cart? abort
         if ( ! $carts.length ) return;
 
-        // if we don't have any items, add 'empty-cart' class
+        // if we don't have any items, append 'cart empty' message
         if( ! wshop.cart.lineItems.length ){
             $carts.addClass('empty-cart');
         } else {
-            // remove empty-cart class (required to render properly)
             $carts.removeClass('empty-cart');
         }
 

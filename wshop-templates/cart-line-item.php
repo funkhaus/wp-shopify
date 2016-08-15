@@ -1,4 +1,4 @@
-<!-- BEGIN: Line item template -->
+<!-- BEGIN: Cart line item template (this template is looped in the cart) -->
 <script type="text/template" class="wshop-cart-line-item">
 
     <div class="line-item" data-lineitem-id="<%- data.id %>">
@@ -12,10 +12,10 @@
         <div class="meta">
             <div class="title"><%- data.title %></div>
             <div class="controls">
-            <!--
+<!--
                 <button class="add" data-cart="add">+</button>
                 <button class="subtract" data-cart="subtract">-</button>
-            -->
+-->
                 <button class="remove" data-cart="remove">X</button>
             </div>
             <div class="price">
