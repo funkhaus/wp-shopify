@@ -54,15 +54,11 @@ Once you have at least one product set up, and the Shopify ID saved, then you're
 ### Setting Up External Custom Styling
 If you want custom styling on the Shopify side of the site, you'll need to set up a couple files on your Shopify account. _Remember that you'll still have to edit any email notifications by hand in your Shopify account settings._
 
-__If you just want to be able to edit the CSS in the Shopify editor__, you can upload `/shopify/wp-shopify-theme` at your store's `admin/themes` page.
+__If you just want to be able to edit the CSS in the Shopify editor__, you can upload `/shopify/wp-shopify-theme` at your store's `admin/themes` page. You can edit `wp-shopify.css` in the Assets folder from there and see your changes immediately.
 
-__If you want to set up custom external styling (say, from a CSS file hosted on your own server)__, the process is a little more complicated:
+__If you want to set up custom external styling (say, from a CSS file hosted on your own server)__, go to your Shopify themes page (`https://YOUR-STORE-NAME.myshopify.com/admin/themes`), click the ellipsis to the left of 'Customize Theme', and click 'Edit HTML/CSS.' Add in this line: `<link rel="stylesheet" href="YOUR_STYLESHEET_URL_HERE">` to load in an external stylesheet.
 
-Go to your Shopify themes page (`https://YOUR-STORE-NAME.myshopify.com/admin/themes`), click the ellipsis to the left of 'Customize Theme', and click 'Edit HTML/CSS.' Copy the contents of `/shopify/theme.liquid` from this repo to the `theme.liquid` file in your Shopify theme, replacing the contents of the original `theme.liquid` file entirely.
-
-Look for the line `<link rel="stylesheet" href="YOUR_STYLESHEET_URL_HERE">` in the newly-pasted content and replace your stylesheet URL accordingly. **Note that you'll need to deliver your stylesheet over `https` rather than `http` because of Shopify's security settings** - usually this is just a matter of adding the `s` to `http` in the URL.
-
-You can use your own custom stylesheet or the example stylesheet included in `/css/shopify.css` to set up your own styling.
+**Note that you'll need to deliver your stylesheet over `https` rather than `http` because of Shopify's security settings** - usually this is just a matter of adding the `s` to `http` in the URL.
 
 **Note that we removed links from the site-header by default.** If you want a link to your shop in your site-header (ie, the logo or name of the shop), use the `/shopify/theme--links-in-header.liquid` file instead of the default `theme.liquid` file.
 
@@ -168,6 +164,16 @@ Using these attributes, you can build any carts you may need throughout the page
 ```
 
 Remember that tags marked with data attributes like `data-cart="line-items"` and `data-cart="line-item-count"` will fill themselves automatically - all you need to do is make sure the product ID metadata is set on the product's Page.
+
+### Events
+
+There are a few events available for you to hook into:
+
+* `wshop-cart-initialized` is triggered on `jQuery(document)` when the cart is set up.
+* `wshop-products-initialized` is triggered on `jQuery(document)` when the products have been initialized, and passes products.length as a parameter.
+* `wshop-image-loaded` is triggered on its containg product block when a `data-product="image"` finishes loading its image.
+* `wshop-variant-change` is triggered on its containing product block when a product variant is selected.
+* `wshop-product-added` is triggered on `jQuery(document)` when a product is added to the cart.
 
 --------
 
