@@ -60,8 +60,6 @@ __If you want to set up custom external styling (say, from a CSS file hosted on 
 
 **Note that you'll need to deliver your stylesheet over `https` rather than `http` because of Shopify's security settings** - usually this is just a matter of adding the `s` to `http` in the URL.
 
-**Note that we removed links from the site-header by default.** If you want a link to your shop in your site-header (ie, the logo or name of the shop), use the `/shopify/theme--links-in-header.liquid` file instead of the default `theme.liquid` file.
-
 ## Product Markup
 
 When writing the markup for an individual product, be it in a grid or on a detail page, you need to first identify the product using the data-attribute `data-product-id`. 
