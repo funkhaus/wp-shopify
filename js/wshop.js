@@ -245,6 +245,9 @@ var wshop = {
         if ( product.variants && product.variants.length > 1 ){
             $productBlock.addClass('has-variants');
         }
+        if ( ! product.attrs.available ){
+            $productBlock.addClass('product-unavailable');
+        }
 
         // track image index (products with multiple images)
         var currentImage = 0;

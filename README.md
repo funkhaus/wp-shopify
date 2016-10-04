@@ -174,6 +174,13 @@ There are a few events available for you to hook into:
 * `wshop-variant-change` is triggered on its containing product block when a product variant is selected.
 * `wshop-product-added` is triggered on `jQuery(document)` when a product is added to the cart.
 
+### Classes
+
+There are informational classes added to product wrappers upon rendering:
+
+* `has-variants` will be added to any product that has variants on Shopify.
+* `product-unavailable` will be added to any product whose inventory is less than or equal to 0 (or is unavailable for any other reason). 
+
 --------
 
 __wp-shopify__
