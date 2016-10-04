@@ -256,6 +256,8 @@ var wshop = {
             if ( jQuery(this).attr('data-product') == 'title' ) jQuery(this).text( product.title );
             if ( jQuery(this).attr('data-product') == 'price' ) jQuery(this).text( product.selectedVariant.price );
             if ( jQuery(this).attr('data-product') == 'description' ) jQuery(this).html( product.description );
+            // set product type
+            if ( jQuery(this).attr('data-product') == 'type' ) jQuery(this).text( product.attrs.product_type );
 
             // set images
             if ( jQuery(this).attr('data-product') == 'image' ){

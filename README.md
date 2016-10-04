@@ -73,6 +73,7 @@ You can then fill whatever markup you need to within that element, and when you 
 - __`data-product="title"`__: The Shopify title of the product.
 - __`data-product="price"`__: The price of the product, does not include symbol of currency.
 - __`data-product="description"`__: The Shopify description of the product.
+- __`data-product="type"`__: The Shopify product-type of the product.
 - __`data-product="image"`__: The featured image of the product from Shopify. Image will be inserted into the element as an img tag.
 - __`data-product="select"`__: If the product has any variants, this element will be filled with a `<select>` that when changed by the user will switch out which variant of the product is being selected.
 - __`data-product="add-to-cart"`__: When clicked, the element with this data-attribute will add the product (or currently selected variant of the product) to the current user's cart.
