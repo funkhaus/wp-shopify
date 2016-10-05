@@ -75,6 +75,7 @@ You can then fill whatever markup you need to within that element, and when you 
 - __`data-product="description"`__: The Shopify description of the product.
 - __`data-product="type"`__: The Shopify product-type of the product.
 - __`data-product="image"`__: The featured image of the product from Shopify. Image will be inserted into the element as an img tag.
+- __`data-product="gallery"`__: A gallery of images attached to your product in Shopify. Rendered using `wshop-templates/product-gallery.php`.
 - __`data-product="select"`__: If the product has any variants, this element will be filled with a `<select>` that when changed by the user will switch out which variant of the product is being selected.
 - __`data-product="add-to-cart"`__: When clicked, the element with this data-attribute will add the product (or currently selected variant of the product) to the current user's cart.
 
@@ -180,6 +181,13 @@ There are informational classes added to product wrappers upon rendering:
 
 * `has-variants` will be added to any product that has variants on Shopify.
 * `product-unavailable` will be added to any product whose inventory is less than or equal to 0 (or is unavailable for any other reason). 
+
+### Templates
+
+wshop includes a few standard templates, prepared using underscore.js, to help you render data efficiently:
+
+* `wshop-templates/cart-line-item.php` renders single items in the cart.
+* `wshop-templates/product-gallery.php` renders a product gallery using all images attached to a product.
 
 --------
 
