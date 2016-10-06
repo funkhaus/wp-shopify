@@ -33,9 +33,8 @@ First, you'll need your Shopify store up and running.
 ##### Wordpress
 After Shopify has been set up, you'll be able to start the Wordpress installation.
 
-Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to __Tools > Shopify__. 
-
-Put in your API key (the access token from the Shopify steps), Shopify domain, and app ID. More info here on where to find that: https://help.shopify.com/api/guides/api-credentials
+1. Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to __Tools > Shopify__. 
+1. Put in your API key (the access token from the Shopify steps), Shopify domain, and app ID. More info here on where to find that: https://help.shopify.com/api/guides/api-credentials
 
 You can now start creating a page or pages that will serve as a placeholder for an individual products. 
 
