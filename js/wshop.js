@@ -269,27 +269,6 @@ var wshop = {
             // set product type
             if ( jQuery(this).attr('data-product') == 'type' ) jQuery(this).text( product.attrs.product_type );
 
-            // render gallery
-            if( jQuery(this).attr('data-product') == 'gallery' ){
-
-                // set main variable name in underscore
-                _.templateSettings.variable = 'product';
-
-                // pre-compile gallery template
-                var galleryTemplate;
-                if ( jQuery( 'script.wshop-product-gallery' ).length ){
-                    galleryTemplate = _.template(
-                        jQuery( 'script.wshop-product-gallery' ).html()
-                    );
-                }
-
-                // render gallery template
-                $renderedGallery = jQuery(galleryTemplate(product));
-
-                // append gallery to this element
-                jQuery(this).html($renderedGallery);
-            }
-
             // set images
             if ( jQuery(this).attr('data-product') == 'image' ){
 
@@ -389,6 +368,7 @@ var wshop = {
             jQuery(this).html($rendered);
 
             // callbacks
+            jQuery(document).trigger('wshop.templateRendered', [ jQuery(this) ]);
         });
 
 
