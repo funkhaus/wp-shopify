@@ -74,8 +74,10 @@ var wshop = {
         // find any products on the page
         $products = jQuery('*[data-product-id]');
 
+        var total = $products.length;
+
         // abort if no products
-        if ( ! $products.length ) return;
+        if ( ! total ) return;
 
         $products.each(function(){
 
@@ -90,15 +92,20 @@ var wshop = {
 
                     return product;
                 })
-                .then( wshop.renderProduct.bind($block) )
-                .catch(function () {
-                    console.log('Request failed');
+                .then(function(){
+                    wshop.renderProduct.bind($block.get(0))();
+
+                    // make sure we've rendered all products before triggering callback
+                    total--;
+                    if( total == 0 ){
+                        jQuery(document).trigger('wshop-products-rendered');
+                    }
                 });
 
         });
 
         // trigger event
-        jQuery(document).trigger('wshop-products-initialized', [ $products.length ]);
+        jQuery(document).trigger('wshop.products-initialized', [ $products.length ]);
 
     },
 
@@ -230,7 +237,7 @@ var wshop = {
 /*
  * function to render all of the data within a product element
  */
-    renderProduct: function(){
+    renderProduct: function(){ // switch back to binding
 
         // get elem
         $productBlock = jQuery(this);
@@ -353,6 +360,39 @@ var wshop = {
             }
 
         });
+
+        // find anything with data-template
+        $productBlock.find('*[data-template]').each(function(){
+
+            // find data-template value
+            var templateName = jQuery(this).attr('data-template');
+
+            // find relevant script ID
+            var $templateScript = jQuery('#' + templateName);
+
+            // return if no template present
+            if( ! $templateScript.length ){
+                console.log('No template with the ID #' + templateName + ' found');
+                return true;
+            }
+
+            // prep template name
+            _.templateSettings.variable = 'data';
+
+            // pre-compile template
+            var template = _.template( $templateScript.html() );
+
+            // render template
+            $rendered = jQuery( template(product) );
+
+            // inject rendered object into block
+            jQuery(this).html($rendered);
+
+            // callbacks
+        });
+
+
+        //$productBlock.trigger('wshop.');
 
     },
 

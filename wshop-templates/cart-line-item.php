@@ -1,5 +1,5 @@
 <!-- BEGIN: Cart line item template (this template is looped in the cart) -->
-<script type="text/template" class="wshop-cart-line-item">
+<script type="text/template" id="cart-line-item">
 
     <div class="line-item" data-lineitem-id="<%- data.id %>">
 
