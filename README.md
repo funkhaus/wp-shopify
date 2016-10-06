@@ -10,55 +10,77 @@ A Wordpress-Shopify Integration plugin by Funkhaus
 
 ```
 
-# What is it?
+# Table of Contents
+1. [What Is It?](#What-is-it?)
+1. [Setup](#Setup)
+1. [Basic Product Info](#Basic-product-info)
+1. [Advanced](#Advanced)
+
+## What is it?
 wp-shopify is an integration tool built around the [Shopify Buy API](https://help.shopify.com/api/sdks/js-buy-sdk).
 
 From a high-level perspective, the plugin allows you to easily add a basic e-commerce store into a Wordpress site without having to get your hands dirty in all the messy logic that comes with e-commerce projects. It allows you to write templates and develop a theme just as you normally would, pulling product and cart data straight from Shopify and leveraging the API for all the hard work.
 
-# How do I use it?
-The basic workflow looks like this:
+## Setup
 
-1. Set up a shopify store, you only need to enable the [Buy Button Channel](https://www.shopify.com/buy-button)
-1. Set up a section of your Wordpress site to put products in using pages. A common structure might be something like this:
-      * __Store__
-        * Product 1
-        * Product 2
-        * Product 3
-1. Link each product page in Wordpress to a Shopify product using the page metadata.
-1. Route and template your theme just like you normally would. When you want to display information from Shopify about a product, you can easily do so using a combination of the page metadata and custom data-attributes. For example:
-```html
-<?php // First, associate the div with a product, using the_product_id() ?>
-<div data-product-id="<?php the_product_id(); ?>">
-    <?php // Next, use a custom data attribute to autopopulate the product's title ?>
-    <div data-product="title"></div>
+##### Shopify
+First, you'll need your Shopify store up and running.
+
+1. Set up a shopify store and enable the [Buy Button Channel](https://www.shopify.com/buy-button).
+1. Create an access token by going to [the Extensions page](https://what-youth-test.myshopify.com/admin/apps/private/extensions) (accessed via Buy Button -> Create Extension, then the Create Extension button in the upper right hand corner).
+1. Note the access token for use later on.
+
+##### Wordpress
+After Shopify has been set up, you'll be able to start the Wordpress installation.
+
+Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to __Tools > Shopify__. 
+
+Put in your API key (the access token from the Shopify steps), Shopify domain, and app ID. More info here on where to find that: https://help.shopify.com/api/guides/api-credentials
+
+You can now start creating a page or pages that will serve as a placeholder for an individual products. 
+
+1. Create and name a page for a product as you normally would. 
+1. You should see a new metabox under the page content that has a field for the product ID. Fill in the product ID from your Shopify store. 
+     * The easiest way to find the ID of a product is to navigate to the "edit" page for that product within Shopify, and copy the last section of the URL for that page. For example, if when editing the product your url is *example.myshopify.com/admin/products/__12345__*, then the ID for that product is __12345__.
+
+Once you have at least one product set up, and the Shopify ID saved, then you're ready to start building templates.
+
+## Templates
+When you want to display information from Shopify about a product, you can easily do so using a combination of the page metadata and custom data-attributes.
+
+1. Prepare a wrapper for your product.
+```php
+<div class="product-wrapper">
+    <!-- Content will live here -->
 </div>
 ```
+2. Add a `data-product-id` attribute to this wrapper element.
+```php
+<div class="product-wrapper" data-product-id=<?php the_product_id(); ?>>
+    <!-- Content will live here -->
+</div>
+```
+`the_product_id()` is a custom wshop function that displays the product ID of a given page, as defined in the 'Product ID' metadata from the previous section.
+3. ***TODO: Continue from here***
+
+
 1. Add a cart (or carts) to your theme wherever you want. Just like information for individual products, carts are templated with regular html and given specific data-attributes to tell this plugin to fill them with Shopify data.
 1. Add a checkout link to your site. When the user clicks this, they will be sent off to the checkout section of Shopify with all of their cart data. Shopify will handle the rest. For example:
 ```html
 <?php // Make sure this is an <a> element and contained within a div with data-product-id set ?>
 <a href="#" data-cart="checkout">Checkout</a>
 ```
+1. Add any custom templates you'd like to include in your project. For example:
+```html
+<!-- A default template, included with wp-shopify -->
+<div class="gallery" data-template="product-gallery"></div>
 
-## Setting Up
-To set up the plugin, download this repo and drop it into your plugins folder. Enable it through the settings and then navigate to __Tools > Shopify__. 
+<!-- A user-defined template, located in your-theme-directory/wshop-templates -->
+<div class="custom-area" data-template="custom-template"></div>
+```
+See the Templates section below for more details.
 
-Put in your API key, Shopify domain, and app ID. More info here on where to find that: https://help.shopify.com/api/guides/api-credentials
 
-The next step after that id to create a page(s) that will serve as a placeholder for an individual product(s). Create and name the page as you normally would, you should see a new metabox under the page content that has a field for the product ID. The easiest way to find the ID of a product is to navigate to the "edit" page for that product within Shopify, and copy the last section of the URL for that page. 
-
-i.e. If when editing the product your url is: *example.myshopify.com/admin/products/__12345__*, then the ID for that product is __12345__.
-
-Once you have at least one product set up, and the Shopify ID saved, then you're ready to start building templates.
-
-### Setting Up External Custom Styling
-If you want custom styling on the Shopify side of the site, you'll need to set up a couple files on your Shopify account. _Remember that you'll still have to edit any email notifications by hand in your Shopify account settings._
-
-__If you just want to be able to edit the CSS in the Shopify editor__, you can upload `/shopify/wp-shopify-theme` at your store's `admin/themes` page. You can edit `wp-shopify.css` in the Assets folder from there and see your changes immediately.
-
-__If you want to set up custom external styling (say, from a CSS file hosted on your own server)__, go to your Shopify themes page (`https://YOUR-STORE-NAME.myshopify.com/admin/themes`), click the ellipsis to the left of 'Customize Theme', and click 'Edit HTML/CSS.' Add in this line: `<link rel="stylesheet" href="YOUR_STYLESHEET_URL_HERE">` to load in an external stylesheet.
-
-**Note that you'll need to deliver your stylesheet over `https` rather than `http` because of Shopify's security settings** - usually this is just a matter of adding the `s` to `http` in the URL.
 
 ## Product Markup
 
@@ -188,6 +210,16 @@ wshop includes a few standard templates, prepared using underscore.js, to help y
 
 * `wshop-templates/cart-line-item.php` renders single items in the cart.
 * `wshop-templates/product-gallery.php` renders a product gallery using all images attached to a product.
+* 
+## Advanced
+### Setting Up External Custom Styling
+If you want custom styling on the Shopify side of the site, you'll need to set up a couple files on your Shopify account. _Remember that you'll still have to edit any email notifications by hand in your Shopify account settings._
+
+__If you just want to be able to edit the CSS in the Shopify editor__, you can upload `/shopify/wp-shopify-theme` at your store's `admin/themes` page. You can edit `wp-shopify.css` in the Assets folder from there and see your changes immediately.
+
+__If you want to set up custom external styling (say, from a CSS file hosted on your own server)__, go to your Shopify themes page (`https://YOUR-STORE-NAME.myshopify.com/admin/themes`), click the ellipsis to the left of 'Customize Theme', and click 'Edit HTML/CSS.' Add in this line: `<link rel="stylesheet" href="YOUR_STYLESHEET_URL_HERE">` to load in an external stylesheet.
+
+**Note that you'll need to deliver your stylesheet over `https` rather than `http` because of Shopify's security settings** - usually this is just a matter of adding the `s` to `http` in the URL.
 
 --------
 
