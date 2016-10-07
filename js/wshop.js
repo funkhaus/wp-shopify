@@ -372,7 +372,7 @@ var wshop = {
         });
 
 
-        //$productBlock.trigger('wshop.');
+        $productBlock.trigger('wshop.allBlocksRendered');
 
     },
 
