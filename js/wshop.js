@@ -47,6 +47,17 @@ var wshop = {
 
         });
 
+        // Bind increment buttons
+
+        // Bind decrement buttons
+
+        // Bind 'remove' buttons
+        jQuery(document).on('click', '*[data-cart="remove"]', function(e){
+            wshop.handleRemove.bind(
+                jQuery(this).closest('*[data-lineitem-id]')
+            )();
+        });
+
         jQuery(document).trigger('wshop-cart-initialized');
 
     },
@@ -191,21 +202,6 @@ var wshop = {
 
             });
 
-            // Bind increment buttons
-
-            // Bind decrement buttons
-
-            // bind 'remove' buttons
-            jQuery(document).on('click', '*[data-cart="remove"]', function(e){
-                wshop.handleRemove.bind(
-                    jQuery(this).closest('*[data-lineitem-id]')
-                /*
-_.find( jQuery('*[data-lineitem-id]'), function($lineItem){
-                    return $lineItem.data('lineitem-id') == jQuery(this).closest(')
-                }
-*/)();
-            });
-
         });
 
     },
@@ -261,7 +257,7 @@ _.find( jQuery('*[data-lineitem-id]'), function($lineItem){
 /*
  * function to render all of the data within a product element
  */
-    renderProduct: function(){ // switch back to binding
+    renderProduct: function(){
 
         // get elem
         $productBlock = jQuery(this);
