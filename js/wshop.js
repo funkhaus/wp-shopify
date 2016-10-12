@@ -132,9 +132,9 @@ var wshop = {
 
         // pre-compile cart line-item template
         var lineItemTemplate;
-        if ( jQuery( 'script.wshop-cart-line-item' ).length ){
+        if ( jQuery( 'script#cart-line-item' ).length ){
             lineItemTemplate = _.template(
-                jQuery( 'script.wshop-cart-line-item' ).html()
+                jQuery( 'script#cart-line-item' ).html()
             );
         }
 
@@ -163,23 +163,47 @@ var wshop = {
                     // loop through any line items in cart
                     _.each(wshop.cart.lineItems, function(lineItem){
 
+                        // Render line item
                         var $lineItem = jQuery(lineItemTemplate(lineItem));
 
-                        // render this line item using template
+                        // Save line item ID
+                        $lineItem.attr('data-lineitem-id', lineItem.id);
+
+                        // Append rendered line item
                         $dataLine.append( $lineItem );
 
-                        // bind any incremenet/decremenet buttons to corresponding functions
+/*
+                        // bind any increment/decremenet buttons to corresponding functions
                         $lineItem.find('*[data-cart="add"]').on('click', wshop.handleIncrement.bind($lineItem));
                         $lineItem.find('*[data-cart="subtract"]').on('click', wshop.handleDecrement.bind($lineItem));
 
                         // bind 'remove' button to 'decrement' function
-                        $lineItem.find('*[data-cart="remove"]').on('click', wshop.handleDecrement.bind($lineItem));
+                        $lineItem.find('*[data-cart="remove"]').on('click', function(){
+                            wshop.handleDecrement.bind($lineItem);
+                            console.log(this);
+                        });
+*/
 
 
                     });
 
                 }
 
+            });
+
+            // Bind increment buttons
+
+            // Bind decrement buttons
+
+            // bind 'remove' buttons
+            jQuery(document).on('click', '*[data-cart="remove"]', function(e){
+                wshop.handleRemove.bind(
+                    jQuery(this).closest('*[data-lineitem-id]')
+                /*
+_.find( jQuery('*[data-lineitem-id]'), function($lineItem){
+                    return $lineItem.data('lineitem-id') == jQuery(this).closest(')
+                }
+*/)();
             });
 
         });
