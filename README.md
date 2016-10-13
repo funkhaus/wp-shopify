@@ -80,6 +80,7 @@ Checkout [Links to Shopify checkout]
 
 ## How to Use
 First, link a Shopify product and a Wordpress page:
+
 1. Create a product in Shopify.
 1. Create and name a page for the product in Wordpress.
 1. You should see a new metabox in Wordpress that has a field for the product ID. Fill in the product ID from your Shopify store. 
@@ -95,6 +96,7 @@ Next, prepare the markup for the product pages:
 1. Fill the wrapper with `data-product` shortcuts and/or custom Underscore templates. See below for examples.
 
 Finally, prepare the markup for the cart page:
+
 1. **Wrap your cart in an element with `data-cart-id` set.** `data-cart-id` can be left blank:
 
         <div data-cart-id=""></div>
@@ -198,6 +200,7 @@ There are a few events available for you to hook into:
 * `wshop.cartInitialized` is triggered on `jQuery(document)` when the cart is set up.
 * `wshop.productsInitialized` is triggered on `jQuery(document)` when the products have been initialized, and passes `products.length` as a parameter.
 * `wshop.imageLoaded` is triggered on its containg product block when a `data-product="image"` finishes loading its image.
+* `wshop.productsRendered` is triggered on `jQuery(document)` when all products have finished rendering.
 * `wshop.variantChange` is triggered on its containing product block when a product variant is selected.
 * `wshop.productAdded` is triggered on `jQuery(document)` when a product is added to the cart.
 * `wshop.unavailableProductAdded` is trigged on `jQuery(document)` when the user attempts to add an unavailable product to their cart.
@@ -213,6 +216,9 @@ jQuery(document).on('wshop.productAdded'), function(){
 There are informational classes added to product wrappers upon rendering:
 * `has-variants` will be added to any product that has variants on Shopify.
 * `product-unavailable` will be added to any product whose inventory is less than or equal to 0 (or is unavailable for any other reason). 
+
+There are also classes added to cart wrappers upon rendering:
+* `empty-cart` will be added to an empty cart.
 
 ### Convenience Functions
 wp-shopify comes with PHP convenience functions to check for, fetch, and display product IDs. Note that `$post` is optional in all of these functions and defaults to the current post.

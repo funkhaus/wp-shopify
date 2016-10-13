@@ -48,8 +48,10 @@ var wshop = {
         });
 
         // Bind increment buttons
+        // TODO
 
         // Bind decrement buttons
+        // TODO
 
         // Bind 'remove' buttons
         jQuery(document).on('click', '*[data-cart="remove"]', function(e){
@@ -107,8 +109,7 @@ var wshop = {
                     wshop.renderProduct.bind($block.get(0))();
 
                     // make sure we've rendered all products before triggering callback
-                    total--;
-                    if( total == 0 ){
+                    if( --total == 0 ){
                         jQuery(document).trigger('wshop.productsRendered');
                     }
                 });
@@ -121,7 +122,7 @@ var wshop = {
     },
 
 /*
- * function to render everything within the page's cart
+ * function to render everything within the page's carts
  */
     renderCarts: function(){
 
@@ -153,8 +154,6 @@ var wshop = {
         $carts.each(function(){
 
             $cart = jQuery(this);
-
-
 
             $cart.find('*[data-cart]').each(function(){
 
@@ -195,7 +194,7 @@ var wshop = {
 
     handleIncrement: function(e){
 
-        // get ID from data-att
+        // get ID from data-attr
         var lineitemId = jQuery(this).data('lineitemId');
 
         // no ID? abort
@@ -212,7 +211,7 @@ var wshop = {
 
     handleDecrement: function(e){
 
-        // get ID from data-att
+        // get ID from data-attr
         var lineitemId = jQuery(this).data('lineitemId');
 
         // no ID? abort
@@ -229,7 +228,7 @@ var wshop = {
 
     handleRemove: function(e){
 
-        // get ID
+        // get ID from data-attr
         var lineitemId = jQuery(this).data('lineitemId');
 
         // no ID? abort
@@ -242,13 +241,16 @@ var wshop = {
     },
 
     applyTemplate: function(templateName, data){
-        // find relevant script ID
+        // find template script by ID
         var $templateScript = jQuery('#' + templateName);
 
         // return if no template present
         if( ! $templateScript.length ){
+
             console.log('No template with the ID #' + templateName + ' found');
-            return true;
+
+            // This will be rendered in renderTemplate, so treat it as an HTML comment
+            return '<!-- No template with the ID #' + templateName + ' found! -->';
         }
 
         // prep template data name
@@ -257,6 +259,7 @@ var wshop = {
         // pre-compile template
         var template = _.template( $templateScript.html() );
 
+        // Apply template formatting and return result
         return jQuery( template(data) );
     },
 
@@ -324,6 +327,7 @@ var wshop = {
 
                     }.bind(this);
 
+                    // Set src and load image
                     var targetImage = product.images[currentImage].src;
                     img.src = targetImage;
 
@@ -364,7 +368,7 @@ var wshop = {
                 // Render radio
                 wshop.renderTemplate.bind(this)('variants-radio', product);
 
-                // add change listener to newly-rendered select
+                // add change listener to newly-rendered radio
                 jQuery(this).find('input[type=radio]').on('change', function(e){
 
                     // get name from radio value
@@ -406,7 +410,7 @@ var wshop = {
             jQuery(document).trigger('wshop.templateRendered', [ jQuery(this) ]);
         });
 
-
+        // Trigger "all rendered" event
         $productBlock.trigger('wshop.allBlocksRendered');
 
     },
@@ -420,8 +424,10 @@ var wshop = {
 
         } else {
 
+            // Find product parent
             var product = jQuery(this).closest('*[data-product-id]').data('product');
 
+            // Add to cart
             wshop.cart.addVariants({ variant: product.selectedVariant, quantity: 1 })
                 .then(function(){
 
