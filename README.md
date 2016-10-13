@@ -156,6 +156,146 @@ In this script, you have access to the `data` variable, which contains all infor
 
 That's it! All contents of the `wshop-templates` directory will be included in the footer of your site, hooking into the `get_footer()` function. You can have full control over the data you received from Shopify this way. See the Examples section for more information.
 
+## Setting Up a Cart
+Any carts on the page will work much in the same way as the products do. The main difference is that the information within a cart is primarily determined by the user, rather than an individual product. For that reason we don't necessarily have to specify a cart ID.
+
+### Cart `data`-attribute Reference
+Remember to wrap the cart with a data-cart-id, even if the data-cart-id is empty!
+
+```html
+<div data-cart-id="">
+
+    <!-- The individual items -->
+    <div data-cart="line-items">
+        <!-- Each item in the cart will be rendered using wshop-templates/cart-line-item.php here -->
+    </div>
+    
+    <!-- The subtotal of the user's cart -->
+    <div data-cart="subtotal"></div>
+    
+    <!-- The total number of items in the current cart (default 0) -->
+    <div data-cart="line-item-count"></div>
+ 
+    <!-- MUST BE AN <a> TAG. href will automatically be set to Shopify checkout URL. You can also use wshop.cart.checkoutUrl at any time to get the checkout URL. -->
+    <a data-cart="checkout">Checkout</a>
+    
+    <!-- Increment one of the quantity of the given item in the cart -->
+    <div data-cart="add"></div>
+    
+    <!-- Decrement one of the quantity of the given item in the cart -->
+    <div data-cart="subtract"></div>
+    
+    <!-- Remove an item from the cart entirely -->
+    <div data-cart="remove"></div>
+
+</div>
+```
+
+### Cart Custom Templates Reference
+Custom Underscore cart templates are set up in the same way as custom product templates. You have access to a `data` variable that contains all the information about each item in a cart, as well as the quantity in the cart and other stats. For example:
+
+```html
+<script type="text/template" id="cart-line-item">
+    <% console.log(data); // Log available data %>
+</script>
+```
+
+## Examples
+Assuming we have a product on Shopify with the following information:
+* *Name:* Foo
+* *Price:* $50
+* *Description:* Sample Description
+
+We can create a template like this:
+```html
+<div data-product-id="<?php the_product_id(); ?>">
+
+    My product's name is <span data-product="title"></span>.
+    My price is $<span data-product="price"></span>.
+    Click <span data-product="add-to-cart">here</span> to add me to the cart.
+
+</div>
+
+<div data-cart-id="">
+
+    <div data-cart="line-items"></div>
+    <a data-cart="checkout">Checkout</a>
+
+</div>
+```
+
+And a custom line-items template like this (contained in `wshop-templates/cart-line-item.php`):
+
+```html
+<script type="text/template" id="cart-line-item">
+    Cart Item: <%= data.quantity %> <%= data.title %>(s)
+    
+    <% if( data.attrs.product_type ){ // A sample data attribute from Shopify %>
+        <%= data.attrs.product_type %>
+    <% } else { %>
+        No product type specified!
+    <% } %>
+    
+    <span data-cart="remove">Remove</span>
+
+</script>
+```
+
+Which will render like this:
+
+```html
+
+My product's name is Foo.
+My price is $50.
+Click here to add me to the cart. [Clicking 'here' adds the item to the cart, as shown below]
+
+Cart Item: 1 Foo(s)
+No product type specified!
+Remove [Clicking removes this item from the cart]
+Checkout [Links to Shopify checkout]
+
+```
+
+## Advanced
+### Events
+
+There are a few events available for you to hook into:
+
+* `wshop.cartInitialized` is triggered on `jQuery(document)` when the cart is set up.
+* `wshop.productsInitialized` is triggered on `jQuery(document)` when the products have been initialized, and passes `products.length` as a parameter.
+* `wshop.imageLoaded` is triggered on its containg product block when a `data-product="image"` finishes loading its image.
+* `wshop.variantChange` is triggered on its containing product block when a product variant is selected.
+* `wshop.productAdded` is triggered on `jQuery(document)` when a product is added to the cart.
+
+For example: 
+```js
+jQuery(document).on('wshop.productAdded'), function(){ 
+    console.log('Product added!'); 
+});
+```
+
+### Wrapper Classes
+There are informational classes added to product wrappers upon rendering:
+* `has-variants` will be added to any product that has variants on Shopify.
+* `product-unavailable` will be added to any product whose inventory is less than or equal to 0 (or is unavailable for any other reason). 
+
+### Convenience Functions
+wp-shopify comes with PHP convenience functions to check for, fetch, and display product IDs. Note that `$post` is optional in all of these functions and defaults to the current post.
+* `has_product( $post )` returns `true` if the page has a product ID set, `false` if not.
+* `get_the_product_id( $post )` is returns the product ID of a given page, as defined in the 'Product ID' metadata. If there is no product ID attached to a page, it returns a blank string.
+* `the_product_id( $post )` echoes the return value of `get_the_product_id()`.
+
+### Overriding Included Templates
+Making a file with the same name as one of the included templates will override that template - so, for example, if you create a `product-gallery` template in your theme's `wshop-templates` directory, it will override the plugin's default `product-gallery` template.
+### Setting Up External Custom Styling
+If you want custom styling on the Shopify side of the site, you'll need to set up a couple files on your Shopify account. _Remember that you'll still have to edit any email notifications by hand in your Shopify account settings._
+
+__If you just want to be able to edit the CSS in the Shopify editor__, you can upload `/shopify/wp-shopify-theme` at your store's `admin/themes` page. You can edit `wp-shopify.css` in the Assets folder from there and see your changes immediately.
+
+__If you want to set up custom external styling (say, from a CSS file hosted on your own server)__, go to your Shopify themes page (`https://YOUR-STORE-NAME.myshopify.com/admin/themes`), click the ellipsis to the left of 'Customize Theme', and click 'Edit HTML/CSS.' Add in this line: `<link rel="stylesheet" href="YOUR_STYLESHEET_URL_HERE">` to load in an external stylesheet.
+
+**Note that you'll need to deliver your stylesheet over `https` rather than `http` because of Shopify's security settings** - usually this is just a matter of adding the `s` to `http` in the URL.
+
 ## What's Going on Behind the Scenes
 
 First, wp-shopify includes the javascript buy SDK off of Shopify's servers. It waits for the document ready event, and then looks for any elements on the page with `data-product-id` set. If it finds any, it fetches all the necessary data from Shopify's servers and saves all of the information. It then searches through child elements of each product and fills in any necessary data based on the data-attributes.
@@ -169,89 +309,6 @@ jQuery('.single-product').each(wshop.renderProduct);
 ```
 
 Once all the data has been added, wp-shopify will set listeners on `<select>` elements, `add-to-cart` elements, and anything else that will need to interact with the state of the product.
-
-## Cart Markup
-
-Any carts on the page will work much in the same way as the products do. The main difference is that the information within a cart is primarily determined by the user, rather than an individual product. For that reason we don't necessarily have to specify a cart ID.
-
-1. Add a cart (or carts) to your theme wherever you want. Just like information for individual products, carts are templated with regular html and given specific data-attributes to tell this plugin to fill them with Shopify data.
-1. Add a checkout link to your site. When the user clicks this, they will be sent off to the checkout section of Shopify with all of their cart data. Shopify will handle the rest. For example:
-```html
-<?php // Make sure this is an <a> element and contained within a div with data-product-id set ?>
-<a href="#" data-cart="checkout">Checkout</a>
-```
-
-### Cart data-attribute Reference
-
-* __`data-cart="subtotal"`__: The subtotal of the current user's cart
-* __`data-cart="line-item-count"`__: The total number of items within the current cart. Defaults to 0
-* __`data-cart="checkout"`__: This attribute must exist on an `<a>` tag. The href of the tag will be automatically set to be the checkout URL for the current cart. If you'd like to get the user to the checkout location by some other mechanism, you can use `wshop.cart.checkoutUrl` at any time to get the checkout URL.
-* __`data-cart="line-items"`__: The element with this attribute will be populated with an html element for each line item within the cart. To modify the html that is rendered here, see [Line Item Markup](wshop-templates).
-* __`data-cart="add"`__: A button that increments one of the quantity of the given item in the cart
-* __`data-cart="subtract"`__: A button that decrements the quantity of one of the given item in the cart
-* __`data-cart="remove"`__: A button that removes an item from the cart entirely
-
-Using these attributes, you can build any carts you may need throughout the page. Here is an example cart:
-
-```html
-<div data-cart-id="">
-
-    <?php // The individual items ?>
-    <div data-cart="line-items">
-        <?php // Each item in the cart will be rendered using /wshop-templates/cart-line-item.php here ?>
-    </div>
-    
-    <?php // The cart summary ?>
-    <div class="cart-meta">
-        <div class="table">
-            <div>
-                <span>Total Items: </span>
-                <span data-cart="line-item-count"></span>
-            </div>
-            <div>
-                <span>Subtotal: </span>
-                <span>$<span data-cart="subtotal"></span></span>
-            </div>
-        </div>
-        <a href="#" class="checkout-button" data-cart="checkout">Checkout</a>
-    </div>
-
-</div>
-```
-
-Remember that tags marked with data attributes like `data-cart="line-items"` and `data-cart="line-item-count"` will fill themselves automatically - all you need to do is make sure the product ID metadata is set on the product's Page.
-
-### Events
-
-There are a few events available for you to hook into:
-
-* `wshop-cart-initialized` is triggered on `jQuery(document)` when the cart is set up.
-* `wshop-products-initialized` is triggered on `jQuery(document)` when the products have been initialized, and passes products.length as a parameter.
-* `wshop-image-loaded` is triggered on its containg product block when a `data-product="image"` finishes loading its image.
-* `wshop-variant-change` is triggered on its containing product block when a product variant is selected.
-* `wshop-product-added` is triggered on `jQuery(document)` when a product is added to the cart.
-
-## Advanced
-### Wrapper Classes
-There are informational classes added to product wrappers upon rendering:
-* `has-variants` will be added to any product that has variants on Shopify.
-* `product-unavailable` will be added to any product whose inventory is less than or equal to 0 (or is unavailable for any other reason). 
-
-### Wrapper Convenience Functions
-wp-shopify comes with PHP convenience functions to check for, fetch, and display product IDs. Note that `$post` is optional in all of these functions and defaults to the current post.
-* **`has_product( $post )`** returns `true` if the page has a product ID set, `false` if not.
-* **`get_the_product_id( $post )`** is returns the product ID of a given page, as defined in the 'Product ID' metadata. If there is no product ID attached to a page, it returns a blank string.
-* **`the_product_id( $post )`** echoes the return value of `get_the_product_id()`.
-### Overriding Included Templates
-Making a file with the same name as one of the included templates will override that template - so, for example, if you create a `product-gallery` template in your theme's `wshop-templates` directory, it will override the plugin's default `product-gallery` template.
-### Setting Up External Custom Styling
-If you want custom styling on the Shopify side of the site, you'll need to set up a couple files on your Shopify account. _Remember that you'll still have to edit any email notifications by hand in your Shopify account settings._
-
-__If you just want to be able to edit the CSS in the Shopify editor__, you can upload `/shopify/wp-shopify-theme` at your store's `admin/themes` page. You can edit `wp-shopify.css` in the Assets folder from there and see your changes immediately.
-
-__If you want to set up custom external styling (say, from a CSS file hosted on your own server)__, go to your Shopify themes page (`https://YOUR-STORE-NAME.myshopify.com/admin/themes`), click the ellipsis to the left of 'Customize Theme', and click 'Edit HTML/CSS.' Add in this line: `<link rel="stylesheet" href="YOUR_STYLESHEET_URL_HERE">` to load in an external stylesheet.
-
-**Note that you'll need to deliver your stylesheet over `https` rather than `http` because of Shopify's security settings** - usually this is just a matter of adding the `s` to `http` in the URL.
 
 --------
 
