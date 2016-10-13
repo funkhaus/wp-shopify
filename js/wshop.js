@@ -58,7 +58,7 @@ var wshop = {
             )();
         });
 
-        jQuery(document).trigger('wshop-cart-initialized');
+        jQuery(document).trigger('wshop.cartInitialized');
 
     },
 
@@ -109,14 +109,14 @@ var wshop = {
                     // make sure we've rendered all products before triggering callback
                     total--;
                     if( total == 0 ){
-                        jQuery(document).trigger('wshop-products-rendered');
+                        jQuery(document).trigger('wshop.productsRendered');
                     }
                 });
 
         });
 
         // trigger event
-        jQuery(document).trigger('wshop.products-initialized', [ $products.length ]);
+        jQuery(document).trigger('wshop.productsInitialized', [ $products.length ]);
 
     },
 
@@ -182,19 +182,6 @@ var wshop = {
 
                         // Append rendered line item
                         $dataLine.append( $lineItem );
-
-/*
-                        // bind any increment/decremenet buttons to corresponding functions
-                        $lineItem.find('*[data-cart="add"]').on('click', wshop.handleIncrement.bind($lineItem));
-                        $lineItem.find('*[data-cart="subtract"]').on('click', wshop.handleDecrement.bind($lineItem));
-
-                        // bind 'remove' button to 'decrement' function
-                        $lineItem.find('*[data-cart="remove"]').on('click', function(){
-                            wshop.handleDecrement.bind($lineItem);
-                            console.log(this);
-                        });
-*/
-
 
                     });
 
@@ -304,7 +291,7 @@ var wshop = {
                         jQuery(this).append($image);
 
                         // trigger image-loaded event
-                        jQuery(this).trigger('wshop-image-loaded');
+                        jQuery(this).trigger('wshop.imageLoaded');
 
                     }.bind(this);
 
@@ -343,7 +330,7 @@ var wshop = {
                     })[0].selected = value;
 
                     // trigger event on this product
-                    $productBlock.trigger('wshop-variant-change');
+                    $productBlock.trigger('wshop.variantChange');
 
                 });
 
@@ -406,7 +393,7 @@ var wshop = {
                 // re-render any carts
                 wshop.renderCarts();
 
-                jQuery(document).trigger('wshop-product-added');
+                jQuery(document).trigger('wshop.productAdded');
 
             });
 
