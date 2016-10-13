@@ -241,6 +241,35 @@ var wshop = {
 
     },
 
+    applyTemplate: function(templateName, data){
+        // find relevant script ID
+        var $templateScript = jQuery('#' + templateName);
+
+        // return if no template present
+        if( ! $templateScript.length ){
+            console.log('No template with the ID #' + templateName + ' found');
+            return true;
+        }
+
+        // prep template data name
+        _.templateSettings.variable = 'data';
+
+        // pre-compile template
+        var template = _.template( $templateScript.html() );
+
+        return jQuery( template(data) );
+    },
+
+    renderTemplate: function(templateName, data){
+
+        // Create rendered template
+        var $applied = wshop.applyTemplate(templateName, data);
+
+        // Place inside bound element
+        jQuery(this).html( $applied );
+
+    },
+
 /*
  * function to render all of the data within a product element
  */
@@ -307,17 +336,10 @@ var wshop = {
             // set select
             if ( jQuery(this).attr('data-product') == 'select' && product.variants.length > 1 ){
 
-                // build html for select
-                var selectElem = product.options.map(function(option) {
-                    return '<select name="' + option.name + '"><option selected disabled>' + option.name + '</option>' + option.values.map(function(value) {
-                        return '<option value="' + value + '">' + value + '</option>';
-                    }) + '</select>';
-                })[0];
+                // Render select
+                wshop.renderTemplate.bind(this)('variants-select', product);
 
-                // add select to this element
-                jQuery(this).html(selectElem);
-
-                // add change listener to select
+                // add change listener to newly-rendered select
                 jQuery(this).find('select').on('change', function(e){
 
                     // get name a val from select
@@ -334,6 +356,30 @@ var wshop = {
 
                 });
 
+            }
+
+            // set radio
+            if( jQuery(this).attr('data-product') == 'radio' && product.variants.length > 1 ){
+
+                // Render radio
+                wshop.renderTemplate.bind(this)('variants-radio', product);
+
+                // add change listener to newly-rendered select
+                jQuery(this).find('input[type=radio]').on('change', function(e){
+
+                    // get name from radio value
+                    var name = e.target.name;
+                    var value = e.target.value;
+
+                    // set this variant as selected
+                    product.options.filter(function(option) {
+                        return option.name === name;
+                    })[0].selected = value;
+
+                    // trigger event on this product
+                    $productBlock.trigger('wshop.variantChange');
+
+                });
             }
 
             // add listener to add-to-cart button
@@ -353,26 +399,8 @@ var wshop = {
             // find data-template value
             var templateName = jQuery(this).attr('data-template');
 
-            // find relevant script ID
-            var $templateScript = jQuery('#' + templateName);
-
-            // return if no template present
-            if( ! $templateScript.length ){
-                console.log('No template with the ID #' + templateName + ' found');
-                return true;
-            }
-
-            // prep template name
-            _.templateSettings.variable = 'data';
-
-            // pre-compile template
-            var template = _.template( $templateScript.html() );
-
             // render template
-            $rendered = jQuery( template(product) );
-
-            // inject rendered object into block
-            jQuery(this).html($rendered);
+            wshop.renderTemplate.bind(this)(templateName, product);
 
             // callbacks
             jQuery(document).trigger('wshop.templateRendered', [ jQuery(this) ]);
