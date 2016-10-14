@@ -178,6 +178,11 @@ var wshop = {
                     // empty any existing line-items
                     $dataLine.empty();
 
+                    // trigger a callback on an empty cart
+                    if( wshop.cart.lineItems.length == 0 ){
+                        jQuery(document).trigger('wshop.cartEmpty');
+                    }
+
                     // loop through any line items in cart
                     _.each(wshop.cart.lineItems, function(lineItem){
 

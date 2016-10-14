@@ -184,6 +184,7 @@ There are a few events available for you to hook into:
 * `wshop.variantChange` is triggered on its containing product block when a product variant is selected.
 * `wshop.productAdded` is triggered on `jQuery(document)` when a product is added to the cart.
 * `wshop.unavailableProductAdded` is trigged on `jQuery(document)` when the user attempts to add an unavailable product to their cart.
+* `wshop.cartEmpty` is triggered on `jQuery(document)` when rendering a cart with 0 items in it.
 
 For example: 
 ```js
