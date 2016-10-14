@@ -48,10 +48,18 @@ var wshop = {
         });
 
         // Bind increment buttons
-        // TODO
+        jQuery(document).on('click', '*[data-cart="add"]', function(e){
+            wshop.handleIncrement.bind(
+                jQuery(this).closest('*[data-lineitem-id]')
+            )();
+        });
 
         // Bind decrement buttons
-        // TODO
+        jQuery(document).on('click', '*[data-cart="subtract"]', function(e){
+            wshop.handleDecrement.bind(
+                jQuery(this).closest('*[data-lineitem-id]')
+            )();
+        });
 
         // Bind 'remove' buttons
         jQuery(document).on('click', '*[data-cart="remove"]', function(e){

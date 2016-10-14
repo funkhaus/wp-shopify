@@ -82,7 +82,7 @@ Checkout [Links to Shopify checkout]
 First, link a Shopify product and a Wordpress page:
 
 1. Create a product in Shopify.
-1. Create and name a page for the product in Wordpress.
+1. Create a page for the product in Wordpress.
 1. You should see a new metabox in Wordpress that has a field for the product ID. Fill in the product ID from your Shopify store. 
      * The easiest way to find the ID of a product is to navigate to the "edit" page for that product within Shopify, and copy the last section of the URL for that page. For example, if when editing the product your url is *example.myshopify.com/admin/products/__12345__*, then the ID for that product is __12345__.
 
@@ -91,9 +91,9 @@ Next, prepare the markup for the product pages:
 1. **Wrap your product in an element with `data-product-id` set correctly.** For example, when in the Loop:
     
         <div class="product-wrapper" data-product-id="<?php the_product_id(); ?>">
-            <!-- the_product_id() will fill in the product ID - see "Advanced" below -->
+            <!-- the_product_id() will fill in the product ID - see "Advanced -> Convenience Functions" below -->
         </div>
-1. Fill the wrapper with `data-product` shortcuts and/or custom Underscore templates. See below for examples.
+1. Fill the wrapper with `data-product` shortcuts and/or custom Underscore templates. See Product Templates below for examples.
 
 Finally, prepare the markup for the cart page:
 
@@ -101,7 +101,7 @@ Finally, prepare the markup for the cart page:
 
         <div data-cart-id=""></div>
         
-1. Fill the wrapper with `data-cart` shortcuts and/or custom Underscore templates. See below for examples.
+1. Fill the wrapper with `data-cart` shortcuts and/or custom Underscore templates. See Cart Templates below for examples.
 
 ## Product Templates
 
@@ -130,18 +130,18 @@ Set the `data-template` attribute equal to one of these included templates:
 * `variants-radio` (renders a product's variants as radio buttons - does not handle callbacks! Use `data-product="radio"` to render the template and have wp-shopify set up the callbacks for you)
 * `variants-select` (renders a product's variants as a dropdown menu - does not handle callbacks! Use `data-product="select"` to render the template and have wp-shopify set up the callbacks for you)
 
-You can also build your own custom template:
+You can also build your own custom templates:
 
 1. If one doesn't exist yet, create a folder in your theme's directory called `wshop-templates`.
 1. Create a PHP file. This file's name will be the template name. For example: `wshop-templates/custom-template.php`.
 1. Create an an inline script in the PHP file to serve as the Underscore template.
-1. Set the script's ID to match the file name.
+1. Set the script's ID to match the file name: `<script type="text/template" id="custom-template">`
 
 Custom templates have access to the `data` variable, which contains all information about the current product returned from Shopify's API.
 
-All contents of the `wshop-templates` directory will be included in the footer of your site, hooking into the `get_footer()` function. You can have full control over the data you received from Shopify this way.
+All contents of the `wshop-templates` directory will be included in the footer of your site, hooking into the `get_footer()` function.
 
-## Setting Up a Cart
+## Cart Templates
 Any carts on the page will work much in the same way as the products do. The main difference is that we don't necessarily have to specify a cart ID:
 ```html
 <!-- Perfectly valid cart wrapper -->
@@ -149,48 +149,28 @@ Any carts on the page will work much in the same way as the products do. The mai
 
 </div>
 ```
-# TODO: Start here
-You can use `data-cart` attributes just like `data-product`, as well as custom Underscore templates:
 
-```html
-<div data-cart-id="">
+#### Using `data-cart`
 
-    <!-- The individual items -->
-    <div data-cart="line-items">
-        <!-- Each item in the cart will be rendered using wshop-templates/cart-line-item.php here -->
-    </div>
-    
-    <!-- The subtotal of the user's cart -->
-    <div data-cart="subtotal"></div>
-    
-    <!-- The total number of items in the current cart (default 0) -->
-    <div data-cart="line-item-count"></div>
- 
-    <!-- MUST BE AN <a> TAG. href will automatically be set to Shopify checkout URL. You can also use wshop.cart.checkoutUrl at any time to get the checkout URL. -->
-    <a data-cart="checkout">Checkout</a>
-    
-    <!-- Increment one of the quantity of the given item in the cart -->
-    <div data-cart="add"></div>
-    
-    <!-- Decrement one of the quantity of the given item in the cart -->
-    <div data-cart="subtract"></div>
-    
-    <!-- Remove an item from the cart entirely -->
-    <div data-cart="remove"></div>
+You can use `data-cart` attributes just like `data-product`. Place any of the following attributes on elements in the `data-cart-id` wrap:
 
-</div>
-```
+* `data-cart="line-items"` - Renders each item in the cart with the `cart-line-items` template.
+* `data-cart="subtotal"` - The subtotal of the products in the cart.
+* `data-cart="line-item-count"` - The number of items in the cart (default 0).
+* `data-cart="checkout"` - **Must be on an <a> tag.** Sets `href` to the Shopify checkout URL. You can also access this URL in JS any time via `wshop.cart.checkoutUrl`.
+* `data-cart="add"` - Add one of a given item to your cart on click. Rerenders the cart.
+* `data-cart="subtract"` - Remove one of a given item from your cart on click. Rerenders the cart.
+* `data-cart="remove"` - Remove all of a given item from your cart on click. Rerenders the cart.
 
-### Cart Custom Templates Reference
+### Using Custom Cart Templates
 Custom Underscore cart templates are set up in the same way as custom product templates. You have access to a `data` variable that contains all the information about each item in a cart, as well as the quantity in the cart and other stats. For example:
+
 
 ```html
 <script type="text/template" id="cart-line-item">
     <% console.log(data); // Log available data %>
 </script>
 ```
-
-
 
 ## Advanced
 ### Events
