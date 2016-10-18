@@ -430,6 +430,13 @@ var wshop = {
 
     handleAddToCart: function(){
 
+        // Add to cart
+        addToCart.bind(this)(1);
+
+    },
+
+    addToCart: function(quantity){
+
         if( jQuery(this).parents('.product-unavailable').length ){
 
             // We have a .product-unavailable parent, so trigger the relevant event
@@ -440,8 +447,8 @@ var wshop = {
             // Find product parent
             var product = jQuery(this).closest('*[data-product-id]').data('product');
 
-            // Add to cart
-            wshop.cart.addVariants({ variant: product.selectedVariant, quantity: 1 })
+            // Add selected variant and selected quantity to cart
+            wshop.cart.addVariants({ variant: product.selectedVariant, quantity: quantity || 1 })
                 .then(function(){
 
                     // re-render any carts
@@ -450,9 +457,7 @@ var wshop = {
                     jQuery(document).trigger('wshop.productAdded');
 
                 });
-
         }
-
     }
 
 };
