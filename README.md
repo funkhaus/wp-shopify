@@ -207,6 +207,27 @@ wp-shopify comes with PHP convenience functions to check for, fetch, and display
 * `get_the_product_id( $post )` is returns the product ID of a given page, as defined in the 'Product ID' metadata. If there is no product ID attached to a page, it returns a blank string.
 * `the_product_id( $post )` echoes the return value of `get_the_product_id()`.
 
+### Adding Custom Quantities to Carts
+The `data-product="add-to-cart"` element will only add one of a given product to a cart. To add custom quantities, do this in your JS:
+
+```
+// html
+<div data-product-id="...">
+    <div id="example"> Click me to add custom quantities </div>
+</div>
+
+// js
+jQuery('#example').on('click', function(){
+    // the custom quantity (any integer)
+    var quantity = 5; 
+    
+    // bind `wshop.addToCart` to `this`, then pass the custom quantity
+    wshop.addToCart.bind(this)(quantity);
+});
+```
+
+`addToCart.bind(this)` makes sure that the addToCart function looks for `this`'s product wrapper and adds the appropriate amount and variant.
+
 ### Overriding Included Templates
 Making a file with the same name as one of the included templates will override that template - so, for example, if you create a `product-gallery` template in your theme's `wshop-templates` directory, it will override the plugin's default `product-gallery` template.
 ### Setting Up External Custom Styling
