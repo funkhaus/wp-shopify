@@ -47,7 +47,28 @@ var wshop = {
 
         });
 
-        jQuery(document).trigger('wshop-cart-initialized');
+        // Bind increment buttons
+        jQuery(document).on('click', '*[data-cart="add"]', function(e){
+            wshop.handleIncrement.bind(
+                jQuery(this).closest('*[data-lineitem-id]')
+            )();
+        });
+
+        // Bind decrement buttons
+        jQuery(document).on('click', '*[data-cart="subtract"]', function(e){
+            wshop.handleDecrement.bind(
+                jQuery(this).closest('*[data-lineitem-id]')
+            )();
+        });
+
+        // Bind 'remove' buttons
+        jQuery(document).on('click', '*[data-cart="remove"]', function(e){
+            wshop.handleRemove.bind(
+                jQuery(this).closest('*[data-lineitem-id]')
+            )();
+        });
+
+        jQuery(document).trigger('wshop.cartInitialized');
 
     },
 
@@ -74,8 +95,10 @@ var wshop = {
         // find any products on the page
         $products = jQuery('*[data-product-id]');
 
+        var total = $products.length;
+
         // abort if no products
-        if ( ! $products.length ) return;
+        if ( ! total ) return;
 
         $products.each(function(){
 
@@ -90,20 +113,24 @@ var wshop = {
 
                     return product;
                 })
-                .then( wshop.renderProduct.bind($block) )
-                .catch(function () {
-                    console.log('Request failed');
+                .then(function(){
+                    wshop.renderProduct.bind($block.get(0))();
+
+                    // make sure we've rendered all products before triggering callback
+                    if( --total == 0 ){
+                        jQuery(document).trigger('wshop.productsRendered');
+                    }
                 });
 
         });
 
         // trigger event
-        jQuery(document).trigger('wshop-products-initialized', [ $products.length ]);
+        jQuery(document).trigger('wshop.productsInitialized', [ $products.length ]);
 
     },
 
 /*
- * function to render everything within the page's cart
+ * function to render everything within the page's carts
  */
     renderCarts: function(){
 
@@ -125,9 +152,9 @@ var wshop = {
 
         // pre-compile cart line-item template
         var lineItemTemplate;
-        if ( jQuery( 'script.wshop-cart-line-item' ).length ){
+        if ( jQuery( 'script#cart-line-item' ).length ){
             lineItemTemplate = _.template(
-                jQuery( 'script.wshop-cart-line-item' ).html()
+                jQuery( 'script#cart-line-item' ).html()
             );
         }
 
@@ -135,8 +162,6 @@ var wshop = {
         $carts.each(function(){
 
             $cart = jQuery(this);
-
-
 
             $cart.find('*[data-cart]').each(function(){
 
@@ -153,21 +178,22 @@ var wshop = {
                     // empty any existing line-items
                     $dataLine.empty();
 
+                    // trigger a callback on an empty cart
+                    if( wshop.cart.lineItems.length == 0 ){
+                        jQuery(document).trigger('wshop.cartEmpty');
+                    }
+
                     // loop through any line items in cart
                     _.each(wshop.cart.lineItems, function(lineItem){
 
+                        // Render line item
                         var $lineItem = jQuery(lineItemTemplate(lineItem));
 
-                        // render this line item using template
+                        // Save line item ID
+                        $lineItem.attr('data-lineitem-id', lineItem.id);
+
+                        // Append rendered line item
                         $dataLine.append( $lineItem );
-
-                        // bind any incremenet/decremenet buttons to corresponding functions
-                        $lineItem.find('*[data-cart="add"]').on('click', wshop.handleIncrement.bind($lineItem));
-                        $lineItem.find('*[data-cart="subtract"]').on('click', wshop.handleDecrement.bind($lineItem));
-
-                        // bind 'remove' button to 'decrement' function
-                        $lineItem.find('*[data-cart="remove"]').on('click', wshop.handleDecrement.bind($lineItem));
-
 
                     });
 
@@ -181,7 +207,7 @@ var wshop = {
 
     handleIncrement: function(e){
 
-        // get ID from data-att
+        // get ID from data-attr
         var lineitemId = jQuery(this).data('lineitemId');
 
         // no ID? abort
@@ -198,7 +224,7 @@ var wshop = {
 
     handleDecrement: function(e){
 
-        // get ID from data-att
+        // get ID from data-attr
         var lineitemId = jQuery(this).data('lineitemId');
 
         // no ID? abort
@@ -215,7 +241,7 @@ var wshop = {
 
     handleRemove: function(e){
 
-        // get ID
+        // get ID from data-attr
         var lineitemId = jQuery(this).data('lineitemId');
 
         // no ID? abort
@@ -224,6 +250,37 @@ var wshop = {
         // remove item and re-render cart
         wshop.cart.updateLineItem(lineitemId, 0)
             .then(wshop.renderCarts);
+
+    },
+
+    renderTemplate: function(templateName, data){
+
+        // Save HTML for applied template
+        var $applied = '';
+
+        // find template script by ID
+        var $templateScript = jQuery('#' + templateName);
+
+        // return if no template present
+        if( ! $templateScript.length ){
+
+            console.log('No template with the ID #' + templateName + ' found');
+
+            // Set an HTML comment
+            $applied =  '<!-- No template with the ID #' + templateName + ' found! -->';
+        } else {
+            // prep template data name
+            _.templateSettings.variable = 'data';
+
+            // pre-compile template
+            var template = _.template( $templateScript.html() );
+
+            // Apply template formatting and return result
+            $applied = jQuery( template(data) );
+        }
+
+        // Place inside bound element
+        jQuery(this).html( $applied );
 
     },
 
@@ -241,7 +298,7 @@ var wshop = {
         // do nothing if no product
         if ( ! product ) return;
 
-        // add class if need be
+        // add classes if need be
         if ( product.variants && product.variants.length > 1 ){
             $productBlock.addClass('has-variants');
         }
@@ -277,10 +334,11 @@ var wshop = {
                         jQuery(this).append($image);
 
                         // trigger image-loaded event
-                        jQuery(this).trigger('wshop-image-loaded');
+                        jQuery(this).trigger('wshop.imageLoaded');
 
                     }.bind(this);
 
+                    // Set src and load image
                     var targetImage = product.images[currentImage].src;
                     img.src = targetImage;
 
@@ -293,17 +351,10 @@ var wshop = {
             // set select
             if ( jQuery(this).attr('data-product') == 'select' && product.variants.length > 1 ){
 
-                // build html for select
-                var selectElem = product.options.map(function(option) {
-                    return '<select name="' + option.name + '"><option selected disabled>' + option.name + '</option>' + option.values.map(function(value) {
-                        return '<option value="' + value + '">' + value + '</option>';
-                    }) + '</select>';
-                })[0];
+                // Render select
+                wshop.renderTemplate.bind(this)('variants-select', product);
 
-                // add select to this element
-                jQuery(this).html(selectElem);
-
-                // add change listener to select
+                // add change listener to newly-rendered select
                 jQuery(this).find('select').on('change', function(e){
 
                     // get name a val from select
@@ -316,39 +367,95 @@ var wshop = {
                     })[0].selected = value;
 
                     // trigger event on this product
-                    $productBlock.trigger('wshop-variant-change');
+                    $productBlock.trigger('wshop.variantChange');
 
                 });
 
+            }
+
+            // set radio
+            if( jQuery(this).attr('data-product') == 'radio' && product.variants.length > 1 ){
+
+                // Render radio
+                wshop.renderTemplate.bind(this)('variants-radio', product);
+
+                // add change listener to newly-rendered radio
+                jQuery(this).find('input[type=radio]').on('change', function(e){
+
+                    // get name from radio value
+                    var name = e.target.name;
+                    var value = e.target.value;
+
+                    // set this variant as selected
+                    product.options.filter(function(option) {
+                        return option.name === name;
+                    })[0].selected = value;
+
+                    // trigger event on this product
+                    $productBlock.trigger('wshop.variantChange');
+
+                });
             }
 
             // add listener to add-to-cart button
             if ( jQuery(this).attr('data-product') == 'add-to-cart' ){
 
                 // may already be set, so unset
-                jQuery(this).off('click', wshop.handleAddToCart);
-                jQuery(this).on('click', wshop.handleAddToCart);
+                jQuery(this).off('click', wshop.addSingleToCart);
+                jQuery(this).on('click', wshop.addSingleToCart);
 
             }
 
         });
 
+        // find anything with data-template
+        $productBlock.find('*[data-template]').each(function(){
+
+            // find data-template value
+            var templateName = jQuery(this).attr('data-template');
+
+            // render template
+            wshop.renderTemplate.bind(this)(templateName, product);
+
+            // callbacks
+            jQuery(document).trigger('wshop.templateRendered', [ jQuery(this) ]);
+        });
+
+        // Trigger "all rendered" event
+        $productBlock.trigger('wshop.allProductsRendered');
+
     },
 
-    handleAddToCart: function(){
+    addSingleToCart: function(){
 
-        var product = jQuery(this).closest('*[data-product-id]').data('product');
+        // Add one of an item to cart
+        addToCart.bind(this)(1);
 
-        wshop.cart.addVariants({ variant: product.selectedVariant, quantity: 1 })
-            .then(function(){
+    },
 
-                // re-render any carts
-                wshop.renderCarts();
+    addToCart: function(quantity){
 
-                jQuery(document).trigger('wshop-product-added');
+        if( jQuery(this).parents('.product-unavailable').length ){
 
-            });
+            // We have a .product-unavailable parent, so trigger the relevant event
+            jQuery(this).parents('.product-unavailable').trigger('wshop.unavailableProductAdded');
 
+        } else {
+
+            // Find product parent
+            var product = jQuery(this).closest('*[data-product-id]').data('product');
+
+            // Add selected variant and selected quantity to cart
+            wshop.cart.addVariants({ variant: product.selectedVariant, quantity: quantity || 1 })
+                .then(function(){
+
+                    // re-render any carts
+                    wshop.renderCarts();
+
+                    jQuery(document).trigger('wshop.productAdded');
+
+                });
+        }
     }
 
 };

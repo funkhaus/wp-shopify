@@ -21,7 +21,7 @@
     ?>
 
 		<div class="wrap">
-			<h2>Funkstagram Options</h2>
+			<h2>wp-shopify Options</h2>
 			<form action="options.php" method="post" id="wshop_settings">
 				<?php settings_fields('wshop_settings'); ?>
 				<table class="form-table">
