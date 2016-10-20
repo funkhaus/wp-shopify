@@ -253,7 +253,11 @@ var wshop = {
 
     },
 
-    applyTemplate: function(templateName, data){
+    renderTemplate: function(templateName, data){
+
+        // Save HTML for applied template
+        var $applied = '';
+
         // find template script by ID
         var $templateScript = jQuery('#' + templateName);
 
@@ -262,24 +266,18 @@ var wshop = {
 
             console.log('No template with the ID #' + templateName + ' found');
 
-            // This will be rendered in renderTemplate, so treat it as an HTML comment
-            return '<!-- No template with the ID #' + templateName + ' found! -->';
+            // Set an HTML comment
+            $applied =  '<!-- No template with the ID #' + templateName + ' found! -->';
+        } else {
+            // prep template data name
+            _.templateSettings.variable = 'data';
+
+            // pre-compile template
+            var template = _.template( $templateScript.html() );
+
+            // Apply template formatting and return result
+            $applied = jQuery( template(data) );
         }
-
-        // prep template data name
-        _.templateSettings.variable = 'data';
-
-        // pre-compile template
-        var template = _.template( $templateScript.html() );
-
-        // Apply template formatting and return result
-        return jQuery( template(data) );
-    },
-
-    renderTemplate: function(templateName, data){
-
-        // Create rendered template
-        var $applied = wshop.applyTemplate(templateName, data);
 
         // Place inside bound element
         jQuery(this).html( $applied );
@@ -403,8 +401,8 @@ var wshop = {
             if ( jQuery(this).attr('data-product') == 'add-to-cart' ){
 
                 // may already be set, so unset
-                jQuery(this).off('click', wshop.handleAddToCart);
-                jQuery(this).on('click', wshop.handleAddToCart);
+                jQuery(this).off('click', wshop.addSingleToCart);
+                jQuery(this).on('click', wshop.addSingleToCart);
 
             }
 
@@ -424,13 +422,13 @@ var wshop = {
         });
 
         // Trigger "all rendered" event
-        $productBlock.trigger('wshop.allBlocksRendered');
+        $productBlock.trigger('wshop.allProductsRendered');
 
     },
 
-    handleAddToCart: function(){
+    addSingleToCart: function(){
 
-        // Add to cart
+        // Add one of an item to cart
         addToCart.bind(this)(1);
 
     },
@@ -440,7 +438,7 @@ var wshop = {
         if( jQuery(this).parents('.product-unavailable').length ){
 
             // We have a .product-unavailable parent, so trigger the relevant event
-            jQuery(document).trigger('wshop.unavailableProductAdded');
+            jQuery(this).parents('.product-unavailable').trigger('wshop.unavailableProductAdded');
 
         } else {
 
