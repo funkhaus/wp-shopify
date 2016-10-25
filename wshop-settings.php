@@ -60,7 +60,33 @@
 			</form>
 		</div><!-- END Wrap -->
 
+		<div class="refresh-wrap">
+    		<h2>Refresh Products</h2>
+
+    		<p>
+        		Pull all products from Shopify and, automatically updating existing Products and creating new ones.
+    		</p>
+
+            <form method="POST" id="refresh">
+                <?php wp_nonce_field('refresh-wshop'); ?>
+
+                <input type="checkbox" name="auto_approve" value="1" id="auto_approve">
+
+                <label for="auto_approve">Automatically publish all new products (otherwise under Pending Review)</label>
+
+                <p class="submit">
+                    <input type="submit" name="refresh" id="refresh" class="button" value="Refresh Products">
+                </p>
+            </form>
+        </div>
+
 		<?php
+
+        // Receive POST
+        if( !empty($_POST) ){
+            include('wshop-refresh.php');
+        }
+
     }
 
     /* Save Takeover Settings */
