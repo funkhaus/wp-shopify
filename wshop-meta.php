@@ -4,7 +4,7 @@
  * Add custom metabox to the new/edit page
  */
     function wshop_add_page_metaboxes(){
-        add_meta_box('wshop_product_meta', 'Product Meta', 'wshop_product_meta', 'wp-shopify-product', 'normal', 'low');
+        add_meta_box('wshop_product_meta', 'Product Meta', 'wshop_product_meta', 'wps-product', 'normal', 'low');
     }
     add_action('add_meta_boxes', 'wshop_add_page_metaboxes');
 

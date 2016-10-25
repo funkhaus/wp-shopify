@@ -89,6 +89,7 @@ First, link a Shopify product and a Wordpress page:
 
 Next, prepare the markup for the product pages:
 
+1. wp-shopify products are a custom post type called `wps-product`. To set the template for a single product, create `single-wps-product.php`.
 1. **Wrap your product in an element with `data-product-id` set correctly.** For example, when in the Loop:
     
         <div class="product-wrapper" data-product-id="<?php the_product_id(); ?>">

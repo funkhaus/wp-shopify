@@ -36,7 +36,7 @@
             )
         );
 
-        register_post_type('wp-shopify-product', $args);
+        register_post_type('wps-product', $args);
 
     }
     add_action('init', 'wshop_create_custom_post', 10);
