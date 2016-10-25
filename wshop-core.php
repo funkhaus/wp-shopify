@@ -29,10 +29,14 @@
             'menu_position'         => 22,
             'supports'              => array(
                 'title',
-                'page-attributes'
+                'editor',
+                'author',
+                'thumbnail',
+                'page-attributes',
+                'revisions'
             ),
             'rewrite'               => array(
-                'slug'  => 'store' // TODO: make this changeable
+                'slug'  => get_option('wshop_rewrite_slug')
             )
         );
 

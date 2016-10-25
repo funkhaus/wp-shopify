@@ -18,6 +18,8 @@
     /* Call Settings Page */
     function wshop_settings_page() {
 
+        flush_rewrite_rules();
+
     ?>
 
 		<div class="wrap">
@@ -44,6 +46,12 @@
 								<input name="wshop_app_id" type="text" title="" id="wshop_app_id" value="<?php echo get_option('wshop_app_id'); ?>">
 							</td>
                         </tr>
+                        <tr valign="top">
+							<th scope="row"><label for="wshop_rename_slug">Permalink Structure Slug:</label></th>
+							<td>
+								<input name="wshop_rewrite_slug" type="text" title="" id="wshop_rewrite_slug" value="<?php echo get_option('wshop_rewrite_slug'); ?>">
+							</td>
+                        </tr>
 					</tbody>
 				</table>
 				<p class="submit">
@@ -60,6 +68,7 @@
         register_setting('wshop_settings', 'wshop_api_key');
         register_setting('wshop_settings', 'wshop_domain');
         register_setting('wshop_settings', 'wshop_app_id');
+        register_setting('wshop_settings', 'wshop_rewrite_slug');
     }
     add_action('admin_init', 'wshop_settings_init');
 
@@ -68,6 +77,5 @@
     }
 
     add_action('admin_menu','wshop_add_settings');
-
 
 ?>
