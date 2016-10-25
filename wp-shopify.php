@@ -25,5 +25,4 @@
             return plugin_dir_url( __FILE__ );
         }
     }
-
 ?>

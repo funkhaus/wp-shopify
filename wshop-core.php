@@ -1,6 +1,47 @@
 <?php
 
 /*
+ * Add Custom Post Type 'Product'
+ */
+    function wshop_create_custom_post() {
+
+        $labels = array(
+            'name'                  => 'Products',
+            'all_items'             => 'All Products',
+            'singular_name'         => 'Product',
+            'add_new'               => 'Add New Product',
+            'add_new_item'          => 'Add New Product',
+            'edit_item'             => 'Edit Product',
+            'new_item'              => 'New Product',
+            'view_item'             => 'View Product',
+            'search_items'          => 'Search Products',
+            'not_found'             => 'No products found',
+            'not_found_in_trash'    => 'No products found in Trash'
+        );
+
+        $args = array(
+            'labels'                => $labels,
+            'public'                => true,
+            'publicly_queryable'    => true,
+            'capability_type'       => 'page',
+            'menu_icon'             => 'dashicons-cart',
+            'hierarchical'          => true,
+            'menu_position'         => 22,
+            'supports'              => array(
+                'title',
+                'page-attributes'
+            ),
+            'rewrite'               => array(
+                'slug'  => 'store' // TODO: make this changeable
+            )
+        );
+
+        register_post_type('wp-shopify-product', $args);
+
+    }
+    add_action('init', 'wshop_create_custom_post', 10);
+
+/*
  * Enqueue Custom Scripts
  */
     function wshop_frontend_scripts() {
