@@ -77,15 +77,17 @@ Checkout [Links to Shopify checkout]
 1. Create an access token by going to the Buy Button Extensions page at your-site.myshopify.com/admin/apps/private/extensions and clicking **Create Extension** in the top right corner.
 1. *Wordpress:* Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to __Tools > Shopify__. 
 1. Put your API key (the access token from step 2 above), Shopify domain, and app ID in the wp-shopify settings. More info here on where to find that Shopify info can be found [here]( https://help.shopify.com/api/guides/api-credentials).
-1. Visit your Settings > Permalinks page in the WordPress admin section to set up the new permalinks.
 
 ## How to Use
 First, link a Shopify product and a Wordpress page:
 
 1. Create a product in Shopify.
-1. Create a product in the new "Products" section on your WP admin bar.
-1. You should see a new metabox in your new Product that has a field for the product ID. Fill in the product ID from your Shopify store. 
-     * The easiest way to find the ID of a product is to navigate to the "edit" page for that product within Shopify, and copy the last section of the URL for that page. For example, if when editing the product your url is *example.myshopify.com/admin/products/__12345__*, then the ID for that product is __12345__.
+1. EITHER: Link your product(s) to your site automatically:
+    1. Go to Tools > Shopify in your WP backend and hit Refresh Products. Your products will auto-populate from your Shopify store.
+1. OR link your product(s) manually:
+    1. Create a product in the new "Products" section on your WP admin bar.
+    1. You should see a new metabox in your new Product that has a field for the product ID. Fill in the product ID from your Shopify store. 
+        * The easiest way to find the ID of a product is to navigate to the "edit" page for that product within Shopify, and copy the last section of the URL for that page. For example, if when editing the product your url is *example.myshopify.com/admin/products/__12345__*, then the ID for that product is __12345__.
 
 Next, prepare the markup for the product pages:
 
@@ -175,6 +177,24 @@ Custom Underscore cart templates are set up in the same way as custom product te
 ```
 
 ## Advanced
+### Updating Products
+
+When you add new product(s) to your Shopify store, you'll need to refresh your products in Wordpress.
+
+From your WP backend, go to Tools > Shopify, set your refresh preferences with the checkboxes, and hit 'Refresh Products.' This will automatically pull product data from your linked Shopify store into Wordpress.
+
+### Permalink Structure Slug
+
+You'll see this option under Tools > Shopify. Changing its value will rewrite the store's parent directory:
+
+```
+// Permalink Structure Slug set to 'store'
+your-site.com/store/product-1
+
+// Permalink Structure Slug set to 'xyz'
+your-site.com/xyz/product-1
+```
+
 ### Events
 
 There are a few events available for you to hook into:
