@@ -6,7 +6,7 @@
  *	Plugin URI: http://funkhaus.us
  *	Description: Shopify + Wordpress
  *	Author: Funkhaus
- *	Version: 1.0
+ *	Version: 1.1
  *	Author URI: http://Funkhaus.us
  *	Requires at least: 3.8
  *

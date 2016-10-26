@@ -79,6 +79,11 @@
         // find all custom templates (defined in the current theme)
         $user_template_paths = glob(get_stylesheet_directory() . '/wshop-templates/*.php');
 
+        // exit if no paths found
+        if( count($user_template_paths <= 0) ){
+            return;
+        }
+
         // loop through user-defined templates and replace any stock templates
         foreach( $user_template_paths as $custom_template_path ){
 
