@@ -7,6 +7,7 @@ var wshopRefresh = {
     vars: wshopVars,
     shopClient: null,
     productsLeft: 0,
+    processedIDs: [],
 
     init: function(){
         wshopRefresh.initShopify();
@@ -15,11 +16,11 @@ var wshopRefresh = {
 
     initListener: function(){
 
-        jQuery('#refresh-button').on('click', function(e){
+        jQuery('#wpshopify-refresh-button').on('click', function(e){
             e.preventDefault();
 
             // Cancel if already working
-            if( jQuery('#refresh-button').hasClass('disabled') ) return;
+            if( jQuery('#wpshopify-refresh-button').hasClass('disabled') ) return;
 
             // Request all products from this user's shop
             wshopRefresh.shopClient.fetchQueryProducts({
@@ -53,7 +54,7 @@ var wshopRefresh = {
         });
 
         // Disable button
-        jQuery('#refresh-button').attr('disabled', 'disabled').addClass('disabled');
+        jQuery('#wpshopify-refresh-button').attr('disabled', 'disabled').addClass('disabled');
 
         // Save products
         wshopRefresh.products = products;
@@ -61,8 +62,11 @@ var wshopRefresh = {
         // How many products do we have total?
         wshopRefresh.totalProducts = products.length;
 
+        // Clear processed IDs
+        wshopRefresh.processedIDs.length = 0;
+
         // Clear message
-        jQuery('.refresh-message').html(`<li>Received ${products.length} Products from Shopify...</li>`);
+        jQuery('.refresh-message').html(`<li>Received ${products.length} product(s) from Shopify...</li>`);
 
         // Kick off processing loop
         wshopRefresh.processNextProduct();
@@ -80,28 +84,88 @@ var wshopRefresh = {
             data: {
                 product_id: data.id,
                 product_title: data.title,
-                auto_publish: jQuery('#auto_approve').is(':checked'),
-                auto_delete: jQuery('#auto_remove').is(':checked')
+                auto_publish: jQuery('#auto_approve').is(':checked')
             }
         }).done(function(message){
 
             jQuery('.refresh-message').append(`<li>(${wshopRefresh.totalProducts - wshopRefresh.products.length} / ${wshopRefresh.totalProducts}) ${message}</li>`);
 
+            // Strip out the product ID and save it to a list of IDs we've processed
+            var processedID = message.match(/\{ID:(\d+)\}/);
+            if( processedID.length ){
+                wshopRefresh.processedIDs.push( parseInt(processedID[1]) );
+            }
+
             if( wshopRefresh.products.length > 0 ){
+
                 // Do we have more products? If so, process the next one
                 wshopRefresh.processNextProduct();
+
             } else {
-                // Reenable the button
-                jQuery('#refresh-button').attr('disabled', false).removeClass('disabled');
-                // Append "finished!" message
-                jQuery('.refresh-message').append('<li>All products updated!</li>');
+
+                // Start removing old products
+                wshopRefresh.removeOldProducts();
+
             }
         });
 
+    },
 
+    removeOldProducts: function(){
 
+        // Find product IDs without corresponding Shopify products
+        jQuery.get({
+            url: wshopRefresh.vars.getAllProductsLink
+        }).done(function(message){
 
+            // Append message
+            jQuery('.refresh-message').append('<li>Cleaning up products removed from Shopify...</li>');
 
+            var allProducts = JSON.parse(message);
+
+            var extraProductPages = [];
+
+            allProducts.forEach(function(product){
+
+                var productId = parseInt(product.product_id);
+
+                // Has this product ID not been processed?
+                if( wshopRefresh.processedIDs.indexOf(productId) == -1 ){
+                    // If it hasn't been processed, mark WP page for removal
+                    extraProductPages.push(product.wp_id);
+                }
+            });
+
+            if( ! extraProductPages.length ){
+                // No products to remove, so wrap it all up!
+                jQuery('.refresh-message').append(`<li>No old products to clean up.</li>`);
+                wshopRefresh.completeRefresh();
+                return;
+            }
+
+            // Delete old products
+            jQuery.post({
+                url: wshopRefresh.vars.removeOldProductsLink,
+                data: {
+                    to_remove: extraProductPages.join(),
+                    auto_delete: jQuery('#auto_remove').is(':checked')
+                }
+            }).done(function(message){
+                // Add status update and finish the process
+                jQuery('.refresh-message').append(`<li>Removed ${extraProductPages.length} old product(s).</li>`);
+                wshopRefresh.completeRefresh();
+            });
+        });
+
+    },
+
+    completeRefresh: function(){
+
+        // Reenable the button
+        jQuery('#wpshopify-refresh-button').attr('disabled', false).removeClass('disabled');
+
+        // Append "finished!" message
+        jQuery('.refresh-message').append('<li>All products updated!</li>');
 
     }
 

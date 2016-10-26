@@ -21,7 +21,9 @@
                 'apiKey'            => get_option('wshop_api_key'),
                 'domain'            => get_option('wshop_domain'),
                 'appId'             => get_option('wshop_app_id'),
-                'processLink'              => get_admin_url(null, '/admin-ajax.php?action=wps_process_product')
+                'processLink'              => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
+                'getAllProductsLink'       => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
+                'removeOldProductsLink'     => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products')
             ));
         }
     }
@@ -84,21 +86,21 @@
                 <?php wp_nonce_field('refresh-wshop'); ?>
 
                 <p class="auto-approve-wrap">
-                    <input type="checkbox" name="auto_approve" value="1" id="auto_approve">
+                    <input type="checkbox" name="auto_approve" value="1" id="auto_approve" checked>
 
-                    <label for="auto_approve">Publish new Products right away (default: Pending Review)</label>
+                    <label for="auto_approve">Publish new products right away (set to Pending Review if unchecked)</label>
                 </p>
 
                 <p class="remove-empty-wrap">
 
                     <input type="checkbox" name="auto_remove" value="1" id="auto_remove">
 
-                    <label for="auto_remove">Delete Products if removed from Shopify (default: set status to Draft)</label>
+                    <label for="auto_remove">Delete products if removed from Shopify (set to Draft if unchecked)</label>
 
                 </p>
 
                 <p class="submit">
-                    <input type="submit" name="refresh-button" id="refresh-button" class="button" value="Refresh Products">
+                    <input type="submit" name="refresh-button" id="wpshopify-refresh-button" class="button" value="Refresh Products">
                 </p>
             </form>
 

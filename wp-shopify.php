@@ -39,8 +39,6 @@
     // Define AJAX functions
     function wps_process_product(){
 
-
-
         // Get the ID of the current Product
         $id = $_REQUEST['product_id'];
         // Get the title of the current Product
@@ -91,6 +89,8 @@
 
         }
 
+        $output .= ' {ID:' . $id . '}';
+
         echo $output;
 
         die();
@@ -98,5 +98,60 @@
     }
 
     add_action('wp_ajax_wps_process_product', 'wps_process_product');
+
+    function wps_get_all_products(){
+
+        // Get all Products
+        $args = array(
+            'posts_per_page'    => -1,
+            'post_type'         => 'wps-product',
+            'post_status'       => 'publish'
+        );
+        $posts = get_posts($args);
+
+        $output = array();
+
+        // Create an array of WP post IDs and their attached product IDs
+        foreach( $posts as $post ){
+            $output[] = array(
+                'wp_id'         => $post->ID,
+                'product_id'    => get_post_meta($post->ID, '_wshop_product_id', true)
+            );
+        }
+
+        echo json_encode($output);
+
+        die();
+
+    }
+
+    add_action('wp_ajax_wps_get_all_products', 'wps_get_all_products');
+
+    function wps_remove_products(){
+
+        $auto_delete = $_REQUEST['auto_delete'] == 'true';
+        $posts_to_remove = explode(',', $_REQUEST['to_remove']);
+
+        // Remove a list of Products
+        foreach( $posts_to_remove as $id_to_remove ){
+            echo $id_to_remove;
+
+            if( $auto_delete ){
+                wp_delete_post( $id_to_remove );
+            } else {
+                $args = array(
+                    'ID'        => $id_to_remove,
+                    'post_status'    => 'draft'
+                );
+
+                wp_update_post($args);
+            }
+        }
+
+        die();
+
+    }
+
+    add_action('wp_ajax_wps_remove_products', 'wps_remove_products');
 
 ?>
