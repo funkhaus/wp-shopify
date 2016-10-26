@@ -55,7 +55,7 @@
         wp_enqueue_script('jquery');
         wp_enqueue_script('underscore');
         wp_enqueue_script('shopify-sdk', 'jquery');
-        wp_enqueue_script('wshop-main', array('jquery', 'shopify-sdk'));
+        wp_enqueue_script('wshop-main', false, array('jquery', 'shopify-sdk'));
 
         // Setup JS variables in scripts
         wp_localize_script('wshop-main', 'wshopVars', array(

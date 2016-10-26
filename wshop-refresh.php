@@ -1,4 +1,5 @@
 <?php
+/*
 
     $auto_approve = ( ! empty($_POST['auto_approve']) and $_POST['auto_approve'] );
 
@@ -12,7 +13,15 @@
         'apiKey'            => get_option('wshop_api_key'),
         'domain'            => get_option('wshop_domain'),
         'appId'             => get_option('wshop_app_id'),
-        'autoApprove'       => $auto_approve
+        'autoApprove'       => $auto_approve,
+        'nonce'             => wp_create_nonce( 'wp_rest' ),
+        'root'              => esc_url_raw( rest_url() )
     ));
+*/
+
+
+
+
+    // json_decode
 
 ?>

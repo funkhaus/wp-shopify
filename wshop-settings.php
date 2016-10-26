@@ -6,10 +6,23 @@
 	function wshop_admin_style() {
         wp_register_style( 'wshop_css', pp() . '/css/wshop.admin.css' );
         wp_register_script( 'wshop_js', pp() . '/js/wshop.admin.js' );
+        wp_register_script('wshop-refresh', pp() . '/js/wshop.refresh.js');
+        wp_register_script('shopify-sdk', 'http://sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
+
 
         if ( is_admin() ) {
+            wp_enqueue_script('jquery');
+            wp_enqueue_script('shopify-sdk');
             wp_enqueue_style( 'wshop_css');
-            wp_enqueue_script( 'wshop_js');
+            wp_enqueue_script( 'wshop_js', array('jquery', 'shopify-sdk'));
+            wp_enqueue_script('wshop-refresh', array('jquery', 'shopify-sdk'));
+
+            wp_localize_script('wshop-refresh', 'wshopVars', array(
+                'apiKey'            => get_option('wshop_api_key'),
+                'domain'            => get_option('wshop_domain'),
+                'appId'             => get_option('wshop_app_id'),
+                'processLink'              => get_admin_url(null, '/admin-ajax.php?action=wps_process_product')
+            ));
         }
     }
     add_action( 'admin_init', 'wshop_admin_style' );
@@ -70,22 +83,27 @@
             <form method="POST" id="refresh">
                 <?php wp_nonce_field('refresh-wshop'); ?>
 
-                <input type="checkbox" name="auto_approve" value="1" id="auto_approve">
+                <p class="auto-approve-wrap">
+                    <input type="checkbox" name="auto_approve" value="1" id="auto_approve">
 
-                <label for="auto_approve">Automatically publish all new products (otherwise under Pending Review)</label>
+                    <label for="auto_approve">Publish new Products right away (default: Pending Review)</label>
+                </p>
+
+                <p class="remove-empty-wrap">
+
+                    <input type="checkbox" name="auto_remove" value="1" id="auto_remove">
+
+                    <label for="auto_remove">Delete Products if removed from Shopify (default: set status to Draft)</label>
+
+                </p>
 
                 <p class="submit">
-                    <input type="submit" name="refresh" id="refresh" class="button" value="Refresh Products">
+                    <input type="submit" name="refresh-button" id="refresh-button" class="button" value="Refresh Products">
                 </p>
             </form>
         </div>
 
 		<?php
-
-        // Receive POST
-        if( !empty($_POST) ){
-            include('wshop-refresh.php');
-        }
 
     }
 

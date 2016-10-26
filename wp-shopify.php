@@ -33,6 +33,45 @@
             flush_rewrite_rules();
         }
     }
+
     register_activation_hook( __FILE__, 'set_wps_rewrite_slug' );
+
+    // Define AJAX functions
+    function wps_process_product(){
+
+        $output = 'error';
+
+        // Get the ID of the current Product
+        $id = $_REQUEST['product_id'];
+        // Get the title of the current Product
+        $title = $_REQUEST['product_title'];
+
+        // Find any existing Products that match the desired ID
+        $args = array(
+            'post_type'     => 'wps-product',
+            'meta_key'      => '_wshop_product_id',
+            'meta_value'    => $id
+
+        );
+        $posts = get_posts($args);
+
+        if( count($posts) > 0 ){
+
+            // We have a matching Product, so let's update it
+            $post = $posts[0];
+            $args = array(
+                'ID'            => $post->ID,
+                'post_title'    => $title,
+                'post_name'     => strtolower($title)
+            );
+            wp_update_post($args);
+
+        } else {
+            echo 'none';
+        }
+
+    }
+
+    add_action('wp_ajax_wps_process_product', 'wps_process_product');
 
 ?>

@@ -6,10 +6,28 @@ var wshopRefresh = {
 
     vars: wshopVars,
     shopClient: null,
+    productsLeft: 0,
 
     init: function(){
         wshopRefresh.initShopify();
-        wshopRefresh.getAllProducts();
+        wshopRefresh.initListener();
+    },
+
+    initListener: function(){
+
+        jQuery('#refresh').on('click', function(e){
+            e.preventDefault();
+
+            // Cancel if already working
+            if( jQuery('#refresh-button').hasClass('disabled') ) return;
+
+            // Request all products from this user's shop
+            wshopRefresh.shopClient.fetchQueryProducts({
+                limit: 1000
+            }).then(wshopRefresh.processAllProducts);
+
+        });
+
     },
 
     initShopify: function(){
@@ -21,25 +39,62 @@ var wshopRefresh = {
         });
     },
 
-    getAllProducts: function(){
-        // Request all products from this user's shop
-        wshopRefresh.shopClient.fetchQueryProducts({
-            limit: 1000
-        })
-
-        .then(wshopRefresh.processAllProducts);
-    },
-
     processAllProducts: function(products){
 
-        for( let product of products ){
+        products = products.sort(function(a, b){
 
-            console.log(product.id);
+            if( a.id < b.id ) {
+                return -1;
+            } else if (a.id > b.id) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
 
-        }
+        // Disable button
+        jQuery('#refresh-button').attr('disabled', 'disabled').addClass('disabled');
+
+        // Save products
+        wshopRefresh.products = products;
+
+        // How many products do we have total?
+        wshopRefresh.productsLeft = products.length;
+
+        // Kick off processing loop
+        wshopRefresh.processNextProduct();
+
+    },
+
+    processNextProduct: function(){
+
+        var data = wshopRefresh.products.shift();
+
+        console.log(data);
+
+        // Create the product page
+        jQuery.post({
+            url: wshopRefresh.vars.processLink,
+            data: {
+                product_id: data.id,
+                product_title: data.title
+            }
+        }).done(function(message){
+            console.log(message);
+        });
+
+        // Are we at the last product?
+
+        // Reenable the button
+        jQuery('#refresh-button').attr('disabled', false).removeClass('disabled');
+
 
     }
 
 }
 
-wshopRefresh.init();
+jQuery(document).ready(function($){
+
+    wshopRefresh.init();
+
+});
