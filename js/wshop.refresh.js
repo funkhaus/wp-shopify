@@ -15,7 +15,7 @@ var wshopRefresh = {
 
     initListener: function(){
 
-        jQuery('#refresh').on('click', function(e){
+        jQuery('#refresh-button').on('click', function(e){
             e.preventDefault();
 
             // Cancel if already working
@@ -70,23 +70,29 @@ var wshopRefresh = {
 
         var data = wshopRefresh.products.shift();
 
-        console.log(data);
-
         // Create the product page
         jQuery.post({
             url: wshopRefresh.vars.processLink,
             data: {
                 product_id: data.id,
-                product_title: data.title
+                product_title: data.title,
+                auto_publish: jQuery('#auto_approve').is(':checked'),
+                auto_delete: jQuery('#auto_remove').is(':checked')
             }
         }).done(function(message){
-            console.log(message);
+
+            if( wshopRefresh.products.length > 0 ){
+                // Do we have more products? If so, process the next one
+                wshopRefresh.processNextProduct();
+            } else {
+                // Reenable the button
+                jQuery('#refresh-button').attr('disabled', false).removeClass('disabled');
+            }
         });
 
-        // Are we at the last product?
 
-        // Reenable the button
-        jQuery('#refresh-button').attr('disabled', false).removeClass('disabled');
+
+
 
 
     }

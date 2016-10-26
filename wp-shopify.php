@@ -45,13 +45,17 @@
         $id = $_REQUEST['product_id'];
         // Get the title of the current Product
         $title = $_REQUEST['product_title'];
+        // Get refresh options
+        $auto_publish = $_REQUEST['auto_publish'] == 'true';
+        $auto_delete = $_REQUEST['auto_delete'] == 'true';
 
         // Find any existing Products that match the desired ID
         $args = array(
-            'post_type'     => 'wps-product',
-            'meta_key'      => '_wshop_product_id',
-            'meta_value'    => $id
-
+            'posts_per_page'    => -1,
+            'post_type'         => 'wps-product',
+            'meta_key'          => '_wshop_product_id',
+            'meta_value'        => $id,
+            'post_status'       => 'publish,private,draft,future,pending'
         );
         $posts = get_posts($args);
 
@@ -62,13 +66,26 @@
             $args = array(
                 'ID'            => $post->ID,
                 'post_title'    => $title,
-                'post_name'     => strtolower($title)
+                'post_name'     => sanitize_title( $title, strtolower($title) )
             );
             wp_update_post($args);
 
         } else {
-            echo 'none';
+
+            // No matching Product, so let's create one
+            $args = array(
+                'post_title'    => $title,
+                'post_type'     => 'wps-product',
+                'post_status'   => $auto_publish ? 'publish' : 'pending',
+                'meta_input'    => array(
+                    '_wshop_product_id' => $id
+                )
+            );
+            wp_insert_post($args);
+
         }
+
+        return $output;
 
     }
 
