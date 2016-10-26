@@ -39,7 +39,7 @@
     // Define AJAX functions
     function wps_process_product(){
 
-        $output = 'error';
+
 
         // Get the ID of the current Product
         $id = $_REQUEST['product_id'];
@@ -48,6 +48,8 @@
         // Get refresh options
         $auto_publish = $_REQUEST['auto_publish'] == 'true';
         $auto_delete = $_REQUEST['auto_delete'] == 'true';
+
+        $output = 'Error processing Product ' . $title . '!';
 
         // Find any existing Products that match the desired ID
         $args = array(
@@ -70,6 +72,8 @@
             );
             wp_update_post($args);
 
+            $output = 'Updated existing Product ' . $title . '.';
+
         } else {
 
             // No matching Product, so let's create one
@@ -83,9 +87,13 @@
             );
             wp_insert_post($args);
 
+            $output = 'Added new Product ' . $title . '.';
+
         }
 
-        return $output;
+        echo $output;
+
+        die();
 
     }
 

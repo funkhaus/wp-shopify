@@ -77,7 +77,7 @@
     		<h2>Refresh Products</h2>
 
     		<p>
-        		Pull all products from Shopify and, automatically updating existing Products and creating new ones.
+        		Pull all products from Shopify, automatically updating existing Products and creating new ones.
     		</p>
 
             <form method="POST" id="refresh">
@@ -101,6 +101,10 @@
                     <input type="submit" name="refresh-button" id="refresh-button" class="button" value="Refresh Products">
                 </p>
             </form>
+
+            <ul class="refresh-message">
+
+            </ul>
         </div>
 
 		<?php

@@ -41,8 +41,8 @@ var wshopRefresh = {
 
     processAllProducts: function(products){
 
+        // Sort Products by ID number
         products = products.sort(function(a, b){
-
             if( a.id < b.id ) {
                 return -1;
             } else if (a.id > b.id) {
@@ -59,7 +59,10 @@ var wshopRefresh = {
         wshopRefresh.products = products;
 
         // How many products do we have total?
-        wshopRefresh.productsLeft = products.length;
+        wshopRefresh.totalProducts = products.length;
+
+        // Clear message
+        jQuery('.refresh-message').html(`<li>Received ${products.length} Products from Shopify...</li>`);
 
         // Kick off processing loop
         wshopRefresh.processNextProduct();
@@ -68,6 +71,7 @@ var wshopRefresh = {
 
     processNextProduct: function(){
 
+        // Get first product from remaining products
         var data = wshopRefresh.products.shift();
 
         // Create the product page
@@ -81,12 +85,16 @@ var wshopRefresh = {
             }
         }).done(function(message){
 
+            jQuery('.refresh-message').append(`<li>(${wshopRefresh.totalProducts - wshopRefresh.products.length} / ${wshopRefresh.totalProducts}) ${message}</li>`);
+
             if( wshopRefresh.products.length > 0 ){
                 // Do we have more products? If so, process the next one
                 wshopRefresh.processNextProduct();
             } else {
                 // Reenable the button
                 jQuery('#refresh-button').attr('disabled', false).removeClass('disabled');
+                // Append "finished!" message
+                jQuery('.refresh-message').append('<li>All products updated!</li>');
             }
         });
 
