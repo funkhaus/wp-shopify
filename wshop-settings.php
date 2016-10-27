@@ -91,14 +91,6 @@
                     <label for="auto_approve">Publish new products right away (set to Pending Review if unchecked)</label>
                 </p>
 
-                <p class="remove-empty-wrap">
-
-                    <input type="checkbox" name="auto_remove" value="1" id="auto_remove">
-
-                    <label for="auto_remove">Delete products if removed from Shopify (set to Draft if unchecked)</label>
-
-                </p>
-
                 <p class="submit">
                     <input type="submit" name="refresh-button" id="wpshopify-refresh-button" class="button" value="Refresh Products">
                 </p>

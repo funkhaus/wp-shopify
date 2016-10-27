@@ -147,8 +147,7 @@ var wshopRefresh = {
             jQuery.post({
                 url: wshopRefresh.vars.removeOldProductsLink,
                 data: {
-                    to_remove: extraProductPages.join(),
-                    auto_delete: jQuery('#auto_remove').is(':checked')
+                    to_remove: extraProductPages.join()
                 }
             }).done(function(message){
                 // Add status update and finish the process

@@ -129,23 +129,13 @@
 
     function wps_remove_products(){
 
-        $auto_delete = $_REQUEST['auto_delete'] == 'true';
         $posts_to_remove = explode(',', $_REQUEST['to_remove']);
 
         // Remove a list of Products
         foreach( $posts_to_remove as $id_to_remove ){
             echo $id_to_remove;
 
-            if( $auto_delete ){
-                wp_delete_post( $id_to_remove );
-            } else {
-                $args = array(
-                    'ID'        => $id_to_remove,
-                    'post_status'    => 'draft'
-                );
-
-                wp_update_post($args);
-            }
+            wp_delete_post( $id_to_remove );
         }
 
         die();
