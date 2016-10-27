@@ -88,7 +88,7 @@ var wshopRefresh = {
             }
         }).done(function(message){
 
-            jQuery('.refresh-message').append(`<li>(${wshopRefresh.totalProducts - wshopRefresh.products.length} / ${wshopRefresh.totalProducts}) ${message}</li>`);
+            jQuery('.refresh-message').prepend(`<li>(${wshopRefresh.totalProducts - wshopRefresh.products.length} / ${wshopRefresh.totalProducts}) ${message}</li>`);
 
             // Strip out the product ID and save it to a list of IDs we've processed
             var processedID = message.match(/\{ID:(\d+)\}/);
@@ -119,7 +119,7 @@ var wshopRefresh = {
         }).done(function(message){
 
             // Append message
-            jQuery('.refresh-message').append('<li>Cleaning up products removed from Shopify...</li>');
+            jQuery('.refresh-message').prepend('<li>Cleaning up products removed from Shopify...</li>');
 
             var allProducts = JSON.parse(message);
 
@@ -138,7 +138,7 @@ var wshopRefresh = {
 
             if( ! extraProductPages.length ){
                 // No products to remove, so wrap it all up!
-                jQuery('.refresh-message').append(`<li>No old products to clean up.</li>`);
+                jQuery('.refresh-message').prepend(`<li>No old products to clean up.</li>`);
                 wshopRefresh.completeRefresh();
                 return;
             }
@@ -151,7 +151,7 @@ var wshopRefresh = {
                 }
             }).done(function(message){
                 // Add status update and finish the process
-                jQuery('.refresh-message').append(`<li>Removed ${extraProductPages.length} old product(s).</li>`);
+                jQuery('.refresh-message').prepend(`<li>Removed ${extraProductPages.length} old product(s).</li>`);
                 wshopRefresh.completeRefresh();
             });
         });
@@ -164,7 +164,7 @@ var wshopRefresh = {
         jQuery('#wpshopify-refresh-button').attr('disabled', false).removeClass('disabled');
 
         // Append "finished!" message
-        jQuery('.refresh-message').append('<li>All products updated!</li>');
+        jQuery('.refresh-message').prepend('<li>All products updated!</li>');
 
     }
 
