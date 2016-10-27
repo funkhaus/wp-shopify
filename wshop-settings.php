@@ -62,7 +62,7 @@
 							</td>
                         </tr>
                         <tr valign="top">
-							<th scope="row"><label for="wshop_rename_slug">Permalink Structure Slug:</label></th>
+							<th scope="row"><label for="wshop_rename_slug">Store permalink:</label></th>
 							<td>
 								<input name="wshop_rewrite_slug" type="text" title="" id="wshop_rewrite_slug" value="<?php echo get_option('wshop_rewrite_slug'); ?>">
 							</td>
@@ -75,33 +75,35 @@
 			</form>
 		</div><!-- END Wrap -->
 
-		<div class="refresh-wrap">
-    		<h2>Refresh Products</h2>
+		<?php /* Only draw 'refresh' section if plugin is linked to Shopify store */ if( !empty(get_option('wshop_api_key')) and !empty(get_option('wshop_domain')) and !empty(get_option('wshop_app_id')) ) : ?>
 
-    		<p>
-        		Pull all products from Shopify, automatically updating existing Products and creating new ones.
-    		</p>
+    		<div class="refresh-wrap">
+        		<h2>Refresh Products</h2>
 
-            <form method="POST" id="refresh">
-                <?php wp_nonce_field('refresh-wshop'); ?>
+        		<p>
+            		Pull all products from Shopify, automatically updating existing Products and creating new ones.
+        		</p>
 
-                <p class="auto-approve-wrap">
-                    <input type="checkbox" name="auto_approve" value="1" id="auto_approve" checked>
+                <form method="POST" id="refresh">
+                    <?php wp_nonce_field('refresh-wshop'); ?>
 
-                    <label for="auto_approve">Publish new products right away (set to Pending Review if unchecked)</label>
-                </p>
+                    <p class="auto-approve-wrap">
+                        <input type="checkbox" name="auto_approve" value="1" id="auto_approve" checked>
 
-                <p class="submit">
-                    <input type="submit" name="refresh-button" id="wpshopify-refresh-button" class="button" value="Refresh Products">
-                </p>
-            </form>
+                        <label for="auto_approve">Publish new products right away (set to Pending Review if unchecked)</label>
+                    </p>
 
-            <ul class="refresh-message">
+                    <p class="submit">
+                        <input type="submit" name="refresh-button" id="wpshopify-refresh-button" class="button" value="Refresh Products">
+                    </p>
+                </form>
 
-            </ul>
-        </div>
+                <ul class="refresh-message">
 
-		<?php
+                </ul>
+            </div>
+
+		<?php endif;
 
     }
 
@@ -115,7 +117,7 @@
     add_action('admin_init', 'wshop_settings_init');
 
     function wshop_add_settings() {
-        add_submenu_page( 'tools.php', 'Shopify', 'Shopify', 'manage_options', 'wshop_settings', 'wshop_settings_page' );
+        add_options_page( 'WP-Shopify', 'WP-Shopify', 'manage_options', 'wshop_settings', 'wshop_settings_page' );
     }
 
     add_action('admin_menu','wshop_add_settings');
