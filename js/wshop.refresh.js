@@ -45,17 +45,6 @@ var wshopRefresh = {
 
     processAllProducts: function(products){
 
-        // Sort Products by ID number
-        products = products.sort(function(a, b){
-            if( a.id < b.id ) {
-                return -1;
-            } else if (a.id > b.id) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-
         // Save products
         wshopRefresh.products = products;
 
@@ -88,12 +77,16 @@ var wshopRefresh = {
             }
         }).done(function(message){
 
-            jQuery('.refresh-message').prepend('<li>(' + (wshopRefresh.totalProducts - wshopRefresh.products.length) + ' / ' + wshopRefresh.totalProducts + ') ' + message + '</li>');
+            message = JSON.parse(message);
+
+            console.log(message);
+
+            jQuery('.refresh-message').prepend('<li>(' + (wshopRefresh.totalProducts - wshopRefresh.products.length) + ' / ' + wshopRefresh.totalProducts + ') ' + message.message + ' (ID: ' + message.id + ')</li>');
 
             // Strip out the product ID and save it to a list of IDs we've processed
-            var processedID = message.match(/\{ID:(\d+)\}/);
+            var processedID = message.id;
             if( processedID.length ){
-                wshopRefresh.processedIDs.push( parseInt(processedID[1]) );
+                wshopRefresh.processedIDs.push( parseInt(processedID) );
             }
 
             if( wshopRefresh.products.length > 0 ){

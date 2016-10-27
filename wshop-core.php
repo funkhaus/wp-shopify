@@ -79,35 +79,34 @@
         // find all custom templates (defined in the current theme)
         $user_template_paths = glob(get_stylesheet_directory() . '/wshop-templates/*.php');
 
-        // exit if no paths found
-        if( count($user_template_paths <= 0) ){
-            return;
-        }
+        // make sure there are some paths to find
+        if( count($user_template_paths > 0) ){
 
-        // loop through user-defined templates and replace any stock templates
-        foreach( $user_template_paths as $custom_template_path ){
+            // loop through user-defined templates and replace any stock templates
+            foreach( $user_template_paths as $custom_template_path ){
 
-            // find the basename of the current custom template
-            $basename = basename($custom_template_path);
+                // find the basename of the current custom template
+                $basename = basename($custom_template_path);
 
-            // create an array of just the stock template basenames
-            $standard_basenames = array_map( function ($v){
-                return basename($v);
-            }, $paths_to_include);
+                // create an array of just the stock template basenames
+                $standard_basenames = array_map( function ($v){
+                    return basename($v);
+                }, $paths_to_include);
 
-            // are we overriding a stock template?
-            if( in_array($basename, $standard_basenames) ){
+                // are we overriding a stock template?
+                if( in_array($basename, $standard_basenames) ){
 
-                // find the stock template's index
-                $index = array_search($basename, $standard_basenames);
+                    // find the stock template's index
+                    $index = array_search($basename, $standard_basenames);
 
-                // replace the stock template with the custom one
-                $paths_to_include[$index] = $custom_template_path;
+                    // replace the stock template with the custom one
+                    $paths_to_include[$index] = $custom_template_path;
 
-            } else {
-                // we're not overriding a stock template
-                // add the new custom template to the list of templates to include
-                $paths_to_include[] = $custom_template_path;
+                } else {
+                    // we're not overriding a stock template
+                    // add the new custom template to the list of templates to include
+                    $paths_to_include[] = $custom_template_path;
+                }
             }
         }
 

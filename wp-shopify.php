@@ -40,12 +40,11 @@
     function wps_process_product(){
 
         // Get the ID of the current Product
-        $id = $_REQUEST['product_id'];
+        $id = $_POST['product_id'];
         // Get the title of the current Product
-        $title = $_REQUEST['product_title'];
+        $title = $_POST['product_title'];
         // Get refresh options
-        $auto_publish = $_REQUEST['auto_publish'] == 'true';
-        $auto_delete = $_REQUEST['auto_delete'] == 'true';
+        $auto_publish = $_POST['auto_publish'] == 'true';
 
         $output = 'Error processing Product ' . $title . '!';
 
@@ -89,9 +88,12 @@
 
         }
 
-        $output .= ' {ID:' . $id . '}';
+        $output = array(
+            'message'       => $output,
+            'id'            => $id
+        );
 
-        echo $output;
+        echo json_encode($output);
 
         die();
 
@@ -129,7 +131,7 @@
 
     function wps_remove_products(){
 
-        $posts_to_remove = explode(',', $_REQUEST['to_remove']);
+        $posts_to_remove = explode(',', $_POST['to_remove']);
 
         // Remove a list of Products
         foreach( $posts_to_remove as $id_to_remove ){
