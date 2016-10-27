@@ -305,6 +305,6 @@ __wp-shopify__
 
 http://funkhaus.us
 
-Version: 1.0
+Version: 1.1
 
 Requires at least WP 3.8
