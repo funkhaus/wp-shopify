@@ -13,7 +13,7 @@ var wshop = {
         wshop.shopClient = ShopifyBuy.buildClient({
             apiKey: wshopVars.apiKey,
             // Strips out 'http' if user entered it in their options
-            domain: wshopVars.domain.replace(/^https?:\/\//, ''),
+            domain: wshopVars.domain,
             appId: wshopVars.appId
         });
 

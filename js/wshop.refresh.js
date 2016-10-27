@@ -20,7 +20,10 @@ var wshopRefresh = {
             e.preventDefault();
 
             // Cancel if already working
-            if( jQuery('#wpshopify-refresh-button').hasClass('disabled') ) return;
+            if( jQuery('#wpshopify-refresh-button').is(':disabled') ) return;
+
+            // Disable button
+            jQuery('#wpshopify-refresh-button').prop('disabled', true);
 
             // Request all products from this user's shop
             wshopRefresh.shopClient.fetchQueryProducts({
@@ -35,7 +38,7 @@ var wshopRefresh = {
         wshopRefresh.shopClient = ShopifyBuy.buildClient({
             apiKey: wshopVars.apiKey,
             // Strips out 'http' if user entered it in their options
-            domain: wshopVars.domain.replace(/^https?:\/\//, ''),
+            domain: wshopVars.domain,
             appId: wshopVars.appId
         });
     },
@@ -53,9 +56,6 @@ var wshopRefresh = {
             }
         });
 
-        // Disable button
-        jQuery('#wpshopify-refresh-button').attr('disabled', 'disabled').addClass('disabled');
-
         // Save products
         wshopRefresh.products = products;
 
@@ -66,7 +66,7 @@ var wshopRefresh = {
         wshopRefresh.processedIDs.length = 0;
 
         // Clear message
-        jQuery('.refresh-message').html(`<li>Received ${products.length} product(s) from Shopify...</li>`);
+        jQuery('.refresh-message').html('<li>Received ' + products.length + ' product(s) from Shopify...</li>');
 
         // Kick off processing loop
         wshopRefresh.processNextProduct();
@@ -88,7 +88,7 @@ var wshopRefresh = {
             }
         }).done(function(message){
 
-            jQuery('.refresh-message').prepend(`<li>(${wshopRefresh.totalProducts - wshopRefresh.products.length} / ${wshopRefresh.totalProducts}) ${message}</li>`);
+            jQuery('.refresh-message').prepend('<li>(' + (wshopRefresh.totalProducts - wshopRefresh.products.length) + ' / ' + wshopRefresh.totalProducts + ') ' + message + '</li>');
 
             // Strip out the product ID and save it to a list of IDs we've processed
             var processedID = message.match(/\{ID:(\d+)\}/);
@@ -138,7 +138,7 @@ var wshopRefresh = {
 
             if( ! extraProductPages.length ){
                 // No products to remove, so wrap it all up!
-                jQuery('.refresh-message').prepend(`<li>No old products to clean up.</li>`);
+                jQuery('.refresh-message').prepend('<li>No old products to clean up.</li>');
                 wshopRefresh.completeRefresh();
                 return;
             }
@@ -151,7 +151,7 @@ var wshopRefresh = {
                 }
             }).done(function(message){
                 // Add status update and finish the process
-                jQuery('.refresh-message').prepend(`<li>Removed ${extraProductPages.length} old product(s).</li>`);
+                jQuery('.refresh-message').prepend('<li>Removed ' + extraProductPages.length + ' old product(s).</li>');
                 wshopRefresh.completeRefresh();
             });
         });
@@ -161,7 +161,7 @@ var wshopRefresh = {
     completeRefresh: function(){
 
         // Reenable the button
-        jQuery('#wpshopify-refresh-button').attr('disabled', false).removeClass('disabled');
+        jQuery('#wpshopify-refresh-button').prop('disabled', false);
 
         // Append "finished!" message
         jQuery('.refresh-message').prepend('<li>All products updated!</li>');

@@ -107,10 +107,15 @@
 
     }
 
+    function remove_protocol( $domain ){
+        $domain  = preg_replace('/^https?:\/\//', '', $domain);
+        return $domain;
+    }
+
     /* Save Takeover Settings */
     function wshop_settings_init(){
         register_setting('wshop_settings', 'wshop_api_key');
-        register_setting('wshop_settings', 'wshop_domain');
+        register_setting('wshop_settings', 'wshop_domain', 'remove_protocol');
         register_setting('wshop_settings', 'wshop_app_id');
         register_setting('wshop_settings', 'wshop_rewrite_slug');
     }
