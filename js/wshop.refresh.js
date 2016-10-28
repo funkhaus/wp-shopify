@@ -68,20 +68,25 @@ var wshopRefresh = {
         var data = wshopRefresh.products.shift();
 
         // Create the product page
-        jQuery.post({
+        jQuery.ajax({
+            type: 'POST',
             url: wshopRefresh.vars.processLink,
             data: {
                 product_id: data.id,
                 product_title: data.title,
                 auto_publish: jQuery('#auto_approve').is(':checked')
             }
-        }).done(function(message){
+        })
+
+        .fail(function(message){
+            console.log(message);
+        })
+
+        .done(function(message){
 
             message = JSON.parse(message);
 
-            console.log(message);
-
-            jQuery('.refresh-message').prepend('<li>(' + (wshopRefresh.totalProducts - wshopRefresh.products.length) + ' / ' + wshopRefresh.totalProducts + ') ' + message.message + ' (ID: ' + message.id + ')</li>');
+            jQuery('.refresh-message').prepend('<li>(' + (wshopRefresh.totalProducts - wshopRefresh.products.length) + ' / ' + wshopRefresh.totalProducts + ') ' + message.message + '</li>');
 
             // Strip out the product ID and save it to a list of IDs we've processed
             var processedID = message.id;
@@ -107,7 +112,8 @@ var wshopRefresh = {
     removeOldProducts: function(){
 
         // Find product IDs without corresponding Shopify products
-        jQuery.get({
+        jQuery.ajax({
+            type: 'POST',
             url: wshopRefresh.vars.getAllProductsLink
         }).done(function(message){
 
@@ -137,7 +143,8 @@ var wshopRefresh = {
             }
 
             // Delete old products
-            jQuery.post({
+            jQuery.ajax({
+                type: 'POST',
                 url: wshopRefresh.vars.removeOldProductsLink,
                 data: {
                     to_remove: extraProductPages.join()

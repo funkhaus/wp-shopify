@@ -61,9 +61,9 @@
         if( count($posts) > 0 ){
 
             // We have a matching Product, so let's update it
-            $post = $posts[0];
+            $target_post = $posts[0];
             $args = array(
-                'ID'            => $post->ID,
+                'ID'            => $target_post->ID,
                 'post_title'    => $title,
                 'post_name'     => sanitize_title( $title, strtolower($title) )
             );
@@ -82,9 +82,15 @@
                     '_wshop_product_id' => $id
                 )
             );
-            wp_insert_post($args);
+            $post_id = wp_insert_post($args);
 
-            $output = 'Added new Product ' . $title . '.';
+            global $wp_version;
+            if( $wp_version < 4.4 and $post_id != 0){
+                // Update meta field for ID (for older WP installs)
+                update_post_meta( $post_id, '_wshop_product_id', $id );
+            }
+
+            $output = 'Added new Product ' . $title . ' (ID: ' . $id . ').';
 
         }
 
@@ -114,10 +120,10 @@
         $output = array();
 
         // Create an array of WP post IDs and their attached product IDs
-        foreach( $posts as $post ){
+        foreach( $posts as $target_post ){
             $output[] = array(
-                'wp_id'         => $post->ID,
-                'product_id'    => get_post_meta($post->ID, '_wshop_product_id', true)
+                'wp_id'         => $target_post->ID,
+                'product_id'    => get_post_meta($target_post->ID, '_wshop_product_id', true)
             );
         }
 
