@@ -25,7 +25,6 @@
             'publicly_queryable'    => true,
             'capability_type'       => 'page',
             'menu_icon'             => 'dashicons-cart',
-            'hierarchical'          => true,
             'menu_position'         => 22,
             'supports'              => array(
                 'title',

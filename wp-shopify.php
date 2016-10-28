@@ -3,11 +3,11 @@
 /*
  *
  *	Plugin Name: WP Shopify
- *	Plugin URI: http://funkhaus.us
+ *	Plugin URI: https://github.com/funkhaus/wp-shopify
  *	Description: Shopify + Wordpress
  *	Author: Funkhaus
  *	Version: 1.1
- *	Author URI: http://Funkhaus.us
+ *	Author URI: http://funkhaus.us
  *	Requires at least: 3.8
  *
  */
