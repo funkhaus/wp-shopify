@@ -1,6 +1,50 @@
 <?php
 
 /*
+ * Add Custom Post Type 'Product'
+ */
+    function wshop_create_custom_post() {
+
+        $labels = array(
+            'name'                  => 'Products',
+            'all_items'             => 'All Products',
+            'singular_name'         => 'Product',
+            'add_new'               => 'Add New Product',
+            'add_new_item'          => 'Add New Product',
+            'edit_item'             => 'Edit Product',
+            'new_item'              => 'New Product',
+            'view_item'             => 'View Product',
+            'search_items'          => 'Search Products',
+            'not_found'             => 'No products found',
+            'not_found_in_trash'    => 'No products found in Trash'
+        );
+
+        $args = array(
+            'labels'                => $labels,
+            'public'                => true,
+            'publicly_queryable'    => true,
+            'capability_type'       => 'page',
+            'menu_icon'             => 'dashicons-cart',
+            'menu_position'         => 22,
+            'supports'              => array(
+                'title',
+                'editor',
+                'author',
+                'thumbnail',
+                'page-attributes',
+                'revisions'
+            ),
+            'rewrite'               => array(
+                'slug'  => get_option('wshop_rewrite_slug')
+            )
+        );
+
+        register_post_type('wps-product', $args);
+
+    }
+    add_action('init', 'wshop_create_custom_post', 10);
+
+/*
  * Enqueue Custom Scripts
  */
     function wshop_frontend_scripts() {
@@ -10,7 +54,7 @@
         wp_enqueue_script('jquery');
         wp_enqueue_script('underscore');
         wp_enqueue_script('shopify-sdk', 'jquery');
-        wp_enqueue_script('wshop-main', array('jquery', 'shopify-sdk'));
+        wp_enqueue_script('wshop-main', false, array('jquery', 'shopify-sdk'));
 
         // Setup JS variables in scripts
         wp_localize_script('wshop-main', 'wshopVars', array(
@@ -34,30 +78,34 @@
         // find all custom templates (defined in the current theme)
         $user_template_paths = glob(get_stylesheet_directory() . '/wshop-templates/*.php');
 
-        // loop through user-defined templates and replace any stock templates
-        foreach( $user_template_paths as $custom_template_path ){
+        // make sure there are some paths to find
+        if( count($user_template_paths > 0) ){
 
-            // find the basename of the current custom template
-            $basename = basename($custom_template_path);
+            // loop through user-defined templates and replace any stock templates
+            foreach( $user_template_paths as $custom_template_path ){
 
-            // create an array of just the stock template basenames
-            $standard_basenames = array_map( function ($v){
-                return basename($v);
-            }, $paths_to_include);
+                // find the basename of the current custom template
+                $basename = basename($custom_template_path);
 
-            // are we overriding a stock template?
-            if( in_array($basename, $standard_basenames) ){
+                // create an array of just the stock template basenames
+                $standard_basenames = array_map( function ($v){
+                    return basename($v);
+                }, $paths_to_include);
 
-                // find the stock template's index
-                $index = array_search($basename, $standard_basenames);
+                // are we overriding a stock template?
+                if( in_array($basename, $standard_basenames) ){
 
-                // replace the stock template with the custom one
-                $paths_to_include[$index] = $custom_template_path;
+                    // find the stock template's index
+                    $index = array_search($basename, $standard_basenames);
 
-            } else {
-                // we're not overriding a stock template
-                // add the new custom template to the list of templates to include
-                $paths_to_include[] = $custom_template_path;
+                    // replace the stock template with the custom one
+                    $paths_to_include[$index] = $custom_template_path;
+
+                } else {
+                    // we're not overriding a stock template
+                    // add the new custom template to the list of templates to include
+                    $paths_to_include[] = $custom_template_path;
+                }
             }
         }
 

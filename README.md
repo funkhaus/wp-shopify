@@ -82,12 +82,16 @@ Checkout [Links to Shopify checkout]
 First, link a Shopify product and a Wordpress page:
 
 1. Create a product in Shopify.
-1. Create a page for the product in Wordpress.
-1. You should see a new metabox in Wordpress that has a field for the product ID. Fill in the product ID from your Shopify store. 
-     * The easiest way to find the ID of a product is to navigate to the "edit" page for that product within Shopify, and copy the last section of the URL for that page. For example, if when editing the product your url is *example.myshopify.com/admin/products/__12345__*, then the ID for that product is __12345__.
+1. EITHER: Link your product(s) to your site automatically:
+    1. Go to Tools > Shopify in your WP backend and hit Refresh Products. Your products will auto-populate from your Shopify store.
+1. OR link your product(s) manually:
+    1. Create a product in the new "Products" section on your WP admin bar.
+    1. You should see a new metabox in your new Product that has a field for the product ID. Fill in the product ID from your Shopify store. 
+        * The easiest way to find the ID of a product is to navigate to the "edit" page for that product within Shopify, and copy the last section of the URL for that page. For example, if when editing the product your url is *example.myshopify.com/admin/products/__12345__*, then the ID for that product is __12345__.
 
 Next, prepare the markup for the product pages:
 
+1. wp-shopify products are a custom post type called `wps-product`. To set the template for a single product, create `single-wps-product.php`.
 1. **Wrap your product in an element with `data-product-id` set correctly.** For example, when in the Loop:
     
         <div class="product-wrapper" data-product-id="<?php the_product_id(); ?>">
@@ -173,6 +177,24 @@ Custom Underscore cart templates are set up in the same way as custom product te
 ```
 
 ## Advanced
+### Updating Products
+
+When you add new product(s) to your Shopify store, you'll need to refresh your products in Wordpress.
+
+From your WP backend, go to Tools > Shopify, set your refresh preferences with the checkboxes, and hit 'Refresh Products.' This will automatically pull product data from your linked Shopify store into Wordpress.
+
+### Permalink Structure Slug
+
+You'll see this option under Tools > Shopify. Changing its value will rewrite the store's parent directory:
+
+```
+// Permalink Structure Slug set to 'store'
+your-site.com/store/product-1
+
+// Permalink Structure Slug set to 'xyz'
+your-site.com/xyz/product-1
+```
+
 ### Events
 
 There are a few events available for you to hook into:
@@ -283,6 +305,6 @@ __wp-shopify__
 
 http://funkhaus.us
 
-Version: 1.0
+Version: 1.1
 
 Requires at least WP 3.8
