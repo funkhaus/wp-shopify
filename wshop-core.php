@@ -26,6 +26,7 @@
             'capability_type'       => 'page',
             'menu_icon'             => 'dashicons-cart',
             'menu_position'         => 22,
+            'hierarchical'          => true,
             'supports'              => array(
                 'title',
                 'editor',
