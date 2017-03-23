@@ -76,7 +76,7 @@ Checkout [Links to Shopify checkout]
 1. *Shopify:* Set up a Shopify store and enable the [Buy Button Channel](https://www.shopify.com/buy-button).
 1. Create an access token by going to the Buy Button Extensions page at your-site.myshopify.com/admin/apps/private/extensions and clicking **Create Token** in the top right corner.
 1. *Wordpress:* Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to __Settings > WP-Shopify__. 
-1. Put your API key (the access token from step 2 above), Shopify domain, and app ID in the wp-shopify settings. More info here on where to find that Shopify info can be found [here]( https://help.shopify.com/api/guides/api-credentials).
+1. Put your API key (the access token from step 2 above), Shopify domain (*your-store*.myshopify.com), and app ID in the wp-shopify settings. More info here on where to find that Shopify info can be found [here]( https://help.shopify.com/api/guides/api-credentials).
 
 ## How to Use
 First, link a Shopify product and a Wordpress page:
