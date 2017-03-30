@@ -1,4 +1,3 @@
-
 export default {
     name: 'title',
     template: '<span class="wpshop-product-title">{{ title }}</span>',

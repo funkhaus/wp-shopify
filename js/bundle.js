@@ -63,57 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 14);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _products = __webpack_require__(9);
-
-var _products2 = _interopRequireDefault(_products);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-//import initCarts from 'src/carts'
-
-var $ = window.jQuery;
-
-$(document).ready(function () {
-
-    (0, _products2.default)();
-    //initCarts()
-});
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _shopifyBuy = __webpack_require__(7);
-
-var _shopifyBuy2 = _interopRequireDefault(_shopifyBuy);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _shopifyBuy2.default.buildClient({
-    apiKey: wshopVars.apiKey,
-    domain: wshopVars.domain,
-    appId: wshopVars.appId
-});
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports) {
 
 var g;
@@ -140,4802 +94,45 @@ module.exports = g;
 
 
 /***/ }),
-/* 3 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+// Thank's IE8 for his funny defineProperty
+module.exports = !__webpack_require__(2)(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
 
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
 
-exports.byteLength = byteLength
-exports.toByteArray = toByteArray
-exports.fromByteArray = fromByteArray
-
-var lookup = []
-var revLookup = []
-var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
-
-var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-for (var i = 0, len = code.length; i < len; ++i) {
-  lookup[i] = code[i]
-  revLookup[code.charCodeAt(i)] = i
-}
-
-revLookup['-'.charCodeAt(0)] = 62
-revLookup['_'.charCodeAt(0)] = 63
-
-function placeHoldersCount (b64) {
-  var len = b64.length
-  if (len % 4 > 0) {
-    throw new Error('Invalid string. Length must be a multiple of 4')
+module.exports = function(exec){
+  try {
+    return !!exec();
+  } catch(e){
+    return true;
   }
+};
 
-  // the number of equal signs (place holders)
-  // if there are two placeholders, than the two characters before it
-  // represent one byte
-  // if there is only one, then the three characters before it represent 2 bytes
-  // this is just a cheap hack to not do indexOf twice
-  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
-}
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
 
-function byteLength (b64) {
-  // base64 is 4/3 + up to two characters of the original data
-  return b64.length * 3 / 4 - placeHoldersCount(b64)
-}
-
-function toByteArray (b64) {
-  var i, j, l, tmp, placeHolders, arr
-  var len = b64.length
-  placeHolders = placeHoldersCount(b64)
-
-  arr = new Arr(len * 3 / 4 - placeHolders)
-
-  // if there are placeholders, only get up to the last complete 4 chars
-  l = placeHolders > 0 ? len - 4 : len
-
-  var L = 0
-
-  for (i = 0, j = 0; i < l; i += 4, j += 3) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
-    arr[L++] = (tmp >> 16) & 0xFF
-    arr[L++] = (tmp >> 8) & 0xFF
-    arr[L++] = tmp & 0xFF
-  }
-
-  if (placeHolders === 2) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
-    arr[L++] = tmp & 0xFF
-  } else if (placeHolders === 1) {
-    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
-    arr[L++] = (tmp >> 8) & 0xFF
-    arr[L++] = tmp & 0xFF
-  }
-
-  return arr
-}
-
-function tripletToBase64 (num) {
-  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
-}
-
-function encodeChunk (uint8, start, end) {
-  var tmp
-  var output = []
-  for (var i = start; i < end; i += 3) {
-    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
-    output.push(tripletToBase64(tmp))
-  }
-  return output.join('')
-}
-
-function fromByteArray (uint8) {
-  var tmp
-  var len = uint8.length
-  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
-  var output = ''
-  var parts = []
-  var maxChunkLength = 16383 // must be multiple of 3
-
-  // go through the array every three bytes, we'll deal with trailing stuff later
-  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
-  }
-
-  // pad the end with zeros, but make sure to not forget the extra bytes
-  if (extraBytes === 1) {
-    tmp = uint8[len - 1]
-    output += lookup[tmp >> 2]
-    output += lookup[(tmp << 4) & 0x3F]
-    output += '=='
-  } else if (extraBytes === 2) {
-    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
-    output += lookup[tmp >> 10]
-    output += lookup[(tmp >> 4) & 0x3F]
-    output += lookup[(tmp << 2) & 0x3F]
-    output += '='
-  }
-
-  parts.push(output)
-
-  return parts.join('')
-}
-
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-/* eslint-disable no-proto */
-
-
-
-var base64 = __webpack_require__(3)
-var ieee754 = __webpack_require__(5)
-var isArray = __webpack_require__(6)
-
-exports.Buffer = Buffer
-exports.SlowBuffer = SlowBuffer
-exports.INSPECT_MAX_BYTES = 50
-
-/**
- * If `Buffer.TYPED_ARRAY_SUPPORT`:
- *   === true    Use Uint8Array implementation (fastest)
- *   === false   Use Object implementation (most compatible, even IE6)
- *
- * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
- * Opera 11.6+, iOS 4.2+.
- *
- * Due to various browser bugs, sometimes the Object implementation will be used even
- * when the browser supports typed arrays.
- *
- * Note:
- *
- *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
- *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
- *
- *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
- *
- *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
- *     incorrect length in some situations.
-
- * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
- * get the Object implementation, which is slower but behaves correctly.
- */
-Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
-  ? global.TYPED_ARRAY_SUPPORT
-  : typedArraySupport()
-
-/*
- * Export kMaxLength after typed array support is determined.
- */
-exports.kMaxLength = kMaxLength()
-
-function typedArraySupport () {
-  try {
-    var arr = new Uint8Array(1)
-    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
-    return arr.foo() === 42 && // typed array instances can be augmented
-        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
-        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
-  } catch (e) {
-    return false
-  }
-}
-
-function kMaxLength () {
-  return Buffer.TYPED_ARRAY_SUPPORT
-    ? 0x7fffffff
-    : 0x3fffffff
-}
-
-function createBuffer (that, length) {
-  if (kMaxLength() < length) {
-    throw new RangeError('Invalid typed array length')
-  }
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Return an augmented `Uint8Array` instance, for best performance
-    that = new Uint8Array(length)
-    that.__proto__ = Buffer.prototype
-  } else {
-    // Fallback: Return an object instance of the Buffer class
-    if (that === null) {
-      that = new Buffer(length)
-    }
-    that.length = length
-  }
-
-  return that
-}
-
-/**
- * The Buffer constructor returns instances of `Uint8Array` that have their
- * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
- * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
- * and the `Uint8Array` methods. Square bracket notation works as expected -- it
- * returns a single octet.
- *
- * The `Uint8Array` prototype remains unmodified.
- */
-
-function Buffer (arg, encodingOrOffset, length) {
-  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
-    return new Buffer(arg, encodingOrOffset, length)
-  }
-
-  // Common case.
-  if (typeof arg === 'number') {
-    if (typeof encodingOrOffset === 'string') {
-      throw new Error(
-        'If encoding is specified then the first argument must be a string'
-      )
-    }
-    return allocUnsafe(this, arg)
-  }
-  return from(this, arg, encodingOrOffset, length)
-}
-
-Buffer.poolSize = 8192 // not used by this implementation
-
-// TODO: Legacy, not needed anymore. Remove in next major version.
-Buffer._augment = function (arr) {
-  arr.__proto__ = Buffer.prototype
-  return arr
-}
-
-function from (that, value, encodingOrOffset, length) {
-  if (typeof value === 'number') {
-    throw new TypeError('"value" argument must not be a number')
-  }
-
-  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
-    return fromArrayBuffer(that, value, encodingOrOffset, length)
-  }
-
-  if (typeof value === 'string') {
-    return fromString(that, value, encodingOrOffset)
-  }
-
-  return fromObject(that, value)
-}
-
-/**
- * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
- * if value is a number.
- * Buffer.from(str[, encoding])
- * Buffer.from(array)
- * Buffer.from(buffer)
- * Buffer.from(arrayBuffer[, byteOffset[, length]])
- **/
-Buffer.from = function (value, encodingOrOffset, length) {
-  return from(null, value, encodingOrOffset, length)
-}
-
-if (Buffer.TYPED_ARRAY_SUPPORT) {
-  Buffer.prototype.__proto__ = Uint8Array.prototype
-  Buffer.__proto__ = Uint8Array
-  if (typeof Symbol !== 'undefined' && Symbol.species &&
-      Buffer[Symbol.species] === Buffer) {
-    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
-    Object.defineProperty(Buffer, Symbol.species, {
-      value: null,
-      configurable: true
-    })
-  }
-}
-
-function assertSize (size) {
-  if (typeof size !== 'number') {
-    throw new TypeError('"size" argument must be a number')
-  } else if (size < 0) {
-    throw new RangeError('"size" argument must not be negative')
-  }
-}
-
-function alloc (that, size, fill, encoding) {
-  assertSize(size)
-  if (size <= 0) {
-    return createBuffer(that, size)
-  }
-  if (fill !== undefined) {
-    // Only pay attention to encoding if it's a string. This
-    // prevents accidentally sending in a number that would
-    // be interpretted as a start offset.
-    return typeof encoding === 'string'
-      ? createBuffer(that, size).fill(fill, encoding)
-      : createBuffer(that, size).fill(fill)
-  }
-  return createBuffer(that, size)
-}
-
-/**
- * Creates a new filled Buffer instance.
- * alloc(size[, fill[, encoding]])
- **/
-Buffer.alloc = function (size, fill, encoding) {
-  return alloc(null, size, fill, encoding)
-}
-
-function allocUnsafe (that, size) {
-  assertSize(size)
-  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) {
-    for (var i = 0; i < size; ++i) {
-      that[i] = 0
-    }
-  }
-  return that
-}
-
-/**
- * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
- * */
-Buffer.allocUnsafe = function (size) {
-  return allocUnsafe(null, size)
-}
-/**
- * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
- */
-Buffer.allocUnsafeSlow = function (size) {
-  return allocUnsafe(null, size)
-}
-
-function fromString (that, string, encoding) {
-  if (typeof encoding !== 'string' || encoding === '') {
-    encoding = 'utf8'
-  }
-
-  if (!Buffer.isEncoding(encoding)) {
-    throw new TypeError('"encoding" must be a valid string encoding')
-  }
-
-  var length = byteLength(string, encoding) | 0
-  that = createBuffer(that, length)
-
-  var actual = that.write(string, encoding)
-
-  if (actual !== length) {
-    // Writing a hex string, for example, that contains invalid characters will
-    // cause everything after the first invalid character to be ignored. (e.g.
-    // 'abxxcd' will be treated as 'ab')
-    that = that.slice(0, actual)
-  }
-
-  return that
-}
-
-function fromArrayLike (that, array) {
-  var length = array.length < 0 ? 0 : checked(array.length) | 0
-  that = createBuffer(that, length)
-  for (var i = 0; i < length; i += 1) {
-    that[i] = array[i] & 255
-  }
-  return that
-}
-
-function fromArrayBuffer (that, array, byteOffset, length) {
-  array.byteLength // this throws if `array` is not a valid ArrayBuffer
-
-  if (byteOffset < 0 || array.byteLength < byteOffset) {
-    throw new RangeError('\'offset\' is out of bounds')
-  }
-
-  if (array.byteLength < byteOffset + (length || 0)) {
-    throw new RangeError('\'length\' is out of bounds')
-  }
-
-  if (byteOffset === undefined && length === undefined) {
-    array = new Uint8Array(array)
-  } else if (length === undefined) {
-    array = new Uint8Array(array, byteOffset)
-  } else {
-    array = new Uint8Array(array, byteOffset, length)
-  }
-
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Return an augmented `Uint8Array` instance, for best performance
-    that = array
-    that.__proto__ = Buffer.prototype
-  } else {
-    // Fallback: Return an object instance of the Buffer class
-    that = fromArrayLike(that, array)
-  }
-  return that
-}
-
-function fromObject (that, obj) {
-  if (Buffer.isBuffer(obj)) {
-    var len = checked(obj.length) | 0
-    that = createBuffer(that, len)
-
-    if (that.length === 0) {
-      return that
-    }
-
-    obj.copy(that, 0, 0, len)
-    return that
-  }
-
-  if (obj) {
-    if ((typeof ArrayBuffer !== 'undefined' &&
-        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
-      if (typeof obj.length !== 'number' || isnan(obj.length)) {
-        return createBuffer(that, 0)
-      }
-      return fromArrayLike(that, obj)
-    }
-
-    if (obj.type === 'Buffer' && isArray(obj.data)) {
-      return fromArrayLike(that, obj.data)
-    }
-  }
-
-  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
-}
-
-function checked (length) {
-  // Note: cannot use `length < kMaxLength()` here because that fails when
-  // length is NaN (which is otherwise coerced to zero.)
-  if (length >= kMaxLength()) {
-    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
-                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
-  }
-  return length | 0
-}
-
-function SlowBuffer (length) {
-  if (+length != length) { // eslint-disable-line eqeqeq
-    length = 0
-  }
-  return Buffer.alloc(+length)
-}
-
-Buffer.isBuffer = function isBuffer (b) {
-  return !!(b != null && b._isBuffer)
-}
-
-Buffer.compare = function compare (a, b) {
-  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
-    throw new TypeError('Arguments must be Buffers')
-  }
-
-  if (a === b) return 0
-
-  var x = a.length
-  var y = b.length
-
-  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
-    if (a[i] !== b[i]) {
-      x = a[i]
-      y = b[i]
-      break
-    }
-  }
-
-  if (x < y) return -1
-  if (y < x) return 1
-  return 0
-}
-
-Buffer.isEncoding = function isEncoding (encoding) {
-  switch (String(encoding).toLowerCase()) {
-    case 'hex':
-    case 'utf8':
-    case 'utf-8':
-    case 'ascii':
-    case 'latin1':
-    case 'binary':
-    case 'base64':
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return true
-    default:
-      return false
-  }
-}
-
-Buffer.concat = function concat (list, length) {
-  if (!isArray(list)) {
-    throw new TypeError('"list" argument must be an Array of Buffers')
-  }
-
-  if (list.length === 0) {
-    return Buffer.alloc(0)
-  }
-
-  var i
-  if (length === undefined) {
-    length = 0
-    for (i = 0; i < list.length; ++i) {
-      length += list[i].length
-    }
-  }
-
-  var buffer = Buffer.allocUnsafe(length)
-  var pos = 0
-  for (i = 0; i < list.length; ++i) {
-    var buf = list[i]
-    if (!Buffer.isBuffer(buf)) {
-      throw new TypeError('"list" argument must be an Array of Buffers')
-    }
-    buf.copy(buffer, pos)
-    pos += buf.length
-  }
-  return buffer
-}
-
-function byteLength (string, encoding) {
-  if (Buffer.isBuffer(string)) {
-    return string.length
-  }
-  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
-      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
-    return string.byteLength
-  }
-  if (typeof string !== 'string') {
-    string = '' + string
-  }
-
-  var len = string.length
-  if (len === 0) return 0
-
-  // Use a for loop to avoid recursion
-  var loweredCase = false
-  for (;;) {
-    switch (encoding) {
-      case 'ascii':
-      case 'latin1':
-      case 'binary':
-        return len
-      case 'utf8':
-      case 'utf-8':
-      case undefined:
-        return utf8ToBytes(string).length
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return len * 2
-      case 'hex':
-        return len >>> 1
-      case 'base64':
-        return base64ToBytes(string).length
-      default:
-        if (loweredCase) return utf8ToBytes(string).length // assume utf8
-        encoding = ('' + encoding).toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-Buffer.byteLength = byteLength
-
-function slowToString (encoding, start, end) {
-  var loweredCase = false
-
-  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
-  // property of a typed array.
-
-  // This behaves neither like String nor Uint8Array in that we set start/end
-  // to their upper/lower bounds if the value passed is out of range.
-  // undefined is handled specially as per ECMA-262 6th Edition,
-  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
-  if (start === undefined || start < 0) {
-    start = 0
-  }
-  // Return early if start > this.length. Done here to prevent potential uint32
-  // coercion fail below.
-  if (start > this.length) {
-    return ''
-  }
-
-  if (end === undefined || end > this.length) {
-    end = this.length
-  }
-
-  if (end <= 0) {
-    return ''
-  }
-
-  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
-  end >>>= 0
-  start >>>= 0
-
-  if (end <= start) {
-    return ''
-  }
-
-  if (!encoding) encoding = 'utf8'
-
-  while (true) {
-    switch (encoding) {
-      case 'hex':
-        return hexSlice(this, start, end)
-
-      case 'utf8':
-      case 'utf-8':
-        return utf8Slice(this, start, end)
-
-      case 'ascii':
-        return asciiSlice(this, start, end)
-
-      case 'latin1':
-      case 'binary':
-        return latin1Slice(this, start, end)
-
-      case 'base64':
-        return base64Slice(this, start, end)
-
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return utf16leSlice(this, start, end)
-
-      default:
-        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-        encoding = (encoding + '').toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-
-// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
-// Buffer instances.
-Buffer.prototype._isBuffer = true
-
-function swap (b, n, m) {
-  var i = b[n]
-  b[n] = b[m]
-  b[m] = i
-}
-
-Buffer.prototype.swap16 = function swap16 () {
-  var len = this.length
-  if (len % 2 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 16-bits')
-  }
-  for (var i = 0; i < len; i += 2) {
-    swap(this, i, i + 1)
-  }
-  return this
-}
-
-Buffer.prototype.swap32 = function swap32 () {
-  var len = this.length
-  if (len % 4 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 32-bits')
-  }
-  for (var i = 0; i < len; i += 4) {
-    swap(this, i, i + 3)
-    swap(this, i + 1, i + 2)
-  }
-  return this
-}
-
-Buffer.prototype.swap64 = function swap64 () {
-  var len = this.length
-  if (len % 8 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 64-bits')
-  }
-  for (var i = 0; i < len; i += 8) {
-    swap(this, i, i + 7)
-    swap(this, i + 1, i + 6)
-    swap(this, i + 2, i + 5)
-    swap(this, i + 3, i + 4)
-  }
-  return this
-}
-
-Buffer.prototype.toString = function toString () {
-  var length = this.length | 0
-  if (length === 0) return ''
-  if (arguments.length === 0) return utf8Slice(this, 0, length)
-  return slowToString.apply(this, arguments)
-}
-
-Buffer.prototype.equals = function equals (b) {
-  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
-  if (this === b) return true
-  return Buffer.compare(this, b) === 0
-}
-
-Buffer.prototype.inspect = function inspect () {
-  var str = ''
-  var max = exports.INSPECT_MAX_BYTES
-  if (this.length > 0) {
-    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
-    if (this.length > max) str += ' ... '
-  }
-  return '<Buffer ' + str + '>'
-}
-
-Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
-  if (!Buffer.isBuffer(target)) {
-    throw new TypeError('Argument must be a Buffer')
-  }
-
-  if (start === undefined) {
-    start = 0
-  }
-  if (end === undefined) {
-    end = target ? target.length : 0
-  }
-  if (thisStart === undefined) {
-    thisStart = 0
-  }
-  if (thisEnd === undefined) {
-    thisEnd = this.length
-  }
-
-  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
-    throw new RangeError('out of range index')
-  }
-
-  if (thisStart >= thisEnd && start >= end) {
-    return 0
-  }
-  if (thisStart >= thisEnd) {
-    return -1
-  }
-  if (start >= end) {
-    return 1
-  }
-
-  start >>>= 0
-  end >>>= 0
-  thisStart >>>= 0
-  thisEnd >>>= 0
-
-  if (this === target) return 0
-
-  var x = thisEnd - thisStart
-  var y = end - start
-  var len = Math.min(x, y)
-
-  var thisCopy = this.slice(thisStart, thisEnd)
-  var targetCopy = target.slice(start, end)
-
-  for (var i = 0; i < len; ++i) {
-    if (thisCopy[i] !== targetCopy[i]) {
-      x = thisCopy[i]
-      y = targetCopy[i]
-      break
-    }
-  }
-
-  if (x < y) return -1
-  if (y < x) return 1
-  return 0
-}
-
-// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
-// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
-//
-// Arguments:
-// - buffer - a Buffer to search
-// - val - a string, Buffer, or number
-// - byteOffset - an index into `buffer`; will be clamped to an int32
-// - encoding - an optional encoding, relevant is val is a string
-// - dir - true for indexOf, false for lastIndexOf
-function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
-  // Empty buffer means no match
-  if (buffer.length === 0) return -1
-
-  // Normalize byteOffset
-  if (typeof byteOffset === 'string') {
-    encoding = byteOffset
-    byteOffset = 0
-  } else if (byteOffset > 0x7fffffff) {
-    byteOffset = 0x7fffffff
-  } else if (byteOffset < -0x80000000) {
-    byteOffset = -0x80000000
-  }
-  byteOffset = +byteOffset  // Coerce to Number.
-  if (isNaN(byteOffset)) {
-    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
-    byteOffset = dir ? 0 : (buffer.length - 1)
-  }
-
-  // Normalize byteOffset: negative offsets start from the end of the buffer
-  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
-  if (byteOffset >= buffer.length) {
-    if (dir) return -1
-    else byteOffset = buffer.length - 1
-  } else if (byteOffset < 0) {
-    if (dir) byteOffset = 0
-    else return -1
-  }
-
-  // Normalize val
-  if (typeof val === 'string') {
-    val = Buffer.from(val, encoding)
-  }
-
-  // Finally, search either indexOf (if dir is true) or lastIndexOf
-  if (Buffer.isBuffer(val)) {
-    // Special case: looking for empty string/buffer always fails
-    if (val.length === 0) {
-      return -1
-    }
-    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
-  } else if (typeof val === 'number') {
-    val = val & 0xFF // Search for a byte value [0-255]
-    if (Buffer.TYPED_ARRAY_SUPPORT &&
-        typeof Uint8Array.prototype.indexOf === 'function') {
-      if (dir) {
-        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
-      } else {
-        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
-      }
-    }
-    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
-  }
-
-  throw new TypeError('val must be string, number or Buffer')
-}
-
-function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
-  var indexSize = 1
-  var arrLength = arr.length
-  var valLength = val.length
-
-  if (encoding !== undefined) {
-    encoding = String(encoding).toLowerCase()
-    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
-        encoding === 'utf16le' || encoding === 'utf-16le') {
-      if (arr.length < 2 || val.length < 2) {
-        return -1
-      }
-      indexSize = 2
-      arrLength /= 2
-      valLength /= 2
-      byteOffset /= 2
-    }
-  }
-
-  function read (buf, i) {
-    if (indexSize === 1) {
-      return buf[i]
-    } else {
-      return buf.readUInt16BE(i * indexSize)
-    }
-  }
-
-  var i
-  if (dir) {
-    var foundIndex = -1
-    for (i = byteOffset; i < arrLength; i++) {
-      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
-        if (foundIndex === -1) foundIndex = i
-        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
-      } else {
-        if (foundIndex !== -1) i -= i - foundIndex
-        foundIndex = -1
-      }
-    }
-  } else {
-    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
-    for (i = byteOffset; i >= 0; i--) {
-      var found = true
-      for (var j = 0; j < valLength; j++) {
-        if (read(arr, i + j) !== read(val, j)) {
-          found = false
-          break
-        }
-      }
-      if (found) return i
-    }
-  }
-
-  return -1
-}
-
-Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
-  return this.indexOf(val, byteOffset, encoding) !== -1
-}
-
-Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
-  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
-}
-
-Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
-  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
-}
-
-function hexWrite (buf, string, offset, length) {
-  offset = Number(offset) || 0
-  var remaining = buf.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
-    }
-  }
-
-  // must be an even number of digits
-  var strLen = string.length
-  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
-
-  if (length > strLen / 2) {
-    length = strLen / 2
-  }
-  for (var i = 0; i < length; ++i) {
-    var parsed = parseInt(string.substr(i * 2, 2), 16)
-    if (isNaN(parsed)) return i
-    buf[offset + i] = parsed
-  }
-  return i
-}
-
-function utf8Write (buf, string, offset, length) {
-  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
-}
-
-function asciiWrite (buf, string, offset, length) {
-  return blitBuffer(asciiToBytes(string), buf, offset, length)
-}
-
-function latin1Write (buf, string, offset, length) {
-  return asciiWrite(buf, string, offset, length)
-}
-
-function base64Write (buf, string, offset, length) {
-  return blitBuffer(base64ToBytes(string), buf, offset, length)
-}
-
-function ucs2Write (buf, string, offset, length) {
-  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
-}
-
-Buffer.prototype.write = function write (string, offset, length, encoding) {
-  // Buffer#write(string)
-  if (offset === undefined) {
-    encoding = 'utf8'
-    length = this.length
-    offset = 0
-  // Buffer#write(string, encoding)
-  } else if (length === undefined && typeof offset === 'string') {
-    encoding = offset
-    length = this.length
-    offset = 0
-  // Buffer#write(string, offset[, length][, encoding])
-  } else if (isFinite(offset)) {
-    offset = offset | 0
-    if (isFinite(length)) {
-      length = length | 0
-      if (encoding === undefined) encoding = 'utf8'
-    } else {
-      encoding = length
-      length = undefined
-    }
-  // legacy write(string, encoding, offset, length) - remove in v0.13
-  } else {
-    throw new Error(
-      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
-    )
-  }
-
-  var remaining = this.length - offset
-  if (length === undefined || length > remaining) length = remaining
-
-  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
-    throw new RangeError('Attempt to write outside buffer bounds')
-  }
-
-  if (!encoding) encoding = 'utf8'
-
-  var loweredCase = false
-  for (;;) {
-    switch (encoding) {
-      case 'hex':
-        return hexWrite(this, string, offset, length)
-
-      case 'utf8':
-      case 'utf-8':
-        return utf8Write(this, string, offset, length)
-
-      case 'ascii':
-        return asciiWrite(this, string, offset, length)
-
-      case 'latin1':
-      case 'binary':
-        return latin1Write(this, string, offset, length)
-
-      case 'base64':
-        // Warning: maxLength not taken into account in base64Write
-        return base64Write(this, string, offset, length)
-
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return ucs2Write(this, string, offset, length)
-
-      default:
-        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-        encoding = ('' + encoding).toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-
-Buffer.prototype.toJSON = function toJSON () {
-  return {
-    type: 'Buffer',
-    data: Array.prototype.slice.call(this._arr || this, 0)
-  }
-}
-
-function base64Slice (buf, start, end) {
-  if (start === 0 && end === buf.length) {
-    return base64.fromByteArray(buf)
-  } else {
-    return base64.fromByteArray(buf.slice(start, end))
-  }
-}
-
-function utf8Slice (buf, start, end) {
-  end = Math.min(buf.length, end)
-  var res = []
-
-  var i = start
-  while (i < end) {
-    var firstByte = buf[i]
-    var codePoint = null
-    var bytesPerSequence = (firstByte > 0xEF) ? 4
-      : (firstByte > 0xDF) ? 3
-      : (firstByte > 0xBF) ? 2
-      : 1
-
-    if (i + bytesPerSequence <= end) {
-      var secondByte, thirdByte, fourthByte, tempCodePoint
-
-      switch (bytesPerSequence) {
-        case 1:
-          if (firstByte < 0x80) {
-            codePoint = firstByte
-          }
-          break
-        case 2:
-          secondByte = buf[i + 1]
-          if ((secondByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
-            if (tempCodePoint > 0x7F) {
-              codePoint = tempCodePoint
-            }
-          }
-          break
-        case 3:
-          secondByte = buf[i + 1]
-          thirdByte = buf[i + 2]
-          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
-            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
-              codePoint = tempCodePoint
-            }
-          }
-          break
-        case 4:
-          secondByte = buf[i + 1]
-          thirdByte = buf[i + 2]
-          fourthByte = buf[i + 3]
-          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
-            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
-              codePoint = tempCodePoint
-            }
-          }
-      }
-    }
-
-    if (codePoint === null) {
-      // we did not generate a valid codePoint so insert a
-      // replacement char (U+FFFD) and advance only 1 byte
-      codePoint = 0xFFFD
-      bytesPerSequence = 1
-    } else if (codePoint > 0xFFFF) {
-      // encode to utf16 (surrogate pair dance)
-      codePoint -= 0x10000
-      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
-      codePoint = 0xDC00 | codePoint & 0x3FF
-    }
-
-    res.push(codePoint)
-    i += bytesPerSequence
-  }
-
-  return decodeCodePointsArray(res)
-}
-
-// Based on http://stackoverflow.com/a/22747272/680742, the browser with
-// the lowest limit is Chrome, with 0x10000 args.
-// We go 1 magnitude less, for safety
-var MAX_ARGUMENTS_LENGTH = 0x1000
-
-function decodeCodePointsArray (codePoints) {
-  var len = codePoints.length
-  if (len <= MAX_ARGUMENTS_LENGTH) {
-    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
-  }
-
-  // Decode in chunks to avoid "call stack size exceeded".
-  var res = ''
-  var i = 0
-  while (i < len) {
-    res += String.fromCharCode.apply(
-      String,
-      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
-    )
-  }
-  return res
-}
-
-function asciiSlice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; ++i) {
-    ret += String.fromCharCode(buf[i] & 0x7F)
-  }
-  return ret
-}
-
-function latin1Slice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; ++i) {
-    ret += String.fromCharCode(buf[i])
-  }
-  return ret
-}
-
-function hexSlice (buf, start, end) {
-  var len = buf.length
-
-  if (!start || start < 0) start = 0
-  if (!end || end < 0 || end > len) end = len
-
-  var out = ''
-  for (var i = start; i < end; ++i) {
-    out += toHex(buf[i])
-  }
-  return out
-}
-
-function utf16leSlice (buf, start, end) {
-  var bytes = buf.slice(start, end)
-  var res = ''
-  for (var i = 0; i < bytes.length; i += 2) {
-    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
-  }
-  return res
-}
-
-Buffer.prototype.slice = function slice (start, end) {
-  var len = this.length
-  start = ~~start
-  end = end === undefined ? len : ~~end
-
-  if (start < 0) {
-    start += len
-    if (start < 0) start = 0
-  } else if (start > len) {
-    start = len
-  }
-
-  if (end < 0) {
-    end += len
-    if (end < 0) end = 0
-  } else if (end > len) {
-    end = len
-  }
-
-  if (end < start) end = start
-
-  var newBuf
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    newBuf = this.subarray(start, end)
-    newBuf.__proto__ = Buffer.prototype
-  } else {
-    var sliceLen = end - start
-    newBuf = new Buffer(sliceLen, undefined)
-    for (var i = 0; i < sliceLen; ++i) {
-      newBuf[i] = this[i + start]
-    }
-  }
-
-  return newBuf
-}
-
-/*
- * Need to make sure that buffer isn't trying to write out of bounds.
- */
-function checkOffset (offset, ext, length) {
-  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
-  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
-}
-
-Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var val = this[offset]
-  var mul = 1
-  var i = 0
-  while (++i < byteLength && (mul *= 0x100)) {
-    val += this[offset + i] * mul
-  }
-
-  return val
-}
-
-Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) {
-    checkOffset(offset, byteLength, this.length)
-  }
-
-  var val = this[offset + --byteLength]
-  var mul = 1
-  while (byteLength > 0 && (mul *= 0x100)) {
-    val += this[offset + --byteLength] * mul
-  }
-
-  return val
-}
-
-Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 1, this.length)
-  return this[offset]
-}
-
-Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  return this[offset] | (this[offset + 1] << 8)
-}
-
-Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  return (this[offset] << 8) | this[offset + 1]
-}
-
-Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return ((this[offset]) |
-      (this[offset + 1] << 8) |
-      (this[offset + 2] << 16)) +
-      (this[offset + 3] * 0x1000000)
-}
-
-Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset] * 0x1000000) +
-    ((this[offset + 1] << 16) |
-    (this[offset + 2] << 8) |
-    this[offset + 3])
-}
-
-Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var val = this[offset]
-  var mul = 1
-  var i = 0
-  while (++i < byteLength && (mul *= 0x100)) {
-    val += this[offset + i] * mul
-  }
-  mul *= 0x80
-
-  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-
-  return val
-}
-
-Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var i = byteLength
-  var mul = 1
-  var val = this[offset + --i]
-  while (i > 0 && (mul *= 0x100)) {
-    val += this[offset + --i] * mul
-  }
-  mul *= 0x80
-
-  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-
-  return val
-}
-
-Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 1, this.length)
-  if (!(this[offset] & 0x80)) return (this[offset])
-  return ((0xff - this[offset] + 1) * -1)
-}
-
-Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  var val = this[offset] | (this[offset + 1] << 8)
-  return (val & 0x8000) ? val | 0xFFFF0000 : val
-}
-
-Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  var val = this[offset + 1] | (this[offset] << 8)
-  return (val & 0x8000) ? val | 0xFFFF0000 : val
-}
-
-Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset]) |
-    (this[offset + 1] << 8) |
-    (this[offset + 2] << 16) |
-    (this[offset + 3] << 24)
-}
-
-Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset] << 24) |
-    (this[offset + 1] << 16) |
-    (this[offset + 2] << 8) |
-    (this[offset + 3])
-}
-
-Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-  return ieee754.read(this, offset, true, 23, 4)
-}
-
-Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-  return ieee754.read(this, offset, false, 23, 4)
-}
-
-Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 8, this.length)
-  return ieee754.read(this, offset, true, 52, 8)
-}
-
-Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 8, this.length)
-  return ieee754.read(this, offset, false, 52, 8)
-}
-
-function checkInt (buf, value, offset, ext, max, min) {
-  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
-  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
-  if (offset + ext > buf.length) throw new RangeError('Index out of range')
-}
-
-Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) {
-    var maxBytes = Math.pow(2, 8 * byteLength) - 1
-    checkInt(this, value, offset, byteLength, maxBytes, 0)
-  }
-
-  var mul = 1
-  var i = 0
-  this[offset] = value & 0xFF
-  while (++i < byteLength && (mul *= 0x100)) {
-    this[offset + i] = (value / mul) & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) {
-    var maxBytes = Math.pow(2, 8 * byteLength) - 1
-    checkInt(this, value, offset, byteLength, maxBytes, 0)
-  }
-
-  var i = byteLength - 1
-  var mul = 1
-  this[offset + i] = value & 0xFF
-  while (--i >= 0 && (mul *= 0x100)) {
-    this[offset + i] = (value / mul) & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
-  this[offset] = (value & 0xff)
-  return offset + 1
-}
-
-function objectWriteUInt16 (buf, value, offset, littleEndian) {
-  if (value < 0) value = 0xffff + value + 1
-  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
-    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-      (littleEndian ? i : 1 - i) * 8
-  }
-}
-
-Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff)
-    this[offset + 1] = (value >>> 8)
-  } else {
-    objectWriteUInt16(this, value, offset, true)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 8)
-    this[offset + 1] = (value & 0xff)
-  } else {
-    objectWriteUInt16(this, value, offset, false)
-  }
-  return offset + 2
-}
-
-function objectWriteUInt32 (buf, value, offset, littleEndian) {
-  if (value < 0) value = 0xffffffff + value + 1
-  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
-    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-  }
-}
-
-Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset + 3] = (value >>> 24)
-    this[offset + 2] = (value >>> 16)
-    this[offset + 1] = (value >>> 8)
-    this[offset] = (value & 0xff)
-  } else {
-    objectWriteUInt32(this, value, offset, true)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 24)
-    this[offset + 1] = (value >>> 16)
-    this[offset + 2] = (value >>> 8)
-    this[offset + 3] = (value & 0xff)
-  } else {
-    objectWriteUInt32(this, value, offset, false)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) {
-    var limit = Math.pow(2, 8 * byteLength - 1)
-
-    checkInt(this, value, offset, byteLength, limit - 1, -limit)
-  }
-
-  var i = 0
-  var mul = 1
-  var sub = 0
-  this[offset] = value & 0xFF
-  while (++i < byteLength && (mul *= 0x100)) {
-    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
-      sub = 1
-    }
-    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) {
-    var limit = Math.pow(2, 8 * byteLength - 1)
-
-    checkInt(this, value, offset, byteLength, limit - 1, -limit)
-  }
-
-  var i = byteLength - 1
-  var mul = 1
-  var sub = 0
-  this[offset + i] = value & 0xFF
-  while (--i >= 0 && (mul *= 0x100)) {
-    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
-      sub = 1
-    }
-    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
-  if (value < 0) value = 0xff + value + 1
-  this[offset] = (value & 0xff)
-  return offset + 1
-}
-
-Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff)
-    this[offset + 1] = (value >>> 8)
-  } else {
-    objectWriteUInt16(this, value, offset, true)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 8)
-    this[offset + 1] = (value & 0xff)
-  } else {
-    objectWriteUInt16(this, value, offset, false)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff)
-    this[offset + 1] = (value >>> 8)
-    this[offset + 2] = (value >>> 16)
-    this[offset + 3] = (value >>> 24)
-  } else {
-    objectWriteUInt32(this, value, offset, true)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-  if (value < 0) value = 0xffffffff + value + 1
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 24)
-    this[offset + 1] = (value >>> 16)
-    this[offset + 2] = (value >>> 8)
-    this[offset + 3] = (value & 0xff)
-  } else {
-    objectWriteUInt32(this, value, offset, false)
-  }
-  return offset + 4
-}
-
-function checkIEEE754 (buf, value, offset, ext, max, min) {
-  if (offset + ext > buf.length) throw new RangeError('Index out of range')
-  if (offset < 0) throw new RangeError('Index out of range')
-}
-
-function writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
-  }
-  ieee754.write(buf, value, offset, littleEndian, 23, 4)
-  return offset + 4
-}
-
-Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
-  return writeFloat(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
-  return writeFloat(this, value, offset, false, noAssert)
-}
-
-function writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
-  }
-  ieee754.write(buf, value, offset, littleEndian, 52, 8)
-  return offset + 8
-}
-
-Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
-  return writeDouble(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
-  return writeDouble(this, value, offset, false, noAssert)
-}
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function copy (target, targetStart, start, end) {
-  if (!start) start = 0
-  if (!end && end !== 0) end = this.length
-  if (targetStart >= target.length) targetStart = target.length
-  if (!targetStart) targetStart = 0
-  if (end > 0 && end < start) end = start
-
-  // Copy 0 bytes; we're done
-  if (end === start) return 0
-  if (target.length === 0 || this.length === 0) return 0
-
-  // Fatal error conditions
-  if (targetStart < 0) {
-    throw new RangeError('targetStart out of bounds')
-  }
-  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
-  if (end < 0) throw new RangeError('sourceEnd out of bounds')
-
-  // Are we oob?
-  if (end > this.length) end = this.length
-  if (target.length - targetStart < end - start) {
-    end = target.length - targetStart + start
-  }
-
-  var len = end - start
-  var i
-
-  if (this === target && start < targetStart && targetStart < end) {
-    // descending copy from end
-    for (i = len - 1; i >= 0; --i) {
-      target[i + targetStart] = this[i + start]
-    }
-  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
-    // ascending copy from start
-    for (i = 0; i < len; ++i) {
-      target[i + targetStart] = this[i + start]
-    }
-  } else {
-    Uint8Array.prototype.set.call(
-      target,
-      this.subarray(start, start + len),
-      targetStart
-    )
-  }
-
-  return len
-}
-
-// Usage:
-//    buffer.fill(number[, offset[, end]])
-//    buffer.fill(buffer[, offset[, end]])
-//    buffer.fill(string[, offset[, end]][, encoding])
-Buffer.prototype.fill = function fill (val, start, end, encoding) {
-  // Handle string cases:
-  if (typeof val === 'string') {
-    if (typeof start === 'string') {
-      encoding = start
-      start = 0
-      end = this.length
-    } else if (typeof end === 'string') {
-      encoding = end
-      end = this.length
-    }
-    if (val.length === 1) {
-      var code = val.charCodeAt(0)
-      if (code < 256) {
-        val = code
-      }
-    }
-    if (encoding !== undefined && typeof encoding !== 'string') {
-      throw new TypeError('encoding must be a string')
-    }
-    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
-      throw new TypeError('Unknown encoding: ' + encoding)
-    }
-  } else if (typeof val === 'number') {
-    val = val & 255
-  }
-
-  // Invalid ranges are not set to a default, so can range check early.
-  if (start < 0 || this.length < start || this.length < end) {
-    throw new RangeError('Out of range index')
-  }
-
-  if (end <= start) {
-    return this
-  }
-
-  start = start >>> 0
-  end = end === undefined ? this.length : end >>> 0
-
-  if (!val) val = 0
-
-  var i
-  if (typeof val === 'number') {
-    for (i = start; i < end; ++i) {
-      this[i] = val
-    }
-  } else {
-    var bytes = Buffer.isBuffer(val)
-      ? val
-      : utf8ToBytes(new Buffer(val, encoding).toString())
-    var len = bytes.length
-    for (i = 0; i < end - start; ++i) {
-      this[i + start] = bytes[i % len]
-    }
-  }
-
-  return this
-}
-
-// HELPER FUNCTIONS
-// ================
-
-var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
-
-function base64clean (str) {
-  // Node strips out invalid characters like \n and \t from the string, base64-js does not
-  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
-  // Node converts strings with length < 2 to ''
-  if (str.length < 2) return ''
-  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
-  while (str.length % 4 !== 0) {
-    str = str + '='
-  }
-  return str
-}
-
-function stringtrim (str) {
-  if (str.trim) return str.trim()
-  return str.replace(/^\s+|\s+$/g, '')
-}
-
-function toHex (n) {
-  if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
-}
-
-function utf8ToBytes (string, units) {
-  units = units || Infinity
-  var codePoint
-  var length = string.length
-  var leadSurrogate = null
-  var bytes = []
-
-  for (var i = 0; i < length; ++i) {
-    codePoint = string.charCodeAt(i)
-
-    // is surrogate component
-    if (codePoint > 0xD7FF && codePoint < 0xE000) {
-      // last char was a lead
-      if (!leadSurrogate) {
-        // no lead yet
-        if (codePoint > 0xDBFF) {
-          // unexpected trail
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-          continue
-        } else if (i + 1 === length) {
-          // unpaired lead
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-          continue
-        }
-
-        // valid lead
-        leadSurrogate = codePoint
-
-        continue
-      }
-
-      // 2 leads in a row
-      if (codePoint < 0xDC00) {
-        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-        leadSurrogate = codePoint
-        continue
-      }
-
-      // valid surrogate pair
-      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
-    } else if (leadSurrogate) {
-      // valid bmp char, but last char was a lead
-      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-    }
-
-    leadSurrogate = null
-
-    // encode utf8
-    if (codePoint < 0x80) {
-      if ((units -= 1) < 0) break
-      bytes.push(codePoint)
-    } else if (codePoint < 0x800) {
-      if ((units -= 2) < 0) break
-      bytes.push(
-        codePoint >> 0x6 | 0xC0,
-        codePoint & 0x3F | 0x80
-      )
-    } else if (codePoint < 0x10000) {
-      if ((units -= 3) < 0) break
-      bytes.push(
-        codePoint >> 0xC | 0xE0,
-        codePoint >> 0x6 & 0x3F | 0x80,
-        codePoint & 0x3F | 0x80
-      )
-    } else if (codePoint < 0x110000) {
-      if ((units -= 4) < 0) break
-      bytes.push(
-        codePoint >> 0x12 | 0xF0,
-        codePoint >> 0xC & 0x3F | 0x80,
-        codePoint >> 0x6 & 0x3F | 0x80,
-        codePoint & 0x3F | 0x80
-      )
-    } else {
-      throw new Error('Invalid code point')
-    }
-  }
-
-  return bytes
-}
-
-function asciiToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; ++i) {
-    // Node's code seems to be doing this and not & 0x7F..
-    byteArray.push(str.charCodeAt(i) & 0xFF)
-  }
-  return byteArray
-}
-
-function utf16leToBytes (str, units) {
-  var c, hi, lo
-  var byteArray = []
-  for (var i = 0; i < str.length; ++i) {
-    if ((units -= 2) < 0) break
-
-    c = str.charCodeAt(i)
-    hi = c >> 8
-    lo = c % 256
-    byteArray.push(lo)
-    byteArray.push(hi)
-  }
-
-  return byteArray
-}
-
-function base64ToBytes (str) {
-  return base64.toByteArray(base64clean(str))
-}
-
-function blitBuffer (src, dst, offset, length) {
-  for (var i = 0; i < length; ++i) {
-    if ((i + offset >= dst.length) || (i >= src.length)) break
-    dst[i + offset] = src[i]
-  }
-  return i
-}
-
-function isnan (val) {
-  return val !== val // eslint-disable-line no-self-compare
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/***/ (function(module, exports) {
+
+module.exports = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports) {
-
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-var toString = {}.toString;
-
-module.exports = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
-};
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global, Buffer) {var require;
-
-/* eslint no-undefined: 0 */
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-var assign = void 0;
-
-if (typeof Object.assign === 'function') {
-  assign = Object.assign;
-} else {
-  assign = function assign(target) {
-    if (target === undefined || target === null) {
-      throw new TypeError('Cannot convert undefined or null to object');
-    }
-
-    var output = Object(target);
-
-    var propertyObjects = [].slice.call(arguments, 1);
-
-    if (propertyObjects.length > 0) {
-      propertyObjects.forEach(function (source) {
-        if (source !== undefined && source !== null) {
-          var nextKey = void 0;
-
-          for (nextKey in source) {
-            if (source.hasOwnProperty(nextKey)) {
-              output[nextKey] = source[nextKey];
-            }
-          }
-        }
-      });
-    }
-
-    return output;
-  };
-}
-
-var assign$1 = assign;
-
-var includes = void 0;
-
-if (!Array.prototype.includes) {
-  includes = function includes(array, searchElement) {
-    var ObjectifiedArray = Object(array);
-    var length = parseInt(ObjectifiedArray.length, 10) || 0;
-
-    if (length === 0) {
-      return false;
-    }
-
-    var startIndex = parseInt(arguments[2], 10) || 0;
-    var index = void 0;
-
-    if (startIndex >= 0) {
-      index = startIndex;
-    } else {
-      index = length + startIndex;
-
-      if (index < 0) {
-        index = 0;
-      }
-    }
-
-    while (index < length) {
-      var currentElement = ObjectifiedArray[index];
-
-      /* eslint no-self-compare:0 */
-      if (searchElement === currentElement || searchElement !== searchElement && currentElement !== currentElement) {
-        // NaN !== NaN
-        return true;
-      }
-      index++;
-    }
-
-    return false;
-  };
-} else {
-  includes = function includes(array) {
-    var args = [].slice.call(arguments, 1);
-
-    return Array.prototype.includes.apply(array, args);
-  };
-}
-
-var includes$1 = includes;
-
-function wrap(func, superFunc) {
-  function superWrapper() {
-    var originalSuper = this['super'];
-
-    this['super'] = function () {
-      return superFunc.apply(this, arguments);
-    };
-
-    var ret = func.apply(this, arguments);
-
-    this['super'] = originalSuper;
-
-    return ret;
-  }
-
-  superWrapper.wrappedFunction = func;
-
-  return superWrapper;
-}
-
-function defineProperties(names, proto, destination) {
-  var parentProto = Object.getPrototypeOf(destination);
-
-  names.forEach(function (name) {
-    var descriptor = Object.getOwnPropertyDescriptor(proto, name);
-    var parentDescriptor = parentProto.hasOwnProperty(name) && Object.getOwnPropertyDescriptor(parentProto, name);
-
-    if (typeof parentDescriptor.value === 'function' && typeof descriptor.value === 'function') {
-      var wrappedFunction = wrap(descriptor.value, parentDescriptor.value);
-
-      Object.defineProperty(destination, name, { value: wrappedFunction });
-    } else {
-      Object.defineProperty(destination, name, descriptor);
-    }
-  });
-}
-
-function createClass(props) {
-  var parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Object;
-
-  var Constructor = wrap(props.constructor, parent);
-  var instancePropertyNames = Object.getOwnPropertyNames(props).filter(function (key) {
-    return !includes$1(['constructor', 'static'], key);
-  });
-
-  assign$1(Constructor, parent);
-
-  Constructor.prototype = Object.create(parent.prototype);
-  defineProperties(instancePropertyNames, props, Constructor.prototype);
-  Constructor.prototype.constructor = Constructor;
-
-  var staticProps = props['static'];
-
-  if (staticProps) {
-    var staticPropertyNames = Object.getOwnPropertyNames(staticProps);
-
-    defineProperties(staticPropertyNames, staticProps, Constructor);
-  }
-
-  return Constructor;
-}
-
-var CoreObject = createClass({
-  constructor: function constructor() {},
-
-
-  'static': {
-    extend: function extend(subClassProps) {
-      return createClass(subClassProps, this);
-    }
-  }
-});
-
-function wrapConsole(logCommand) {
-  var logMethod = function logMethod() {
-    var log = void 0;
-
-    /* eslint-disable no-console */
-    if (console[logCommand]) {
-      log = Function.prototype.bind.call(console[logCommand], console);
-    } else {
-      log = Function.prototype.bind.call(console.log, console);
-    }
-    log.apply(undefined, arguments);
-    /* eslint-enable no-console */
-  };
-
-  return function () {
-    var args = [].concat(Array.prototype.slice.call(arguments));
-
-    args.unshift('[JS-BUY-SDK]: ');
-    logMethod.apply(undefined, _toConsumableArray(args));
-  };
-}
-
-var Logger = CoreObject.extend({
-  /**
-   * Wrapper around the console log so in the future we can have better dev output.
-   * Also allows us to disable output in production.
-   * @private
-   * @class Logger
-   * @constructor
-   */
-  constructor: function constructor() {},
-
-  debug: wrapConsole('debug'),
-  info: wrapConsole('info'),
-  warn: wrapConsole('warn'),
-  error: wrapConsole('error')
-});
-
-var logger = new Logger();
-
-var Config = CoreObject.extend({
-  constructor: function constructor(attrs) {
-    var _this = this;
-
-    Object.keys(this.deprecatedProperties).forEach(function (key) {
-      if (attrs.hasOwnProperty(key)) {
-        var transformName = _this.deprecatedProperties[key];
-        var transform = _this[transformName];
-
-        transform(attrs[key], attrs);
-      }
-    });
-    this.requiredProperties.forEach(function (key) {
-      if (!attrs.hasOwnProperty(key)) {
-        throw new Error('new Config() requires the option \'' + key + '\'');
-      } else {
-        _this[key] = attrs[key];
-      }
-    });
-    this.optionalProperties.forEach(function (key) {
-      if (attrs.hasOwnProperty(key)) {
-        _this[key] = attrs[key];
-      }
-    });
-  },
-
-
-  /**
-   * An object with keys for deprecated properties and values as functions that
-   * will transform the value into a usable value. A depracation transform should
-   * have the value signature function(deprecated_value, config_to_be_transformed)
-   * @attribute deprecatedProperties
-   * @default { apiKey: this.transformApiKey, myShopifyDomain: this.transformMyShopifyDomain }
-   * @type Object
-   * @private
-   */
-  deprecatedProperties: {
-    apiKey: 'transformApiKey',
-    myShopifyDomain: 'transformMyShopifyDomain'
-  },
-
-  /**
-   * Transform the myShopifyDomain config to a domain config.
-   * @method transformMyShopifyDomain
-   * @static
-   * @private
-   * @param {String} subdomain The original subdomain on myshopify.com
-   * @param {Object} attrs. The config attributes to be transformed to a
-   * non-deprecated state.
-   * @return {Object} the transformed config attributes.
-   */
-  transformMyShopifyDomain: function transformMyShopifyDomain(subdomain, attrs) {
-    logger.warn('Config - ', 'myShopifyDomain is deprecated, please use domain and provide the full shop domain.');
-    attrs.domain = subdomain + '.myshopify.com';
-  },
-
-
-  /**
-   * Transform the apiKey config to an accessToken config.
-   * @method transformApiKey
-   * @static
-   * @private
-   * @param {String} apiKey The original api key
-   * @param {Object} attrs. The config attributes to be transformed to a
-   * non-deprecated state.
-   * @return {Object} the transformed config attributes.
-   */
-  transformApiKey: function transformApiKey(apiKey, attrs) {
-    logger.warn('Config - ', 'apiKey is deprecated, please use accessToken instead.');
-    attrs.accessToken = apiKey;
-  },
-
-
-  /**
-   * Properties that must be set on initializations
-   * @attribute requiredProperties
-   * @default ['accessToken', 'appId', 'myShopifyDomain']
-   * @type Array
-   * @private
-   */
-  requiredProperties: ['accessToken', 'appId', 'domain'],
-
-  /**
-   * Properties that may be set on initializations
-   * @attribute optionalProperties
-   * @default ['ajaxHeaders']
-   * @type Array
-   * @private
-   */
-  optionalProperties: ['ajaxHeaders'],
-
-  /**
-   * The accessToken for authenticating against shopify. This is your api client's
-   * storefront access token. Not the shared secret. Set during initialization.
-   * @attribute accessToken
-   * @default ''
-   * @type String
-   * @private
-   */
-  accessToken: '',
-
-  /**
-   * The apiKey for authenticating against shopify. This is your api client's
-   * public api token. Not the shared secret. Set during initialization.
-   * @attribute apiKey
-   * @default ''
-   * @type String
-   * @private
-   * @deprecated Use `config.accessToken` instead.
-   */
-  apiKey: '',
-
-  /**
-   * @attribute appId
-   * @default ''
-   * @type String
-   * @private
-   */
-  appId: '',
-
-  /**
-   * The domain that all the api requests will go to
-   * @attribute domain
-   * @default ''
-   * @type String
-   * @private
-   */
-  domain: '',
-
-  /**
-   * The subdomain of myshopify.io that all the api requests will go to
-   * @attribute myShopifyDomain
-   * @default ''
-   * @type String
-   * @private
-   * @deprecated Use `config.domain` instead.
-   */
-  myShopifyDomain: '',
-
-  /**
-   * @attribute ajaxHeaders
-   * @default {}
-   * @type Object
-   * @private
-   */
-  ajaxHeaders: {}
-});
-
-var version = 'v0.7.1-66ba4e4'; // eslint-disable-line
-
-var BaseModel = CoreObject.extend({
-  constructor: function constructor() {
-    var attrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var metaAttrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    this.attrs = attrs;
-
-    assign$1(this, metaAttrs);
-  },
-
-  attrs: null,
-  serializer: null,
-  adapter: null,
-  shopClient: null
-});
-
-/**
-  * Class for product option
-  * @class ProductOptionModel
-  * @constructor
-*/
-var ProductOptionModel = BaseModel.extend(Object.defineProperties({
-  constructor: function constructor() {
-    this['super'].apply(this, arguments);
-
-    this.selected = this.values[0];
-  }
-}, {
-  name: {
-
-    /**
-      * name of option. Example values: `"Size"`, `"Color"`, etc.
-      * @property name
-      * @readOnly
-      * @type String
-    */
-    get: function get() {
-      return this.attrs.name;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  values: {
-
-    /**
-      * an Array possible values for option. For instance if this option is a "Size" option an example value
-      * for values could be: `["Large", "Medium", "Small"]`
-      *
-      * @property values
-      * @readOnly
-      * @type Array
-    */
-    get: function get() {
-      return this.attrs.values;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  selected: {
-
-    /**
-      * get/set the currently selected option value with one of the values from the
-      * {{#crossLink "ProductOptionModel/values"}}ProductOptionModel.values{{/crossLink}} array. For
-      * instance if the option values array had the following `["Large", "Medium", "Small"]` setting `selected` to be
-      * `"Large"`, `"Medium"`, or `"Small"` would be valid any other value would throw an `Error`.
-      *
-      * @property selected
-      * @type String
-    */
-    get: function get() {
-      return this._selected;
-    },
-    set: function set(value) {
-      if (includes$1(this.values, value)) {
-        this._selected = value;
-      } else {
-        throw new Error('Invalid option selection for ' + this.name + '.');
-      }
-
-      return value;
-    },
-    configurable: true,
-    enumerable: true
-  }
-}));
-
-var variants = [{ name: 'pico', dimension: '16x16' }, { name: 'icon', dimension: '32x32' }, { name: 'thumb', dimension: '50x50' }, { name: 'small', dimension: '100x100' }, { name: 'compact', dimension: '160x160' }, { name: 'medium', dimension: '240x240' }, { name: 'large', dimension: '480x480' }, { name: 'grande', dimension: '600x600' }, { name: '1024x1024', dimension: '1024x1024' }, { name: '2048x2048', dimension: '2048x2048' }];
-
-/**
-* Class for image model
-* @class ImageModel
-*/
-var ImageModel = CoreObject.extend(Object.defineProperties({
-  constructor: function constructor(attrs) {
-    var _this2 = this;
-
-    Object.keys(attrs).forEach(function (key) {
-      _this2[key] = attrs[key];
-    });
-  }
-}, {
-  variants: {
-
-    /**
-      * Image variants available for an image. An example value of `imageVariant`:
-      * ```
-      * [
-      *   {
-      *     "name": "pico",
-      *     "dimensions": "16x16",
-      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_pico.jpg?v=1469046423"
-      *   },
-      *   {
-      *     "name": "compact",
-      *     "dimensions": "160x160",
-      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_compact.jpg?v=1469046423"
-      *   }
-      * ]
-      * ```
-      *
-      * @attribute variants
-      * @type {Array}
-    */
-    get: function get() {
-      var src = this.src;
-      var extensionIndex = src.lastIndexOf('.');
-      var pathAndBasename = src.slice(0, extensionIndex);
-      var extension = src.slice(extensionIndex);
-
-      variants.forEach(function (variant) {
-        variant.src = pathAndBasename + '_' + variant.name + extension;
-      });
-
-      return variants;
-    },
-    configurable: true,
-    enumerable: true
-  }
-}));
-
-/**
-  * Model for product variant
-  * @class ProductVariantModel
-  * @constructor
-*/
-var ProductVariantModel = BaseModel.extend(Object.defineProperties({
-  constructor: function constructor() {
-    this['super'].apply(this, arguments);
-  },
-
-
-  /**
-    * Get a checkout url for a specific product variant. You can
-    * optionally pass a quantity. If no quantity is passed then quantity
-    * will default to 1. The example below will grab a checkout url for
-    * 3 copies of the first variant:
-    * ```
-    * const checkoutURL = product.variants[ 0 ].checkoutUrl(3);
-    * ```
-    *
-    * @method checkoutUrl
-    * @param {Number} [quantity = 1] quantity of variants
-    * @public
-    * @return {String} Checkout URL
-  */
-  checkoutUrl: function checkoutUrl() {
-    var quantity = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-
-    var config = this.config;
-    var baseUrl = 'https://' + config.domain + '/cart';
-
-    var variantPath = this.id + ':' + parseInt(quantity, 10);
-
-    var query = 'access_token=' + config.accessToken + '&_fd=0';
-
-    return baseUrl + '/' + variantPath + '?' + query;
-  }
-}, {
-  id: {
-
-    /**
-      * Variant unique ID
-      * @property id
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.variant.id;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  productId: {
-
-    /**
-      * ID of product variant belongs to
-      * @property productId
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.product.id;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  title: {
-
-    /**
-      * Title of variant
-      * @property title
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.variant.title;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  productTitle: {
-
-    /**
-      * Title of product variant belongs to
-      * @property productTitle
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.product.title;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  compareAtPrice: {
-
-    /**
-      * Compare at price for variant. The `compareAtPrice` would be
-      * the price of the product previously before the product went on sale. For more info
-      * go <a href="https://docs.shopify.com/manual/products/promoting-marketing/sales" target="_blank">here</a>.
-      *
-      * If no `compareAtPrice` is set then this value will be `null`. An example value: `"5.00"`
-      * @property compareAtPrice
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.variant.compare_at_price;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  price: {
-
-    /**
-      * Price of the variant. The price will be in the following form: `"10.00"`
-      *
-      * @property price
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.variant.price;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  formattedPrice: {
-
-    /**
-      * Price of variant, formatted according to shop currency format string.
-      * For instance `"$10.00"`
-      *
-      * @property formattedPrice
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.variant.formatted_price;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  grams: {
-
-    /**
-      * Variant weight in grams. If no weight is defined grams will be `0`.
-      * @property grams
-      * @type {Number}
-    */
-    get: function get() {
-      return this.attrs.variant.grams;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  optionValues: {
-
-    /**
-      * Option values associated with this variant. Example `optionValues`:
-      * ```
-      * [
-      *   {
-      *     "name": "Size",
-      *     "option_id": 9165336518,
-      *     "value": "small"
-      *   },
-      *   {
-      *     "name": "Color",
-      *     "option_id": 9640532358,
-      *     "value": "blue"
-      *   }
-      * ]
-      * ````
-      *
-      * @property optionValues
-      * @type {Array|Object}
-    */
-    get: function get() {
-      return this.attrs.variant.option_values;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  available: {
-
-    /**
-      * Variant in stock. Always `true` if inventory tracking is disabled.
-      * @property available
-      * @type {Boolean}
-    */
-    get: function get() {
-      return this.attrs.variant.available;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  image: {
-
-    /**
-      * Image for variant. An example image `Object`:
-      * ```
-      * {
-      *   created_at: "2016-08-29T12:35:09-04:00",
-      *   id: 17690553350,
-      *   position: 1,
-      *   product_id: 8291029446,
-      *   src: "https://cdn.shopify.com/s/files/1/1019/0495/products/i11_c3334325-2d67-4623-8cd4-0a6b08aa1b83.jpg?v=1472488509",
-      *   updated_at: "2016-08-29T12:35:09-04:00",
-      *   variant_ids: [ 27690103238 ]
-      * }
-      * ```
-      *
-      * @property image
-      * @type {Object}
-    */
-    get: function get() {
-      var id = this.id;
-      var images = this.attrs.product.images;
-
-      var primaryImage = images[0];
-      var variantImage = images.filter(function (image) {
-        return image.variant_ids.indexOf(id) !== -1;
-      })[0];
-
-      var image = variantImage || primaryImage;
-
-      if (!image) {
-        return null;
-      }
-
-      return new ImageModel(image);
-    },
-    configurable: true,
-    enumerable: true
-  },
-  imageVariants: {
-
-    /**
-      * Image variants available for a variant. An example value of `imageVariant`:
-      * ```
-      * [
-      *   {
-      *     "name": "pico",
-      *     "dimensions": "16x16",
-      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_pico.jpg?v=1469046423"
-      *   },
-      *   {
-      *     "name": "compact",
-      *     "dimensions": "160x160",
-      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_compact.jpg?v=1469046423"
-      *   }
-      * ]
-      * ```
-      *
-      * @property imageVariant
-      * @type {Array}
-    */
-    get: function get() {
-      if (!this.image) {
-        return [];
-      }
-
-      return this.image.variants;
-    },
-    configurable: true,
-    enumerable: true
-  }
-}));
-
-var uniq = function uniq(array) {
-  return array.reduce(function (uniqueArray, item) {
-    if (uniqueArray.indexOf(item) < 0) {
-      uniqueArray.push(item);
-    }
-
-    return uniqueArray;
-  }, []);
-};
-
-var NO_IMAGE_URI = 'https://widgets.shopifyapps.com/assets/no-image.svg';
-
-/**
-   * Class for products returned by fetch('product')
-   * @class ProductModel
-   * @constructor
- */
-var ProductModel = BaseModel.extend(Object.defineProperties({
-  constructor: function constructor() {
-    this['super'].apply(this, arguments);
-  }
-}, {
-  id: {
-
-    /**
-      * Product unique ID
-      *
-      * @property id
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.product_id;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  title: {
-
-    /**
-      * The product title
-      * @property title
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.title;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  description: {
-
-    /**
-      * A product description.
-      * @property description
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.body_html;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  images: {
-
-    /**
-      * An `Array` of `Objects` that contain meta data about an image including `src` of the images.
-      *
-      * An example image `Object`:
-      * ```
-      * {
-      *   created_at: "2016-08-29T12:35:09-04:00",
-      *   id: 17690553350,
-      *   position: 1,
-      *   product_id: 8291029446,
-      *   src: "https://cdn.shopify.com/s/files/1/1019/0495/products/i11_c3334325-2d67-4623-8cd4-0a6b08aa1b83.jpg?v=1472488509",
-      *   updated_at: "2016-08-29T12:35:09-04:00",
-      *   variant_ids: [ 27690103238 ]
-      * }
-      * ```
-      * @property images
-      * @type {Array} array of image objects.
-    */
-    get: function get() {
-      return this.attrs.images.map(function (image) {
-        return new ImageModel(image);
-      });
-    },
-    configurable: true,
-    enumerable: true
-  },
-  memoized: {
-    get: function get() {
-      this._memoized = this._memoized || {};
-
-      return this._memoized;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  options: {
-
-    /**
-     *  Get an array of {{#crossLink "ProductOptionModel"}}ProductOptionModels{{/crossLink}}.
-     *  {{#crossLink "ProductOptionModel"}}ProductOptionModels{{/crossLink}} can be used to
-     *  define the currently `selectedVariant` from which you can get a checkout url
-     *  ({{#crossLink "ProductVariantModel/checkoutUrl"}}ProductVariantModel.checkoutUrl{{/crossLink}}) or can
-     *  be added to a cart ({{#crossLink "CartModel/createLineItemsFromVariants"}}CartModel.createLineItemsFromVariants{{/crossLink}}).
-     *
-     *  Below is an example on how to create html for option selections:
-     * ```javascript
-     *  // the following will create an Array of HTML to create multiple select inputs
-     *  // global callbacks are also created which will set the option as selected
-     *  var elements = product.options.map(function(option) {
-     *    // we'll create a callback in global scope
-     *    // which will be called when the select's value changes
-     *    var callBackName = option.name + 'onChange';
-     *    window[ callBackName ] = function(select) {
-     *      // set the products option to be selected
-     *      option.selected = select.value;
-     *    };
-     *
-     *    // return a string which will be HTML for the select
-     *    return '<select name="' + option.name + '" onchange="'callBackName'(this)">' + option.values.map(function(value) {
-     *      return '<option value="' + value + '">' + value + '</option>';
-     *    }) + '</select>';
-     *  });
-     * ```
-     *
-     * @property options
-     * @type {Array|ProductOptionModel}
-     */
-    get: function get() {
-      if (this.memoized.options) {
-        return this.memoized.options;
-      }
-
-      var baseOptions = this.attrs.options;
-      var variants$$1 = this.variants;
-
-      this.memoized.options = baseOptions.map(function (option) {
-        var name = option.name;
-
-        var dupedValues = variants$$1.reduce(function (valueList, variant) {
-          var optionValueForOption = variant.optionValues.filter(function (optionValue) {
-            return optionValue.name === option.name;
-          })[0];
-
-          valueList.push(optionValueForOption.value);
-
-          return valueList;
-        }, []);
-
-        var values = uniq(dupedValues);
-
-        return new ProductOptionModel({ name: name, values: values });
-      });
-
-      return this.memoized.options;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  variants: {
-
-    /**
-      * An `Array` of {{#crossLink "ProductVariantModel"}}ProductVariantModel's{{/crossLink}}
-      * @property variants
-      * @type {Array|ProductVariantModel} array of ProductVariantModel instances.
-    */
-    get: function get() {
-      var _this3 = this;
-
-      return this.attrs.variants.map(function (variant) {
-        return new ProductVariantModel({ variant: variant, product: _this3 }, { config: _this3.config });
-      });
-    },
-    configurable: true,
-    enumerable: true
-  },
-  selections: {
-
-    /**
-      * A read only `Array` of Strings represented currently selected option values. eg. `["Large", "Red"]`
-      * @property selections
-      * @type {Array | String}
-    */
-    get: function get() {
-      return this.options.map(function (option) {
-        return option.selected;
-      });
-    },
-    configurable: true,
-    enumerable: true
-  },
-  selectedVariant: {
-
-    /**
-      * Retrieve variant for currently selected options. By default the first value in each
-      * option is selected which means `selectedVariant` will never be `null`.
-      *
-      * With a `selectedVariant` you can create checkout url
-      * ({{#crossLink "ProductVariantModel/checkoutUrl"}}ProductVariantModel.checkoutUrl{{/crossLink}}) or it can
-      * be added to a cart ({{#crossLink "CartModel/createLineItemsFromVariants"}}CartModel.createLineItemsFromVariants{{/crossLink}}).
-      *
-      * @property selectedVariant
-      * @type {ProductVariantModel}
-    */
-    get: function get() {
-      var variantTitle = this.selections.join(' / ');
-
-      return this.variants.filter(function (variant) {
-        return variant.title === variantTitle;
-      })[0] || null;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  selectedVariantImage: {
-
-    /**
-      * Retrieve image for currently selected variantImage. An example image Object would look like this:
-      * ```
-      * {
-      *   created_at: "2016-08-29T12:35:09-04:00",
-      *   id: 17690553350,
-      *   position: 1,
-      *   product_id: 8291029446,
-      *   src: "https://cdn.shopify.com/s/files/1/1019/0495/products/i11_c3334325-2d67-4623-8cd4-0a6b08aa1b83.jpg?v=1472488509",
-      *   updated_at: "2016-08-29T12:35:09-04:00",
-      *   variant_ids: [ 27690103238 ]
-      * }
-      * ```
-      *
-      * @property selectedVariantImage
-      * @type {Object}
-    */
-    get: function get() {
-      if (!this.selectedVariant) {
-        return null;
-      }
-
-      return this.selectedVariant.image;
-    },
-    configurable: true,
-    enumerable: true
-  }
-}));
-
-var ListingsSerializer = CoreObject.extend({
-  constructor: function constructor(config) {
-    this.config = config;
-  },
-  rootKeyForType: function rootKeyForType(type) {
-    return type.slice(0, -1) + '_listing';
-  },
-
-
-  models: {
-    collections: BaseModel,
-    products: ProductModel
-  },
-
-  modelForType: function modelForType(type) {
-    return this.models[type];
-  },
-  deserializeSingle: function deserializeSingle(type) {
-    var singlePayload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var metaAttrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-    var modelAttrs = singlePayload[this.rootKeyForType(type)];
-    var model = this.modelFromAttrs(type, modelAttrs, metaAttrs);
-
-    return model;
-  },
-  deserializeMultiple: function deserializeMultiple(type) {
-    var _this4 = this;
-
-    var collectionPayload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var metaAttrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-    var models = collectionPayload[this.rootKeyForType(type) + 's'];
-
-    return models.map(function (attrs) {
-      var model = _this4.modelFromAttrs(type, attrs, metaAttrs);
-
-      return model;
-    });
-  },
-  modelFromAttrs: function modelFromAttrs(type, attrs, metaAttrs) {
-    var Model = this.modelForType(type);
-
-    metaAttrs.config = this.config;
-
-    return new Model(attrs, metaAttrs);
-  }
-});
-
-function authToUrl(url, opts) {
-  var authorization = void 0;
-
-  if (opts.headers) {
-    Object.keys(opts.headers).forEach(function (key) {
-      if (key.toLowerCase() === 'authorization') {
-        authorization = opts.headers[key];
-      }
-    });
-  }
-
-  if (authorization) {
-    var hashedKey = authorization.split(' ').slice(-1)[0];
-
-    try {
-      var plainKey = atob(hashedKey);
-
-      var newUrl = void 0;
-
-      if (url.indexOf('?') > -1) {
-        newUrl = url + '&_x_http_authorization=' + plainKey;
-      } else {
-        newUrl = url + '?_x_http_authorization=' + plainKey;
-      }
-
-      return newUrl;
-    } catch (e) {
-      // atob choked on non-encoded data. Therefore, not a form of auth we
-      // support.
-      //
-      // NOOP
-      //
-    }
-  }
-
-  /* eslint newline-before-return: 0 */
-  return url;
-}
-
-function ie9Ajax(method, url, opts) {
-  return new Promise(function (resolve, reject) {
-    var xdr = new XDomainRequest();
-
-    xdr.onload = function () {
-      try {
-        var json = JSON.parse(xdr.responseText);
-
-        resolve({ json: json, originalResponse: xdr, isJSON: true });
-      } catch (e) {
-        resolve({ text: xdr.responseText, originalResponse: xdr, isText: true });
-      }
-    };
-
-    function handleError() {
-      reject(new Error('There was an error with the XDR'));
-    }
-
-    xdr.onerror = handleError;
-    xdr.ontimeout = handleError;
-
-    xdr.open(method, authToUrl(url, opts));
-    xdr.send(opts.data);
-  });
-}
-
-function isNodeLikeEnvironment() {
-  var windowAbsent = typeof window === 'undefined';
-  var requirePresent = "function" === 'function';
-
-  return windowAbsent && requirePresent;
-}
-
-function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  }
-
-  var error = new Error(response.statusText);
-
-  error.status = response.status;
-  error.response = response;
-  throw error;
-}
-
-function parseResponse(response) {
-  return response.json().then(function (json) {
-    return { json: json, originalResponse: response, isJSON: true };
-  })['catch'](function () {
-    var responseClone = response.clone();
-
-    return responseClone.text().then(function (text) {
-      return { text: text, originalResponse: responseClone, isText: true };
-    });
-  });
-}
-
-function ajax(method, url) {
-  var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-  // we need to check that we're not running in Node
-  // before we should check if this is ie9
-  if (!isNodeLikeEnvironment()) {
-    var xhr = new XMLHttpRequest();
-
-    if (!('withCredentials' in xhr)) {
-      return ie9Ajax.apply(undefined, arguments);
-    }
-  }
-
-  opts.method = method;
-  opts.mode = 'cors';
-
-  return fetch(url, opts).then(checkStatus).then(parseResponse);
-}
-
-var ListingsAdapter = CoreObject.extend(Object.defineProperties({
-  ajax: ajax,
-
-  constructor: function constructor(config) {
-    this.config = config;
-  },
-  pathForType: function pathForType(type) {
-    return '/' + type.slice(0, -1) + '_listings';
-  },
-  buildUrl: function buildUrl(singleOrMultiple, type, idOrQuery) {
-    switch (singleOrMultiple) {
-      case 'multiple':
-        return this.buildMultipleUrl(type, idOrQuery);
-      case 'single':
-        return this.buildSingleUrl(type, idOrQuery);
-      default:
-        return '';
-    }
-  },
-  buildMultipleUrl: function buildMultipleUrl(type) {
-    var query = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var url = '' + this.baseUrl + this.pathForType(type);
-    var paramNames = Object.keys(query);
-
-    if (paramNames.length > 0) {
-      var queryString = paramNames.map(function (key) {
-        var value = void 0;
-
-        if (Array.isArray(query[key])) {
-          value = query[key].join(',');
-        } else {
-          value = query[key];
-        }
-
-        return key + '=' + encodeURIComponent(value);
-      }).join('&');
-
-      return url + '?' + queryString;
-    }
-
-    return url;
-  },
-  buildSingleUrl: function buildSingleUrl(type, id) {
-    return '' + this.baseUrl + this.pathForType(type) + '/' + id;
-  },
-  fetchMultiple: function fetchMultiple() /* type, [query] */{
-    var url = this.buildUrl.apply(this, ['multiple'].concat(Array.prototype.slice.call(arguments)));
-
-    return this.ajax('GET', url, { headers: this.headers }).then(function (response) {
-      return response.json;
-    });
-  },
-  fetchSingle: function fetchSingle() /* type, id */{
-    var url = this.buildUrl.apply(this, ['single'].concat(Array.prototype.slice.call(arguments)));
-
-    return this.ajax('GET', url, { headers: this.headers }).then(function (response) {
-      return response.json;
-    });
-  }
-}, {
-  base64AccessToken: {
-    get: function get() {
-      return btoa(this.config.accessToken);
-    },
-    configurable: true,
-    enumerable: true
-  },
-  baseUrl: {
-    get: function get() {
-      var _config = this.config,
-          domain = _config.domain,
-          appId = _config.appId;
-
-
-      return 'https://' + domain + '/api/apps/' + appId;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  headers: {
-    get: function get() {
-      return assign$1({}, {
-        Authorization: 'Basic ' + this.base64AccessToken,
-        'Content-Type': 'application/json',
-        'X-SDK-Variant': 'javascript',
-        'X-SDK-Version': version
-
-      }, this.config.ajaxHeaders);
-    },
-    configurable: true,
-    enumerable: true
-  }
-}));
-
-var GUID_KEY = 'shopify-buy-uuid';
-
-/**
- * A cart stores an Array of `CartLineItemModel`'s in it's `lineItems` property.
- * @class CartLineItemModel
- * @constructor
- */
-var CartLineItemModel = BaseModel.extend(Object.defineProperties({
-  constructor: function constructor() {
-    this['super'].apply(this, arguments);
-  }
-}, {
-  id: {
-
-    /**
-     * A line item ID.
-     * @property id
-     * @readOnly
-     * @type {String}
-     */
-    get: function get() {
-      return this.attrs[GUID_KEY];
-    },
-    configurable: true,
-    enumerable: true
-  },
-  variant_id: {
-
-    /**
-     * ID of line item variant.
-     * @property variant_id
-     * @readOnly
-     * @type {String}
-     */
-    get: function get() {
-      return this.attrs.variant_id;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  product_id: {
-
-    /**
-     * ID of variant's product.
-     * @property product_id
-     * @readOnly
-     * @type {String}
-     */
-    get: function get() {
-      return this.attrs.product_id;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  image: {
-
-    /**
-     * Variant's image.
-     * Example `Object` returned:
-     * ```
-     * {
-     *    "id": 18723183238,
-     *    "created_at": "2016-09-14T17:12:12-04:00",
-     *    "position": 1,
-     *    "updated_at": "2016-09-14T17:12:12-04:00",
-     *    "product_id": 8569911558,
-     *    "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/Mop__three_different_mop_handles.jpg?v=1473887532",
-     *    "variant_ids": []
-     *  }
-     * ```
-     * @property image
-     * @readOnly
-     * @type {Object}
-     */
-    get: function get() {
-      if (!this.attrs.image) {
-        return null;
-      }
-
-      return new ImageModel(this.attrs.image);
-    },
-    configurable: true,
-    enumerable: true
-  },
-  imageVariants: {
-
-    /**
-      * Image variants available for a variant. An example value of `imageVariant`:
-      * ```
-      * [
-      *   {
-      *     "name": "pico",
-      *     "dimensions": "16x16",
-      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_pico.jpg?v=1469046423"
-      *   },
-      *   {
-      *     "name": "compact",
-      *     "dimensions": "160x160",
-      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_compact.jpg?v=1469046423"
-      *   }
-      * ]
-      * ```
-      *
-      * @property imageVariant
-      * @type {Array}
-    */
-    get: function get() {
-      if (!this.image) {
-        return [];
-      }
-
-      return this.image.variants;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  title: {
-
-    /**
-     * Product title of variant's parent product.
-     * @property title
-     * @readOnly
-     * @type {String}
-     */
-    get: function get() {
-      return this.attrs.title;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  quantity: {
-
-    /**
-     * Count of variants to order.
-     * @property quantity
-     * @type {Number}
-     */
-    get: function get() {
-      return this.attrs.quantity;
-    },
-    set: function set(value) {
-      var parsedValue = parseInt(value, 10);
-
-      if (parsedValue < 0) {
-        throw new Error('Quantities must be positive');
-      } else if (parsedValue !== parseFloat(value)) {
-        /* incidentally, this covers all NaN values, because NaN !== Nan */
-        throw new Error('Quantities must be whole numbers');
-      }
-
-      this.attrs.quantity = parsedValue;
-
-      return this.attrs.quantity;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  properties: {
-
-    /**
-     * Customization information for a product.
-     * <a href="https://help.shopify.com/themes/customization/products/get-customization-information-for-products" target="_blank">
-     * See here for more info
-     * </a>.
-     * @property properties
-     * @type {Object}
-     * @private
-     */
-    get: function get() {
-      return this.attrs.properties || {};
-    },
-    set: function set(value) {
-      this.attrs.properties = value || {};
-
-      return value;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  variant_title: {
-
-    /**
-     * Title of variant.
-     * @property variant_title
-     * @readOnly
-     * @type {String}
-     */
-    get: function get() {
-      return this.attrs.variant_title;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  price: {
-
-    /**
-     * Price of the variant. For example: `"5.00"`.
-     * @property price
-     * @readOnly
-     * @type {String}
-     */
-    get: function get() {
-      return this.attrs.price;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  compare_at_price: {
-
-    /**
-      * Compare at price for variant. The `compareAtPrice` would be
-      * the price of the product previously before the product went on sale. For more info
-      * go <a href="https://docs.shopify.com/manual/products/promoting-marketing/sales" target="_blank">here</a>.
-      *
-      * If no `compareAtPrice` is set then this value will be `null`. An example value: `"5.00"`.
-      * @property compareAtPrice
-      * @readOnly
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs.compare_at_price;
-    },
-    configurable: true,
-    enumerable: true
-  },
-  line_price: {
-
-    /**
-     * The total price for this line item. For instance if the variant costs `1.50` and you have a quantity
-     * of 2 then `line_price` will be `3.00`.
-     * @property line_price
-     * @readOnly
-     * @type {String}
-     */
-    get: function get() {
-      return (this.quantity * parseFloat(this.price)).toFixed(2);
-    },
-    configurable: true,
-    enumerable: true
-  },
-  grams: {
-
-    /**
-     * Variant's weight in grams. If no weight is set then `0` is returned.
-     * @property grams
-     * @readOnly
-     * @type {Number}
-     */
-    get: function get() {
-      return this.attrs.grams;
-    },
-    configurable: true,
-    enumerable: true
-  }
-}));
-
-/* eslint no-undefined: 0 complexity: 0 */
-var GUID_PREFIX = 'shopify-buy.' + Date.now();
-
-var GUID_DESC = {
-  writable: true,
-  configurable: true,
-  enumerable: true,
-  value: null
-};
-
-var uuidSeed = 0;
-
-function uuid() {
-  return ++uuidSeed;
-}
-
-var numberCache = {};
-var stringCache = {};
-
-function setGuidFor(obj) {
-  if (obj && obj[GUID_KEY]) {
-    return obj[GUID_KEY];
-  }
-
-  if (obj === undefined) {
-    return '(undefined)';
-  }
-
-  if (obj === null) {
-    return '(null)';
-  }
-
-  var type = typeof obj === 'undefined' ? 'undefined' : _typeof(obj);
-  var id = void 0;
-
-  switch (type) {
-    case 'number':
-      id = numberCache[obj];
-
-      if (!id) {
-        id = numberCache[obj] = 'nu' + obj;
-      }
-
-      break;
-
-    case 'string':
-      id = stringCache[obj];
-
-      if (!id) {
-        id = stringCache[obj] = 'st' + uuid();
-      }
-
-      break;
-
-    case 'boolean':
-      if (obj) {
-        id = '(true)';
-      } else {
-        id = '(false)';
-      }
-
-      break;
-
-    default:
-      if (obj === Object) {
-        id = '(Object)';
-        break;
-      }
-
-      if (obj === Array) {
-        id = '(Array)';
-        break;
-      }
-
-      id = GUID_PREFIX + '.' + uuid();
-
-      if (obj[GUID_KEY] === null) {
-        obj[GUID_KEY] = id;
-      } else {
-        GUID_DESC.value = id;
-        Object.defineProperty(obj, GUID_KEY, GUID_DESC);
-      }
-  }
-
-  return id;
-}
-
-/* global global */
-
-var globalNamespace = void 0;
-
-if (typeof global === 'undefined') {
-  globalNamespace = window;
-} else {
-  globalNamespace = global;
-}
-
-function set(key, value) {
-  if (!globalNamespace[key]) {
-    globalNamespace[key] = value;
-  }
-}
-
-function get(key) {
-  return globalNamespace[key];
-}
-
-var globalVars = { set: set, get: get };
-
-function objectsEqual(one, two) {
-  if (one === two) {
-    return true;
-  }
-
-  return Object.keys(one).every(function (key) {
-    if (one[key] instanceof Date) {
-      return one[key].toString() === two[key].toString();
-    } else if (_typeof(one[key]) === 'object') {
-      return objectsEqual(one[key], two[key]);
-    }
-
-    return one[key] === two[key];
-  });
-}
-
-/**
-* Class for cart model
-* @class CartModel
-*/
-var CartModel = BaseModel.extend(Object.defineProperties({
-  constructor: function constructor() {
-    this['super'].apply(this, arguments);
-  },
-
-
-  /**
-    * Add items to the cart. Updates cart's `lineItems` based on variants passed in.
-    * ```javascript
-    * cart.addVariants({variant: variantObject, quantity: 1}).then(cart => {
-    *   // the cart has created line items
-    * });
-    * ```
-    * @deprecated `createLineItemsFromVariants` will be used in the future as it's more descriptive
-    * @method addVariants
-    * @param {Object} item - One or more variants
-    * @param {ProductVariantModel} item.variant - variant object
-    * @param {Number} item.quantity - quantity
-    * @param {Object} [moreItems...] - further objects defining `variant` and `quantity` maybe passed in
-    * @private
-    * @return {Promise|CartModel} - the cart instance.
-  */
-  addVariants: function addVariants() {
-    logger.warn('CartModel - ', 'addVariants is deprecated, please use createLineItemsFromVariants instead');
-
-    return this.createLineItemsFromVariants.apply(this, arguments);
-  },
-
-
-  /**
-    * Add items to the cart. Updates cart's `lineItems` based on variants passed in.
-    * ```javascript
-    * cart.createLineItemsFromVariants({variant: variantObject, quantity: 1}).then(cart => {
-    *   // the cart has created line items
-    * });
-    * ```
-    * @method createLineItemsFromVariants
-    * @param {Object} item - One or more variants
-    * @param {ProductVariantModel} item.variant - variant object
-    * @param {Number} item.quantity - quantity
-    * @param {Object} [moreItems...] - further objects defining `variant` and `quantity` maybe passed in
-    * @public
-    * @return {Promise|CartModel} - the cart instance.
-  */
-  createLineItemsFromVariants: function createLineItemsFromVariants() {
-    var newLineItems = [].concat(Array.prototype.slice.call(arguments)).map(function (item) {
-      var lineItem = {
-        image: item.variant.image,
-        image_variants: item.variant.imageVariants,
-        variant_id: item.variant.id,
-        product_id: item.variant.productId,
-        title: item.variant.productTitle,
-        quantity: parseInt(item.quantity, 10),
-        properties: item.properties || {},
-        variant_title: item.variant.title,
-        price: item.variant.price,
-        compare_at_price: item.variant.compareAtPrice,
-        grams: item.variant.grams
-      };
-
-      setGuidFor(lineItem);
-
-      return lineItem;
-    });
-    var existingLineItems = this.attrs.line_items;
-
-    existingLineItems.push.apply(existingLineItems, _toConsumableArray(newLineItems));
-
-    var dedupedLineItems = existingLineItems.reduce(function (itemAcc, item) {
-      var matchingItem = itemAcc.filter(function (existingItem) {
-        return existingItem.variant_id === item.variant_id && objectsEqual(existingItem.properties, item.properties);
-      })[0];
-
-      if (matchingItem) {
-        matchingItem.quantity = matchingItem.quantity + item.quantity;
-      } else {
-        itemAcc.push(item);
-      }
-
-      return itemAcc;
-    }, []);
-
-    // Users may pass negative numbers and remove items. This ensures there's no
-    // item with a quantity of zero or less.
-    this.attrs.line_items = dedupedLineItems.reduce(function (itemAcc, item) {
-      if (item.quantity >= 1) {
-        itemAcc.push(item);
-      }
-
-      return itemAcc;
-    }, []);
-
-    return this.updateModel();
-  },
-
-
-  /**
-    * Update a line item quantity based on line item id
-    * ```javascript
-    * // This example changes the quantity for the first line item to 2
-    * const firstLineItemId = cart.lineItems[0].id;
-    *
-    * cart.updateLineItem(firstLineItemId, 2).then(cart => {
-    *   // the cart has updated the line item
-    * });
-    * ```
-    * @method updateLineItem
-    * @param {String} id - line item ID
-    * @param {Number} quantity - new quantity for line item
-    * @throws {Error} if line item with ID is not in cart.
-    * @public
-    * @return {Promise|CartModel} - the cart instance
-  */
-  updateLineItem: function updateLineItem(id, quantity) {
-    if (quantity < 1) {
-      return this.removeLineItem(id);
-    }
-
-    var lineItem = this.lineItems.filter(function (item) {
-      return item.id === id;
-    })[0];
-
-    if (lineItem) {
-      lineItem.quantity = quantity;
-
-      return this.updateModel();
-    }
-
-    return new Promise(function (resolve, reject) {
-      reject(new Error('line item with id: ' + id + ' not found in cart#' + this.id));
-    });
-  },
-
-
-  /**
-    * Remove a line item from cart based on line item id
-    * ```javascript
-    * // This example removes the first line item
-    * const firstLineItemId = cart.lineItems[0].id;
-    *
-    * cart.removeLineItem(firstLineItemId).then(cart => {
-    *   // the cart has removed the line item
-    * });
-    * ```
-    *
-    * @method removeLineItem
-    * @param {String} id - line item ID
-    * @throws {Error} if line item with ID is not in cart.
-    * @public
-    * @return {Promise|CartModel} - the cart instance
-  */
-  removeLineItem: function removeLineItem(id) {
-    var oldLength = this.lineItems.length;
-    var newLineItems = this.lineItems.filter(function (item) {
-      return item.id !== id;
-    });
-    var newLength = newLineItems.length;
-
-    if (newLength < oldLength) {
-      this.attrs.line_items = newLineItems.map(function (item) {
-        return item.attrs;
-      });
-
-      return this.updateModel();
-    }
-
-    return new Promise(function (resolve, reject) {
-      reject(new Error('line item with id: ' + id + ' not found in cart#' + this.id));
-    });
-  },
-
-
-  /**
-    * Remove all line items from cart
-    * ```javascript
-    * // This example removes all line items from the cart
-    * cart.clearLineItems().then(cart => {
-    *   // the cart has removed all line items
-    * });
-    * @method clearLineItems
-    * @public
-    * @return {Promise|CartModel} - the cart instance
-  */
-  clearLineItems: function clearLineItems() {
-    this.attrs.line_items = [];
-
-    return this.updateModel();
-  },
-
-
-  /**
-    * Force update of cart model on server. This function will only be used in advanced situations and does not need to be called
-    * explicitly to update line items. It is automatically called after
-    * {{#crossLink "CartModel/createLineItemsFromVariants"}}{{/crossLink}},
-    * {{#crossLink "CartModel/updateLineItem"}}{{/crossLink}},
-    * {{#crossLink "CartModel/removeLineItem"}}{{/crossLink}},
-    * and {{#crossLink "CartModel/removeLineItem"}}{{/crossLink}}
-    *
-    * @method updateModel
-    * @public
-    * @return {Promise|CartModel} - the cart instance
-  */
-  updateModel: function updateModel() {
-    var _this5 = this;
-
-    return this.shopClient.update('carts', this).then(function (updateCart) {
-      assign$1(_this5.attrs, updateCart.attrs);
-
-      return _this5;
-    });
-  }
-}, {
-  id: {
-
-    /**
-      * get ID for current cart
-      * @property id
-      * @readOnly
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs[GUID_KEY];
-    },
-    configurable: true,
-    enumerable: true
-  },
-  lineItems: {
-
-    /**
-      * Get an `Array` of {{#crossLink "CartLineItemModel"}}CartLineItemModel's{{/crossLink}}
-      * @property lineItems
-      * @readOnly
-      * @type {Array}
-    */
-    get: function get() {
-      return (this.attrs.line_items || []).map(function (item) {
-        return new CartLineItemModel(item);
-      });
-    },
-    configurable: true,
-    enumerable: true
-  },
-  lineItemCount: {
-
-    /**
-      * Gets the total quantity of all line items. Example: you've added two variants with quantities 3 and 2. `lineItemCount` will be 5.
-      * @property lineItemCount
-      * @readOnly
-      * @type {Number}
-    */
-    get: function get() {
-      return this.lineItems.reduce(function (total, item) {
-        return total + item.quantity;
-      }, 0);
-    },
-    configurable: true,
-    enumerable: true
-  },
-  subtotal: {
-
-    /**
-      * Get current subtotal price for all line items. Example: two items have been added to the cart that cost $1.25
-      * then the subtotal will be `2.50`
-      *
-      * @property subtotal
-      * @readOnly
-      * @type {String}
-    */
-    get: function get() {
-      var subtotal = this.lineItems.reduce(function (runningTotal, lineItem) {
-        return runningTotal + parseFloat(lineItem.line_price);
-      }, 0);
-
-      return subtotal.toFixed(2);
-    },
-    configurable: true,
-    enumerable: true
-  },
-  checkoutUrl: {
-
-    /**
-      * Get checkout URL for current cart
-      * @property checkoutUrl
-      * @readOnly
-      * @type {String}
-    */
-    get: function get() {
-      var config = this.config;
-      var baseUrl = 'https://' + config.domain + '/cart';
-      var ga = globalVars.get('ga');
-
-      var variantPath = this.lineItems.map(function (item) {
-        return item.variant_id + ':' + item.quantity;
-      });
-
-      var query = 'access_token=' + config.accessToken + '&_fd=0';
-
-      if (typeof ga === 'function') {
-        var linkerParam = void 0;
-
-        ga(function (tracker) {
-          linkerParam = tracker.get('linkerParam');
-        });
-
-        if (linkerParam) {
-          query += '&' + linkerParam;
-        }
-      }
-
-      return baseUrl + '/' + variantPath + '?' + query;
-    },
-    configurable: true,
-    enumerable: true
-  }
-}));
-
-var CartSerializer = CoreObject.extend({
-  constructor: function constructor(config) {
-    this.config = config;
-  },
-  rootKeyForType: function rootKeyForType(type) {
-    return type.slice(0, -1);
-  },
-  modelForType: function modelForType() /* type */{
-    return CartModel;
-  },
-  deserializeSingle: function deserializeSingle(type) {
-    var singlePayload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var metaAttrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-    var modelAttrs = singlePayload[this.rootKeyForType(type)];
-    var model = this.modelFromAttrs(type, modelAttrs, metaAttrs);
-
-    return model;
-  },
-  modelFromAttrs: function modelFromAttrs(type, attrs, metaAttrs) {
-    var Model = this.modelForType(type);
-
-    metaAttrs.config = this.config;
-
-    return new Model(attrs, metaAttrs);
-  },
-  serialize: function serialize(type, model) {
-    var root = this.rootKeyForType(type);
-    var payload = {};
-    var attrs = assign$1({}, model.attrs);
-
-    payload[root] = attrs;
-
-    delete attrs.attributes;
-
-    Object.keys(attrs).forEach(function (key) {
-      var value = attrs[key];
-
-      if (value === null || typeof value === 'string' && value.length === 0) {
-        delete attrs[key];
-      }
-    });
-
-    return payload;
-  }
-});
-
-var ReferenceModel = BaseModel.extend(Object.defineProperties({
-
-  /**
-    * Class for reference model
-    * @private
-    * @class ReferenceModel
-    * @constructor
-  */
-  constructor: function constructor(attrs) {
-    if (Object.keys(attrs).indexOf('referenceId') < 0) {
-      throw new Error('Missing key referenceId of reference. References to null are not allowed');
-    }
-
-    this['super'].apply(this, arguments);
-  }
-}, {
-  id: {
-
-    /**
-      * get the ID for current reference (not what it refers to, but its own unique identifier)
-      * @property id
-      * @type {String}
-    */
-    get: function get() {
-      return this.attrs[GUID_KEY];
-    },
-    configurable: true,
-    enumerable: true
-  },
-  referenceId: {
-    get: function get() {
-      return this.attrs.referenceId;
-    },
-    set: function set(value) {
-      this.attrs.referenceId = value;
-
-      return value;
-    },
-    configurable: true,
-    enumerable: true
-  }
-}));
-
-var ReferenceSerializer = CoreObject.extend({
-  constructor: function constructor(config) {
-    this.config = config;
-  },
-  modelForType: function modelForType() /* type */{
-    return ReferenceModel;
-  },
-  deserializeSingle: function deserializeSingle(type) {
-    var singlePayload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var metaAttrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-    var Model = this.modelForType(type);
-
-    return new Model(singlePayload, metaAttrs);
-  },
-  serialize: function serialize(type, model) {
-    var attrs = assign$1({}, model.attrs);
-
-    return attrs;
-  }
-});
-
-var Store = CoreObject.extend({
-  constructor: function constructor() {
-    this.localStorageAvailable = this.storageAvailable('localStorage');
-    this.cache = {};
-  },
-  setItem: function setItem(key, value) {
-    if (this.localStorageAvailable) {
-      localStorage.setItem(key, JSON.stringify(value));
-    } else {
-      this.cache[key] = value;
-    }
-
-    return value;
-  },
-  getItem: function getItem(key) {
-    if (this.localStorageAvailable) {
-      var stringValue = localStorage.getItem(key);
-
-      try {
-        return JSON.parse(stringValue);
-      } catch (e) {
-        return null;
-      }
-    } else {
-      return this.cache[key] || null;
-    }
-  },
-  storageAvailable: function storageAvailable(type) {
-    try {
-      var storage = globalVars.get(type);
-      var x = '__storage_test__';
-
-      storage.setItem(x, x);
-      storage.removeItem(x);
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-});
-
-var LocalStorageAdapter = CoreObject.extend({
-  constructor: function constructor() {
-    this.store = new Store();
-  },
-  idKeyForType: function idKeyForType() /* type */{
-    return GUID_KEY;
-  },
-  fetchSingle: function fetchSingle(type, id) {
-    var _this6 = this;
-
-    return new Promise(function (resolve, reject) {
-      var value = _this6.store.getItem(_this6.storageKey(type, id));
-
-      if (value === null) {
-        reject(new Error(type + '#' + id + ' not found'));
-
-        return;
-      }
-
-      resolve(value);
-    });
-  },
-  create: function create(type, payload) {
-    var _this7 = this;
-
-    return new Promise(function (resolve) {
-      var id = _this7.identify(payload);
-
-      _this7.store.setItem(_this7.storageKey(type, id), payload);
-      resolve(payload);
-    });
-  },
-  update: function update(type, id, payload) {
-    var _this8 = this;
-
-    return new Promise(function (resolve) {
-      _this8.store.setItem(_this8.storageKey(type, id), payload);
-      resolve(payload);
-    });
-  },
-  storageKey: function storageKey(type, id) {
-    return type + '.' + id;
-  },
-  identify: function identify(payload) {
-    var keys = Object.keys(payload);
-
-    if (keys.length === 1 && _typeof(payload[keys[0]]) === 'object') {
-      return setGuidFor(payload[keys[0]]);
-    }
-
-    return setGuidFor(payload);
-  }
-});
-
-/**
- * @module shopify-buy
- * @submodule shop-client
- */
-
-function fetchFactory(fetchType, type) {
-  var func = void 0;
-
-  switch (fetchType) {
-    case 'all':
-      func = function func() {
-        return this.fetchAll(type);
-      };
-      break;
-    case 'one':
-      func = function func() {
-        return this.fetch.apply(this, [type].concat(Array.prototype.slice.call(arguments)));
-      };
-      break;
-    case 'query':
-      func = function func() {
-        return this.fetchQuery.apply(this, [type].concat(Array.prototype.slice.call(arguments)));
-      };
-      break;
-  }
-
-  return func;
-}
-
-var ShopClient = CoreObject.extend(Object.defineProperties({
-  /**
-   * @class ShopClient
-   * @constructor
-   */
-  constructor: function constructor(config) {
-    this.config = config;
-
-    this.serializers = {
-      products: ListingsSerializer,
-      collections: ListingsSerializer,
-      carts: CartSerializer,
-      references: ReferenceSerializer
-    };
-
-    this.adapters = {
-      products: ListingsAdapter,
-      collections: ListingsAdapter,
-      carts: LocalStorageAdapter,
-      references: LocalStorageAdapter
-    };
-  },
-
-
-  config: null,
-
-  /**
-   * Fetch all of a `type`, returning a promise.
-   *
-   * ```javascript
-   * client.fetchAll('products').then(products => {
-   *   // do things with products
-   * });
-   * ```
-   *
-   * @method fetchAll
-   * @private
-   * @param {String} type The pluralized name of the type, in lower case.
-   * @return {Promise|Array} a promise resolving with an array of `type`
-   */
-  fetchAll: function fetchAll(type) {
-    var _this9 = this;
-
-    var adapter = new this.adapters[type](this.config);
-
-    return adapter.fetchMultiple(type).then(function (payload) {
-      return _this9.deserialize(type, payload, adapter, null, { multiple: true });
-    });
-  },
-
-
-  /**
-   * Fetch one of a `type`, returning a promise.
-   *
-   * ```javascript
-   * client.fetch('products', 123).then(product => {
-   *   // do things with the product
-   * });
-   * ```
-   *
-   * @method fetch
-   * @private
-   * @param {String} type The pluralized name of the type, in lower case.
-   * @param {String|Number} id a unique identifier
-   * @return {Promise|BaseModel} a promise resolving with a single instance of
-   * `type` expressed as a `BaseModel`.
-   */
-  fetch: function fetch(type, id) {
-    var _this10 = this;
-
-    var adapter = new this.adapters[type](this.config);
-
-    return adapter.fetchSingle(type, id).then(function (payload) {
-      return _this10.deserialize(type, payload, adapter, null, { single: true });
-    });
-  },
-
-
-  /**
-   * Fetch many of a `type`, that match `query`
-   *
-   * ```javascript
-   * client.fetchQuery('products', { collection_id: 456 }).then(products => {
-   *   // do things with the products
-   * });
-   * ```
-   *
-   * @method fetchQuery
-   * @private
-   * @param {String} type The pluralized name of the type, in lower case.
-   * @param {Object} query a query sent to the api server.
-   * @return {Promise|Array} a promise resolving with an array of `type`.
-   */
-  fetchQuery: function fetchQuery(type, query) {
-    var _this11 = this;
-
-    var adapter = new this.adapters[type](this.config);
-
-    return adapter.fetchMultiple(type, query).then(function (payload) {
-      return _this11.deserialize(type, payload, adapter, null, { multiple: true });
-    });
-  },
-
-
-  /**
-   * Create an instance of `type`, optionally including `modelAttrs`.
-   *
-   * ```javascript
-   * client.create('carts', { line_items: [ ... ] }).then(cart => {
-   *   // do things with the cart.
-   * });
-   * ```
-   *
-   * @method create
-   * @private
-   * @param {String} type The pluralized name of the type, in lower case.
-   * @param {Object} [modelAttrs={}] attributes representing the internal state
-   * of the model to be persisted.
-   * @return {Promise|CartModel} a promise resolving with a single instance of
-   * `type`
-   */
-  create: function create(type) {
-    var _this12 = this;
-
-    var modelAttrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var adapter = new this.adapters[type](this.config);
-    var serializer = new this.serializers[type](this.config);
-    var Model = serializer.modelForType(type);
-    var model = new Model(modelAttrs, { shopClient: this });
-    var attrs = serializer.serialize(type, model);
-
-    return adapter.create(type, attrs).then(function (payload) {
-      return _this12.deserialize(type, payload, adapter, serializer, { single: true });
-    });
-  },
-
-
-  /**
-   * Create an instance of `type`, optionally including `attrs`.
-   *
-   * ```javascript
-   * client.create('carts', { line_items: [ ... ] }).then(cart => {
-   *   // do things with the cart.
-   * });
-   * ```
-   *
-   * @method update
-   * @private
-   * @param {String} type The pluralized name of the type, in lower case.
-   * @param {BaseModel} updatedModel The model that represents new state to
-   * to persist.
-   * @return {Promise|CartModel} a promise resolving with a single instance of
-   * `type`
-   */
-  update: function update(type, updatedModel) {
-    var _this13 = this;
-
-    var adapter = updatedModel.adapter;
-    var serializer = updatedModel.serializer;
-    var serializedModel = serializer.serialize(type, updatedModel);
-    var id = updatedModel.attrs[adapter.idKeyForType(type)];
-
-    return adapter.update(type, id, serializedModel).then(function (payload) {
-      return _this13.deserialize(type, payload, adapter, serializer, { single: true });
-    });
-  },
-
-
-  /**
-   * Proxy to serializer's deserialize.
-   *
-   * @method deserialize
-   * @private
-   * @param {String} type The pluralized name of the type, in lower case.
-   * @param {Object} payload The raw payload returned by the adapter.
-   * @param {BaseAdapter} adapter The adapter that yielded the payload.
-   * @param {BaseSerializer} existingSerializer The serializer to attach. If
-   * none is passed, then `this.deserialize` will create one for the type.
-   * @param {Object} opts Options that determine which deserialization method to
-   * use.
-   * @param {Boolean} opts.multiple true when the payload represents multiple
-   * models
-   * @param {Boolean} opts.single true when the payload represents one model.
-   * @return {BaseModel} an instance of `type` reified into a model.
-   */
-  deserialize: function deserialize(type, payload, adapter, existingSerializer) {
-    var opts = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-
-    var serializer = existingSerializer || new this.serializers[type](this.config);
-    var meta = { shopClient: this, adapter: adapter, serializer: serializer, type: type };
-    var serializedPayload = void 0;
-
-    if (opts.multiple) {
-      serializedPayload = serializer.deserializeMultiple(type, payload, meta);
-    } else {
-      serializedPayload = serializer.deserializeSingle(type, payload, meta);
-    }
-
-    return serializedPayload;
-  },
-
-
-  /**
-    * Creates a {{#crossLink "CartModel"}}CartModel{{/crossLink}} instance.
-    *
-    * ```javascript
-    * client.createCart().then(cart => {
-    *   // do something with cart
-    * });
-    * ```
-    *
-    * @method createCart
-    * @public
-    * @return {Promise|CartModel} - new cart instance.
-  */
-  createCart: function createCart() {
-    var userAttrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    var baseAttrs = {
-      line_items: []
-    };
-    var attrs = {};
-
-    assign$1(attrs, baseAttrs);
-    assign$1(attrs, userAttrs);
-
-    return this.create('carts', attrs);
-  },
-
-
-  /**
-    * Updates an existing {{#crossLink "CartModel"}}CartModel{{/crossLink}} instance and persists it to localStorage.
-    *
-    * ```javascript
-    * client.createCart().then(cart => {
-    *   cart.lineItems = [
-    *     // ...
-    *   ];
-    *   client.updateCart(cart);
-    * });
-    * ```
-    *
-    * @param {CartModel} updatedCart an updated CartModel
-    * @method updateCart
-    * @private
-    * @return {Promise|CartModel} - updated cart instance.
-  */
-  updateCart: function updateCart(updatedCart) {
-    return this.update('carts', updatedCart);
-  },
-
-
-  /**
-   * Retrieve a previously created cart by its key.
-   *
-   * ```javascript
-   * client.fetchCart('shopify-buy.1459804699118.2').then(cart => {
-   *   console.log(cart); // The retrieved cart
-   * });
-   *
-   * @method fetchCart
-   * @public
-   * @param {String} id The cart's unique identifier
-   * @return {Promise|CartModel} The cart model.
-   *
-   */
-  fetchCart: fetchFactory('one', 'carts'),
-
-  /**
-   * This function will return an `Array` of products from your store
-   * ```
-   * client.fetchAllProducts()
-   * .then(function(products) {
-   *   // all products in store
-   * });
-   * ```
-   *
-   * @method fetchAllProducts
-   * @public
-   * @return {Promise|Array} The product models.
-   */
-  fetchAllProducts: fetchFactory('all', 'products'),
-
-  /**
-   * This function will return an `Array` of collections from your store
-   * ```
-   * client.fetchAllCollections()
-   * .then(function(collections) {
-   *
-   * });
-   * ```
-   *
-   * @method fetchAllCollections
-   * @public
-   * @return {Promise|Array} The collection models.
-   */
-  fetchAllCollections: fetchFactory('all', 'collections'),
-
-  /**
-   * Fetch one product by its ID.
-   *
-   * ```javascript
-   * client.fetchProduct('8569911558').then(product => {
-   *   console.log(product); // The product with an ID of '8569911558'
-   * });
-   * ```
-   *
-   * @method fetchProduct
-   * @public
-   * @param {String|Number} id a unique identifier
-   * @return {Promise|BaseModel} The product model with the specified ID.
-   */
-  fetchProduct: fetchFactory('one', 'products'),
-
-  /**
-   * Fetch one collection by its ID.
-   *
-   * ```javascript
-   * client.fetchCollection('336903494').then(collection => {
-   *   console.log(collection); // The collection with an ID of '336903494'
-   * });
-   * ```
-   *
-   * @method fetchCollection
-   * @public
-   * @param {String|Number} id a unique identifier
-   * @return {Promise|BaseModel} The collection model with the specified ID.
-   */
-  fetchCollection: fetchFactory('one', 'collections'),
-
-  /**
-   * Fetches a list of products matching a specified query.
-   *
-   * ```javascript
-   * client.fetchQueryProducts({ collection_id: '336903494', tag: ['hats'] }).then(products => {
-   *   console.log(products); // An array of products in collection '336903494' having the tag 'hats'
-   * });
-   * ```
-   * @method fetchQueryProducts
-   * @public
-   * @param {Object} query A query sent to the api server containing one or more of:
-   *   @param {String|Number} [query.collection_id] The ID of a collection to retrieve products from
-   *   @param {Array} [query.tag] A list of tags to filter the products by. Accepts up to 10 tags.
-   *   @param {Array} [query.product_ids] A list of product IDs to retrieve
-   *   @param {String|Number} [query.page=1] The page offset number of the current lookup (based on the `limit`)
-   *   @param {String|Number} [query.limit=50] The number of products to retrieve per page
-   *   @param {String} [query.handle] The handle of the product to look up
-   *   @param {String} [query.updated_at_min] Products updated since the supplied timestamp (format: 2008-12-31 03:00)
-   *   @param {String} [query.sort_by] Will modify how products are ordered. Possible values are:
-   *                                   `"updated_at"`, `"best-selling"`, `"title-ascending"`, `"title-descending"`,
-   *                                   `"price-descending"`, `"price-ascending"`, `"created-descending"`, `"created-ascending"`,
-   *                                   or `"collection-default"`. Using `"collection-default"` means that products will be ordered
-   *                                   the using the custom ordering defined in your Shopify Admin. Default value `"collection-default"`.
-   * @return {Promise|Array} The product models.
-   */
-  fetchQueryProducts: fetchFactory('query', 'products'),
-
-  /**
-   * Fetches a list of collections matching a specified query.
-   *
-   * ```javascript
-   * client.fetchQueryCollections({page: 2, limit: 20}).then(collections => {
-   *   console.log(collections); // An array of collection resources
-   * });
-   * ```
-   *
-   * @method fetchQueryCollections
-   * @public
-   * @param {Object} query a query sent to the api server.
-   *   @param {String|Number} [query.page=1] the page offset number of the current lookup (based on the `limit`)
-   *   @param {String|Number} [query.limit=50] the number of collections to retrieve per page
-   * @return {Promise|Array} The collection models.
-   */
-  fetchQueryCollections: fetchFactory('query', 'collections'),
-
-  /**
-   * This method looks up a reference in localStorage to the most recent cart.
-   * If one is not found, creates one. If the cart the reference points to
-   * doesn't exist, create one and store the new reference.
-   *
-   * ```javascript
-   * client.fetchRecentCart().then(cart => {
-   *  // do stuff with the cart
-   * });
-   * ```
-   *
-   * @method fetchRecentCart
-   * @public
-   * @return {Promise|CartModel} The cart.
-   */
-  fetchRecentCart: function fetchRecentCart() {
-    var _this14 = this;
-
-    return this.fetch('references', this.config.domain + '.recent-cart').then(function (reference) {
-      var cartId = reference.referenceId;
-
-      return _this14.fetchCart(cartId);
-    })['catch'](function () {
-      return _this14.createCart().then(function (cart) {
-        var refAttrs = {
-          referenceId: cart.id
-        };
-
-        refAttrs[GUID_KEY] = _this14.config.domain + '.recent-cart';
-
-        _this14.create('references', refAttrs);
-
-        return cart;
-      });
-    });
-  }
-}, {
-  serializers: {
-    /**
-     * @attribute
-     * @default {
-     *  products: ListingsAdapter,
-     *  collections: ListingsAdapter,
-     *  carts: CartAdapter
-     * }
-     * @type Object
-     * @protected
-     */
-    // Prevent leaky state
-    get: function get() {
-      return assign$1({}, this.shadowedSerializers);
-    },
-    set: function set(values) {
-      this.shadowedSerializers = assign$1({}, values);
-    },
-    configurable: true,
-    enumerable: true
-  },
-  adapters: {
-    get: function get() {
-      return assign$1({}, this.shadowedAdapters);
-    },
-    set: function set(values) {
-      this.shadowedAdapters = assign$1({}, values);
-    },
-    configurable: true,
-    enumerable: true
-  }
-}));
-
-/* globals require */
-
-if (isNodeLikeEnvironment()) {
-  /* this indirection is needed because babel throws errors when
-   * transpiling require('node-fetch') using `amd` plugin with babel6
-   */
-  var localRequire = require;
-  var _fetch = __webpack_require__(8);
-
-  globalVars.set('fetch', _fetch);
-  globalVars.set('Response', _fetch.Response);
-}
-
-/* global Buffer */
-
-if (isNodeLikeEnvironment()) {
-  globalVars.set('btoa', function (string) {
-    return new Buffer(string).toString('base64');
-  });
-}
-
-/**
- * @module shopify-buy
- * @submodule shopify
- */
-
-/**
- * `ShopifyBuy` only defines one function {{#crossLink "ShopifyBuy/buildClient"}}{{/crossLink}} which can
- * be used to build a {{#crossLink "ShopClient"}}{{/crossLink}} to query your store using the
- * provided
- * {{#crossLink "ShopifyBuy/buildClient/configAttrs:accessToken"}}`accessToken`{{/crossLink}},
- * {{#crossLink "ShopifyBuy/buildClient/configAttrs:appId"}}`appId`{{/crossLink}},
- * and {{#crossLink "ShopifyBuy/buildClient/configAttrs:domain"}}`domain`{{/crossLink}}.
- * @class ShopifyBuy
- * @static
- */
-var Shopify = {
-  ShopClient: ShopClient,
-  Config: Config,
-  version: version,
-  NO_IMAGE_URI: NO_IMAGE_URI,
-
-  /**
-   * Create a ShopClient. This is the main entry point to the SDK.
-   *
-   * ```javascript
-   * const client = ShopifyBuy.buildClient({
-   *   accessToken: 'bf081e860bc9dc1ce0654fdfbc20892d',
-   *   appId: 6,
-   *   myShopifyDomain: 'your-shop-subdomain.myshopify.com', //Deprecated. Use `domain` instead
-   *   domain: 'embeds.myshopify.com'
-   * });
-   * ```
-   *
-   * @method buildClient
-   * @for ShopifyBuy
-   * @static
-   * @public
-   * @param {Object} configAttrs An object of required config data such as: `accessToken`, `appId`, `domain`
-   * @param {String} configAttrs.accessToken An access token for your store. Documentation how to get a token:
-   *   https://help.shopify.com/api/sdks/custom-storefront/js-buy-sdk/getting-started#generate-javascript-buy-sdk-credentials
-   * @param {String} configAttrs.appId Typically will be 6 which is the Buy Button App Id. For more info on App Id see:
-   *   https://help.shopify.com/api/sdks/js-buy-sdk/getting-started#app-id
-   * @param {String} configAttrs.domain Your shop's full `myshopify.com` domain. For example: `embeds.myshopify.com`
-   * @param {String} configAttrs.myShopifyDomain You shop's `myshopify.com` domain. [deprecated Use configAttrs.domain]
-   * @return {ShopClient} a client for the shop using your api credentials which you can use to query your store.
-   */
-  buildClient: function buildClient() {
-    var configAttrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    var config = new this.Config(configAttrs);
-
-    return new this.ShopClient(config);
-  }
-};
-
-module.exports = Shopify;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(4).Buffer))
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(_) {
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _shopClient = __webpack_require__(1);
-
-var _shopClient2 = _interopRequireDefault(_shopClient);
-
-var _productCmp = __webpack_require__(12);
-
-var _productCmp2 = _interopRequireDefault(_productCmp);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function () {
-
-    // get all valid product components
-    var productEls = document.querySelectorAll('*[data-product-id]');
-
-    _.each(productEls, function (el) {
-
-        var propsData = _.get(el, 'dataset');
-
-        // abort if no ID
-        if (!propsData.productId) return;
-
-        // init vue instance
-        new _productCmp2.default({ el: el, propsData: propsData, template: el.innerHTML });
-    });
-};
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
-
-/***/ }),
-/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module, _) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22024,38 +17221,182 @@ exports.default = function () {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(11)(module), __webpack_require__(10)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(53)(module), __webpack_require__(5)))
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _shopifyBuy = __webpack_require__(51);
+
+var _shopifyBuy2 = _interopRequireDefault(_shopifyBuy);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _shopifyBuy2.default.buildClient({
+    apiKey: wshopVars.apiKey,
+    domain: wshopVars.domain,
+    appId: wshopVars.appId
+});
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+var core = module.exports = {version: '2.4.0'};
+if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function(it){
+  if(it == undefined)throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+var cof = __webpack_require__(25);
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+  return cof(it) == 'String' ? it.split('') : Object(it);
+};
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+// 7.1.4 ToInteger
+var ceil  = Math.ceil
+  , floor = Math.floor;
+module.exports = function(it){
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = function(module) {
-	if(!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if(!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = __webpack_require__(9)
+  , defined = __webpack_require__(8);
+module.exports = function(it){
+  return IObject(defined(it));
 };
-
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _shopClient = __webpack_require__(6);
+
+var _shopClient2 = _interopRequireDefault(_shopClient);
+
+var _productCmp = __webpack_require__(16);
+
+var _productCmp2 = _interopRequireDefault(_productCmp);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+
+    // get all valid product components
+    var productEls = document.querySelectorAll('*[data-product-id]');
+
+    _.each(productEls, function (el) {
+
+        var propsData = _.get(el, 'dataset');
+
+        // abort if no ID
+        if (!propsData.productId) return;
+
+        // init vue instance
+        new _productCmp2.default({ el: el, propsData: propsData, template: '<div class="product-wrapper">' + el.innerHTML + '</div>' });
+    });
+};
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _events = __webpack_require__(48);
+
+var bus = new _events.EventEmitter();
+
+exports.default = bus;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _products = __webpack_require__(12);
+
+var _products2 = _interopRequireDefault(_products);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//import initCarts from 'src/carts'
+
+var $ = window.jQuery;
+
+$(document).ready(function () {
+
+    (0, _products2.default)();
+    //initCarts()
+});
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    name: 'title',
+    template: '<span class="wpshop-product-title">{{ title }}</span>',
+    computed: {
+        title: function title() {
+            return _.get(this.$root, 'product.attrs.title');
+        }
+    }
+};
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22065,25 +17406,41 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(28);
+var _extends2 = __webpack_require__(18);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _shopClient = __webpack_require__(1);
+var _shopClient = __webpack_require__(6);
 
 var _shopClient2 = _interopRequireDefault(_shopClient);
 
-var _title = __webpack_require__(17);
-
-var _title2 = _interopRequireDefault(_title);
-
-var _bus = __webpack_require__(14);
+var _bus = __webpack_require__(13);
 
 var _bus2 = _interopRequireDefault(_bus);
 
+var _title = __webpack_require__(15);
+
+var _title2 = _interopRequireDefault(_title);
+
+var _price = __webpack_require__(55);
+
+var _price2 = _interopRequireDefault(_price);
+
+var _description = __webpack_require__(56);
+
+var _description2 = _interopRequireDefault(_description);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Register all product components here
 Vue.component('product-title', _title2.default);
+
+// Import product components
+
+Vue.component('product-price', _price2.default);
+Vue.component('product-description', _description2.default);
+
+// Set up the product's Vue instance
 
 exports.default = function (options) {
     var el = options.el,
@@ -22105,7 +17462,9 @@ exports.default = function (options) {
             return {
                 propsData: (0, _extends3.default)({}, propsData),
                 product: null,
-                loading: false
+                loading: false,
+                hasVariants: false,
+                productUnavailable: false
             };
         },
         mounted: function mounted() {
@@ -22116,16 +17475,5526 @@ exports.default = function (options) {
                 return _this.product = product;
             }).then(function () {
                 return _this.loading = false;
+            }).then(function () {
+                // Adds/removes hasVariants and productUnavailable classes
+                _this.hasVariants = _this.product.variants && _this.product.variants.length > 1;
+                _this.productUnavailable = !_this.product.attrs.available;
             });
         },
 
-        template: '\n            <div :class="[\'wshop-product-module\', { loading }]">\n                <product-inner></product-inner>\n            </div>'.trim()
+        template: '\n            <div :class="[\'wshop-product-module\', { loading }, { hasVariants }, { productUnavailable }]">\n                <product-inner></product-inner>\n            </div>'.trim()
     });
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(52)))
 
 /***/ }),
-/* 13 */
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(21), __esModule: true };
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _assign = __webpack_require__(17);
+
+var _assign2 = _interopRequireDefault(_assign);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _assign2.default || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.byteLength = byteLength
+exports.toByteArray = toByteArray
+exports.fromByteArray = fromByteArray
+
+var lookup = []
+var revLookup = []
+var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
+
+var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (var i = 0, len = code.length; i < len; ++i) {
+  lookup[i] = code[i]
+  revLookup[code.charCodeAt(i)] = i
+}
+
+revLookup['-'.charCodeAt(0)] = 62
+revLookup['_'.charCodeAt(0)] = 63
+
+function placeHoldersCount (b64) {
+  var len = b64.length
+  if (len % 4 > 0) {
+    throw new Error('Invalid string. Length must be a multiple of 4')
+  }
+
+  // the number of equal signs (place holders)
+  // if there are two placeholders, than the two characters before it
+  // represent one byte
+  // if there is only one, then the three characters before it represent 2 bytes
+  // this is just a cheap hack to not do indexOf twice
+  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+}
+
+function byteLength (b64) {
+  // base64 is 4/3 + up to two characters of the original data
+  return b64.length * 3 / 4 - placeHoldersCount(b64)
+}
+
+function toByteArray (b64) {
+  var i, j, l, tmp, placeHolders, arr
+  var len = b64.length
+  placeHolders = placeHoldersCount(b64)
+
+  arr = new Arr(len * 3 / 4 - placeHolders)
+
+  // if there are placeholders, only get up to the last complete 4 chars
+  l = placeHolders > 0 ? len - 4 : len
+
+  var L = 0
+
+  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
+    arr[L++] = (tmp >> 16) & 0xFF
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
+  }
+
+  if (placeHolders === 2) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[L++] = tmp & 0xFF
+  } else if (placeHolders === 1) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
+  }
+
+  return arr
+}
+
+function tripletToBase64 (num) {
+  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
+}
+
+function encodeChunk (uint8, start, end) {
+  var tmp
+  var output = []
+  for (var i = start; i < end; i += 3) {
+    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+    output.push(tripletToBase64(tmp))
+  }
+  return output.join('')
+}
+
+function fromByteArray (uint8) {
+  var tmp
+  var len = uint8.length
+  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
+  var output = ''
+  var parts = []
+  var maxChunkLength = 16383 // must be multiple of 3
+
+  // go through the array every three bytes, we'll deal with trailing stuff later
+  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+  }
+
+  // pad the end with zeros, but make sure to not forget the extra bytes
+  if (extraBytes === 1) {
+    tmp = uint8[len - 1]
+    output += lookup[tmp >> 2]
+    output += lookup[(tmp << 4) & 0x3F]
+    output += '=='
+  } else if (extraBytes === 2) {
+    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
+    output += lookup[tmp >> 10]
+    output += lookup[(tmp >> 4) & 0x3F]
+    output += lookup[(tmp << 2) & 0x3F]
+    output += '='
+  }
+
+  parts.push(output)
+
+  return parts.join('')
+}
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+/* eslint-disable no-proto */
+
+
+
+var base64 = __webpack_require__(19)
+var ieee754 = __webpack_require__(49)
+var isArray = __webpack_require__(50)
+
+exports.Buffer = Buffer
+exports.SlowBuffer = SlowBuffer
+exports.INSPECT_MAX_BYTES = 50
+
+/**
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (most compatible, even IE6)
+ *
+ * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+ * Opera 11.6+, iOS 4.2+.
+ *
+ * Due to various browser bugs, sometimes the Object implementation will be used even
+ * when the browser supports typed arrays.
+ *
+ * Note:
+ *
+ *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+ *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ *
+ *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *
+ *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *     incorrect length in some situations.
+
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+ * get the Object implementation, which is slower but behaves correctly.
+ */
+Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
+  ? global.TYPED_ARRAY_SUPPORT
+  : typedArraySupport()
+
+/*
+ * Export kMaxLength after typed array support is determined.
+ */
+exports.kMaxLength = kMaxLength()
+
+function typedArraySupport () {
+  try {
+    var arr = new Uint8Array(1)
+    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
+    return arr.foo() === 42 && // typed array instances can be augmented
+        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+  } catch (e) {
+    return false
+  }
+}
+
+function kMaxLength () {
+  return Buffer.TYPED_ARRAY_SUPPORT
+    ? 0x7fffffff
+    : 0x3fffffff
+}
+
+function createBuffer (that, length) {
+  if (kMaxLength() < length) {
+    throw new RangeError('Invalid typed array length')
+  }
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = new Uint8Array(length)
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    if (that === null) {
+      that = new Buffer(length)
+    }
+    that.length = length
+  }
+
+  return that
+}
+
+/**
+ * The Buffer constructor returns instances of `Uint8Array` that have their
+ * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+ * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+ * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+ * returns a single octet.
+ *
+ * The `Uint8Array` prototype remains unmodified.
+ */
+
+function Buffer (arg, encodingOrOffset, length) {
+  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
+    return new Buffer(arg, encodingOrOffset, length)
+  }
+
+  // Common case.
+  if (typeof arg === 'number') {
+    if (typeof encodingOrOffset === 'string') {
+      throw new Error(
+        'If encoding is specified then the first argument must be a string'
+      )
+    }
+    return allocUnsafe(this, arg)
+  }
+  return from(this, arg, encodingOrOffset, length)
+}
+
+Buffer.poolSize = 8192 // not used by this implementation
+
+// TODO: Legacy, not needed anymore. Remove in next major version.
+Buffer._augment = function (arr) {
+  arr.__proto__ = Buffer.prototype
+  return arr
+}
+
+function from (that, value, encodingOrOffset, length) {
+  if (typeof value === 'number') {
+    throw new TypeError('"value" argument must not be a number')
+  }
+
+  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
+    return fromArrayBuffer(that, value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'string') {
+    return fromString(that, value, encodingOrOffset)
+  }
+
+  return fromObject(that, value)
+}
+
+/**
+ * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+ * if value is a number.
+ * Buffer.from(str[, encoding])
+ * Buffer.from(array)
+ * Buffer.from(buffer)
+ * Buffer.from(arrayBuffer[, byteOffset[, length]])
+ **/
+Buffer.from = function (value, encodingOrOffset, length) {
+  return from(null, value, encodingOrOffset, length)
+}
+
+if (Buffer.TYPED_ARRAY_SUPPORT) {
+  Buffer.prototype.__proto__ = Uint8Array.prototype
+  Buffer.__proto__ = Uint8Array
+  if (typeof Symbol !== 'undefined' && Symbol.species &&
+      Buffer[Symbol.species] === Buffer) {
+    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
+    Object.defineProperty(Buffer, Symbol.species, {
+      value: null,
+      configurable: true
+    })
+  }
+}
+
+function assertSize (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('"size" argument must be a number')
+  } else if (size < 0) {
+    throw new RangeError('"size" argument must not be negative')
+  }
+}
+
+function alloc (that, size, fill, encoding) {
+  assertSize(size)
+  if (size <= 0) {
+    return createBuffer(that, size)
+  }
+  if (fill !== undefined) {
+    // Only pay attention to encoding if it's a string. This
+    // prevents accidentally sending in a number that would
+    // be interpretted as a start offset.
+    return typeof encoding === 'string'
+      ? createBuffer(that, size).fill(fill, encoding)
+      : createBuffer(that, size).fill(fill)
+  }
+  return createBuffer(that, size)
+}
+
+/**
+ * Creates a new filled Buffer instance.
+ * alloc(size[, fill[, encoding]])
+ **/
+Buffer.alloc = function (size, fill, encoding) {
+  return alloc(null, size, fill, encoding)
+}
+
+function allocUnsafe (that, size) {
+  assertSize(size)
+  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < size; ++i) {
+      that[i] = 0
+    }
+  }
+  return that
+}
+
+/**
+ * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+ * */
+Buffer.allocUnsafe = function (size) {
+  return allocUnsafe(null, size)
+}
+/**
+ * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+ */
+Buffer.allocUnsafeSlow = function (size) {
+  return allocUnsafe(null, size)
+}
+
+function fromString (that, string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') {
+    encoding = 'utf8'
+  }
+
+  if (!Buffer.isEncoding(encoding)) {
+    throw new TypeError('"encoding" must be a valid string encoding')
+  }
+
+  var length = byteLength(string, encoding) | 0
+  that = createBuffer(that, length)
+
+  var actual = that.write(string, encoding)
+
+  if (actual !== length) {
+    // Writing a hex string, for example, that contains invalid characters will
+    // cause everything after the first invalid character to be ignored. (e.g.
+    // 'abxxcd' will be treated as 'ab')
+    that = that.slice(0, actual)
+  }
+
+  return that
+}
+
+function fromArrayLike (that, array) {
+  var length = array.length < 0 ? 0 : checked(array.length) | 0
+  that = createBuffer(that, length)
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+function fromArrayBuffer (that, array, byteOffset, length) {
+  array.byteLength // this throws if `array` is not a valid ArrayBuffer
+
+  if (byteOffset < 0 || array.byteLength < byteOffset) {
+    throw new RangeError('\'offset\' is out of bounds')
+  }
+
+  if (array.byteLength < byteOffset + (length || 0)) {
+    throw new RangeError('\'length\' is out of bounds')
+  }
+
+  if (byteOffset === undefined && length === undefined) {
+    array = new Uint8Array(array)
+  } else if (length === undefined) {
+    array = new Uint8Array(array, byteOffset)
+  } else {
+    array = new Uint8Array(array, byteOffset, length)
+  }
+
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = array
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that = fromArrayLike(that, array)
+  }
+  return that
+}
+
+function fromObject (that, obj) {
+  if (Buffer.isBuffer(obj)) {
+    var len = checked(obj.length) | 0
+    that = createBuffer(that, len)
+
+    if (that.length === 0) {
+      return that
+    }
+
+    obj.copy(that, 0, 0, len)
+    return that
+  }
+
+  if (obj) {
+    if ((typeof ArrayBuffer !== 'undefined' &&
+        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
+      if (typeof obj.length !== 'number' || isnan(obj.length)) {
+        return createBuffer(that, 0)
+      }
+      return fromArrayLike(that, obj)
+    }
+
+    if (obj.type === 'Buffer' && isArray(obj.data)) {
+      return fromArrayLike(that, obj.data)
+    }
+  }
+
+  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
+}
+
+function checked (length) {
+  // Note: cannot use `length < kMaxLength()` here because that fails when
+  // length is NaN (which is otherwise coerced to zero.)
+  if (length >= kMaxLength()) {
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+  }
+  return length | 0
+}
+
+function SlowBuffer (length) {
+  if (+length != length) { // eslint-disable-line eqeqeq
+    length = 0
+  }
+  return Buffer.alloc(+length)
+}
+
+Buffer.isBuffer = function isBuffer (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer.compare = function compare (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+    throw new TypeError('Arguments must be Buffers')
+  }
+
+  if (a === b) return 0
+
+  var x = a.length
+  var y = b.length
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i]
+      y = b[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+Buffer.isEncoding = function isEncoding (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'latin1':
+    case 'binary':
+    case 'base64':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.concat = function concat (list, length) {
+  if (!isArray(list)) {
+    throw new TypeError('"list" argument must be an Array of Buffers')
+  }
+
+  if (list.length === 0) {
+    return Buffer.alloc(0)
+  }
+
+  var i
+  if (length === undefined) {
+    length = 0
+    for (i = 0; i < list.length; ++i) {
+      length += list[i].length
+    }
+  }
+
+  var buffer = Buffer.allocUnsafe(length)
+  var pos = 0
+  for (i = 0; i < list.length; ++i) {
+    var buf = list[i]
+    if (!Buffer.isBuffer(buf)) {
+      throw new TypeError('"list" argument must be an Array of Buffers')
+    }
+    buf.copy(buffer, pos)
+    pos += buf.length
+  }
+  return buffer
+}
+
+function byteLength (string, encoding) {
+  if (Buffer.isBuffer(string)) {
+    return string.length
+  }
+  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
+      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
+    return string.byteLength
+  }
+  if (typeof string !== 'string') {
+    string = '' + string
+  }
+
+  var len = string.length
+  if (len === 0) return 0
+
+  // Use a for loop to avoid recursion
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'latin1':
+      case 'binary':
+        return len
+      case 'utf8':
+      case 'utf-8':
+      case undefined:
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+Buffer.byteLength = byteLength
+
+function slowToString (encoding, start, end) {
+  var loweredCase = false
+
+  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+  // property of a typed array.
+
+  // This behaves neither like String nor Uint8Array in that we set start/end
+  // to their upper/lower bounds if the value passed is out of range.
+  // undefined is handled specially as per ECMA-262 6th Edition,
+  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+  if (start === undefined || start < 0) {
+    start = 0
+  }
+  // Return early if start > this.length. Done here to prevent potential uint32
+  // coercion fail below.
+  if (start > this.length) {
+    return ''
+  }
+
+  if (end === undefined || end > this.length) {
+    end = this.length
+  }
+
+  if (end <= 0) {
+    return ''
+  }
+
+  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
+  end >>>= 0
+  start >>>= 0
+
+  if (end <= start) {
+    return ''
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Slice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
+// Buffer instances.
+Buffer.prototype._isBuffer = true
+
+function swap (b, n, m) {
+  var i = b[n]
+  b[n] = b[m]
+  b[m] = i
+}
+
+Buffer.prototype.swap16 = function swap16 () {
+  var len = this.length
+  if (len % 2 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 16-bits')
+  }
+  for (var i = 0; i < len; i += 2) {
+    swap(this, i, i + 1)
+  }
+  return this
+}
+
+Buffer.prototype.swap32 = function swap32 () {
+  var len = this.length
+  if (len % 4 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 32-bits')
+  }
+  for (var i = 0; i < len; i += 4) {
+    swap(this, i, i + 3)
+    swap(this, i + 1, i + 2)
+  }
+  return this
+}
+
+Buffer.prototype.swap64 = function swap64 () {
+  var len = this.length
+  if (len % 8 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 64-bits')
+  }
+  for (var i = 0; i < len; i += 8) {
+    swap(this, i, i + 7)
+    swap(this, i + 1, i + 6)
+    swap(this, i + 2, i + 5)
+    swap(this, i + 3, i + 4)
+  }
+  return this
+}
+
+Buffer.prototype.toString = function toString () {
+  var length = this.length | 0
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
+}
+
+Buffer.prototype.equals = function equals (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return true
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function inspect () {
+  var str = ''
+  var max = exports.INSPECT_MAX_BYTES
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+    if (this.length > max) str += ' ... '
+  }
+  return '<Buffer ' + str + '>'
+}
+
+Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+  if (!Buffer.isBuffer(target)) {
+    throw new TypeError('Argument must be a Buffer')
+  }
+
+  if (start === undefined) {
+    start = 0
+  }
+  if (end === undefined) {
+    end = target ? target.length : 0
+  }
+  if (thisStart === undefined) {
+    thisStart = 0
+  }
+  if (thisEnd === undefined) {
+    thisEnd = this.length
+  }
+
+  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+    throw new RangeError('out of range index')
+  }
+
+  if (thisStart >= thisEnd && start >= end) {
+    return 0
+  }
+  if (thisStart >= thisEnd) {
+    return -1
+  }
+  if (start >= end) {
+    return 1
+  }
+
+  start >>>= 0
+  end >>>= 0
+  thisStart >>>= 0
+  thisEnd >>>= 0
+
+  if (this === target) return 0
+
+  var x = thisEnd - thisStart
+  var y = end - start
+  var len = Math.min(x, y)
+
+  var thisCopy = this.slice(thisStart, thisEnd)
+  var targetCopy = target.slice(start, end)
+
+  for (var i = 0; i < len; ++i) {
+    if (thisCopy[i] !== targetCopy[i]) {
+      x = thisCopy[i]
+      y = targetCopy[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+//
+// Arguments:
+// - buffer - a Buffer to search
+// - val - a string, Buffer, or number
+// - byteOffset - an index into `buffer`; will be clamped to an int32
+// - encoding - an optional encoding, relevant is val is a string
+// - dir - true for indexOf, false for lastIndexOf
+function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
+  // Empty buffer means no match
+  if (buffer.length === 0) return -1
+
+  // Normalize byteOffset
+  if (typeof byteOffset === 'string') {
+    encoding = byteOffset
+    byteOffset = 0
+  } else if (byteOffset > 0x7fffffff) {
+    byteOffset = 0x7fffffff
+  } else if (byteOffset < -0x80000000) {
+    byteOffset = -0x80000000
+  }
+  byteOffset = +byteOffset  // Coerce to Number.
+  if (isNaN(byteOffset)) {
+    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+    byteOffset = dir ? 0 : (buffer.length - 1)
+  }
+
+  // Normalize byteOffset: negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
+  if (byteOffset >= buffer.length) {
+    if (dir) return -1
+    else byteOffset = buffer.length - 1
+  } else if (byteOffset < 0) {
+    if (dir) byteOffset = 0
+    else return -1
+  }
+
+  // Normalize val
+  if (typeof val === 'string') {
+    val = Buffer.from(val, encoding)
+  }
+
+  // Finally, search either indexOf (if dir is true) or lastIndexOf
+  if (Buffer.isBuffer(val)) {
+    // Special case: looking for empty string/buffer always fails
+    if (val.length === 0) {
+      return -1
+    }
+    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
+  } else if (typeof val === 'number') {
+    val = val & 0xFF // Search for a byte value [0-255]
+    if (Buffer.TYPED_ARRAY_SUPPORT &&
+        typeof Uint8Array.prototype.indexOf === 'function') {
+      if (dir) {
+        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
+      } else {
+        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
+      }
+    }
+    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
+  var indexSize = 1
+  var arrLength = arr.length
+  var valLength = val.length
+
+  if (encoding !== undefined) {
+    encoding = String(encoding).toLowerCase()
+    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
+        encoding === 'utf16le' || encoding === 'utf-16le') {
+      if (arr.length < 2 || val.length < 2) {
+        return -1
+      }
+      indexSize = 2
+      arrLength /= 2
+      valLength /= 2
+      byteOffset /= 2
+    }
+  }
+
+  function read (buf, i) {
+    if (indexSize === 1) {
+      return buf[i]
+    } else {
+      return buf.readUInt16BE(i * indexSize)
+    }
+  }
+
+  var i
+  if (dir) {
+    var foundIndex = -1
+    for (i = byteOffset; i < arrLength; i++) {
+      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+      } else {
+        if (foundIndex !== -1) i -= i - foundIndex
+        foundIndex = -1
+      }
+    }
+  } else {
+    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
+    for (i = byteOffset; i >= 0; i--) {
+      var found = true
+      for (var j = 0; j < valLength; j++) {
+        if (read(arr, i + j) !== read(val, j)) {
+          found = false
+          break
+        }
+      }
+      if (found) return i
+    }
+  }
+
+  return -1
+}
+
+Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
+  return this.indexOf(val, byteOffset, encoding) !== -1
+}
+
+Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
+}
+
+Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
+}
+
+function hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  var remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length
+  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  for (var i = 0; i < length; ++i) {
+    var parsed = parseInt(string.substr(i * 2, 2), 16)
+    if (isNaN(parsed)) return i
+    buf[offset + i] = parsed
+  }
+  return i
+}
+
+function utf8Write (buf, string, offset, length) {
+  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+function asciiWrite (buf, string, offset, length) {
+  return blitBuffer(asciiToBytes(string), buf, offset, length)
+}
+
+function latin1Write (buf, string, offset, length) {
+  return asciiWrite(buf, string, offset, length)
+}
+
+function base64Write (buf, string, offset, length) {
+  return blitBuffer(base64ToBytes(string), buf, offset, length)
+}
+
+function ucs2Write (buf, string, offset, length) {
+  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+Buffer.prototype.write = function write (string, offset, length, encoding) {
+  // Buffer#write(string)
+  if (offset === undefined) {
+    encoding = 'utf8'
+    length = this.length
+    offset = 0
+  // Buffer#write(string, encoding)
+  } else if (length === undefined && typeof offset === 'string') {
+    encoding = offset
+    length = this.length
+    offset = 0
+  // Buffer#write(string, offset[, length][, encoding])
+  } else if (isFinite(offset)) {
+    offset = offset | 0
+    if (isFinite(length)) {
+      length = length | 0
+      if (encoding === undefined) encoding = 'utf8'
+    } else {
+      encoding = length
+      length = undefined
+    }
+  // legacy write(string, encoding, offset, length) - remove in v0.13
+  } else {
+    throw new Error(
+      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+    )
+  }
+
+  var remaining = this.length - offset
+  if (length === undefined || length > remaining) length = remaining
+
+  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+    throw new RangeError('Attempt to write outside buffer bounds')
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'hex':
+        return hexWrite(this, string, offset, length)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Write(this, string, offset, length)
+
+      case 'ascii':
+        return asciiWrite(this, string, offset, length)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Write(this, string, offset, length)
+
+      case 'base64':
+        // Warning: maxLength not taken into account in base64Write
+        return base64Write(this, string, offset, length)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return ucs2Write(this, string, offset, length)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.toJSON = function toJSON () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+function base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function utf8Slice (buf, start, end) {
+  end = Math.min(buf.length, end)
+  var res = []
+
+  var i = start
+  while (i < end) {
+    var firstByte = buf[i]
+    var codePoint = null
+    var bytesPerSequence = (firstByte > 0xEF) ? 4
+      : (firstByte > 0xDF) ? 3
+      : (firstByte > 0xBF) ? 2
+      : 1
+
+    if (i + bytesPerSequence <= end) {
+      var secondByte, thirdByte, fourthByte, tempCodePoint
+
+      switch (bytesPerSequence) {
+        case 1:
+          if (firstByte < 0x80) {
+            codePoint = firstByte
+          }
+          break
+        case 2:
+          secondByte = buf[i + 1]
+          if ((secondByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
+            if (tempCodePoint > 0x7F) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 3:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
+            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 4:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          fourthByte = buf[i + 3]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
+            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+              codePoint = tempCodePoint
+            }
+          }
+      }
+    }
+
+    if (codePoint === null) {
+      // we did not generate a valid codePoint so insert a
+      // replacement char (U+FFFD) and advance only 1 byte
+      codePoint = 0xFFFD
+      bytesPerSequence = 1
+    } else if (codePoint > 0xFFFF) {
+      // encode to utf16 (surrogate pair dance)
+      codePoint -= 0x10000
+      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
+      codePoint = 0xDC00 | codePoint & 0x3FF
+    }
+
+    res.push(codePoint)
+    i += bytesPerSequence
+  }
+
+  return decodeCodePointsArray(res)
+}
+
+// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+// the lowest limit is Chrome, with 0x10000 args.
+// We go 1 magnitude less, for safety
+var MAX_ARGUMENTS_LENGTH = 0x1000
+
+function decodeCodePointsArray (codePoints) {
+  var len = codePoints.length
+  if (len <= MAX_ARGUMENTS_LENGTH) {
+    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+  }
+
+  // Decode in chunks to avoid "call stack size exceeded".
+  var res = ''
+  var i = 0
+  while (i < len) {
+    res += String.fromCharCode.apply(
+      String,
+      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+    )
+  }
+  return res
+}
+
+function asciiSlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i] & 0x7F)
+  }
+  return ret
+}
+
+function latin1Slice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i])
+  }
+  return ret
+}
+
+function hexSlice (buf, start, end) {
+  var len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  var out = ''
+  for (var i = start; i < end; ++i) {
+    out += toHex(buf[i])
+  }
+  return out
+}
+
+function utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
+  var res = ''
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
+  }
+  return res
+}
+
+Buffer.prototype.slice = function slice (start, end) {
+  var len = this.length
+  start = ~~start
+  end = end === undefined ? len : ~~end
+
+  if (start < 0) {
+    start += len
+    if (start < 0) start = 0
+  } else if (start > len) {
+    start = len
+  }
+
+  if (end < 0) {
+    end += len
+    if (end < 0) end = 0
+  } else if (end > len) {
+    end = len
+  }
+
+  if (end < start) end = start
+
+  var newBuf
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    newBuf = this.subarray(start, end)
+    newBuf.__proto__ = Buffer.prototype
+  } else {
+    var sliceLen = end - start
+    newBuf = new Buffer(sliceLen, undefined)
+    for (var i = 0; i < sliceLen; ++i) {
+      newBuf[i] = this[i + start]
+    }
+  }
+
+  return newBuf
+}
+
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+}
+
+Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    checkOffset(offset, byteLength, this.length)
+  }
+
+  var val = this[offset + --byteLength]
+  var mul = 1
+  while (byteLength > 0 && (mul *= 0x100)) {
+    val += this[offset + --byteLength] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  return this[offset]
+}
+
+Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
+}
+
+Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
+}
+
+Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
+}
+
+Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+    ((this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    this[offset + 3])
+}
+
+Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var i = byteLength
+  var mul = 1
+  var val = this[offset + --i]
+  while (i > 0 && (mul *= 0x100)) {
+    val += this[offset + --i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80)) return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
+}
+
+Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+    (this[offset + 1] << 8) |
+    (this[offset + 2] << 16) |
+    (this[offset + 3] << 24)
+}
+
+Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] << 24) |
+    (this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    (this[offset + 3])
+}
+
+Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
+}
+
+Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
+}
+
+Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
+}
+
+Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+}
+
+Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var mul = 1
+  var i = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8
+  }
+}
+
+Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 1] = (value >>> 8)
+    this[offset] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = 0
+  var mul = 1
+  var sub = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  var sub = 0
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 3] = (value >>> 24)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+  if (offset < 0) throw new RangeError('Index out of range')
+}
+
+function writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+  return offset + 4
+}
+
+Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, false, noAssert)
+}
+
+function writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+  return offset + 8
+}
+
+Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, false, noAssert)
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function copy (target, targetStart, start, end) {
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (targetStart >= target.length) targetStart = target.length
+  if (!targetStart) targetStart = 0
+  if (end > 0 && end < start) end = start
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || this.length === 0) return 0
+
+  // Fatal error conditions
+  if (targetStart < 0) {
+    throw new RangeError('targetStart out of bounds')
+  }
+  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length) end = this.length
+  if (target.length - targetStart < end - start) {
+    end = target.length - targetStart + start
+  }
+
+  var len = end - start
+  var i
+
+  if (this === target && start < targetStart && targetStart < end) {
+    // descending copy from end
+    for (i = len - 1; i >= 0; --i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    // ascending copy from start
+    for (i = 0; i < len; ++i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else {
+    Uint8Array.prototype.set.call(
+      target,
+      this.subarray(start, start + len),
+      targetStart
+    )
+  }
+
+  return len
+}
+
+// Usage:
+//    buffer.fill(number[, offset[, end]])
+//    buffer.fill(buffer[, offset[, end]])
+//    buffer.fill(string[, offset[, end]][, encoding])
+Buffer.prototype.fill = function fill (val, start, end, encoding) {
+  // Handle string cases:
+  if (typeof val === 'string') {
+    if (typeof start === 'string') {
+      encoding = start
+      start = 0
+      end = this.length
+    } else if (typeof end === 'string') {
+      encoding = end
+      end = this.length
+    }
+    if (val.length === 1) {
+      var code = val.charCodeAt(0)
+      if (code < 256) {
+        val = code
+      }
+    }
+    if (encoding !== undefined && typeof encoding !== 'string') {
+      throw new TypeError('encoding must be a string')
+    }
+    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
+      throw new TypeError('Unknown encoding: ' + encoding)
+    }
+  } else if (typeof val === 'number') {
+    val = val & 255
+  }
+
+  // Invalid ranges are not set to a default, so can range check early.
+  if (start < 0 || this.length < start || this.length < end) {
+    throw new RangeError('Out of range index')
+  }
+
+  if (end <= start) {
+    return this
+  }
+
+  start = start >>> 0
+  end = end === undefined ? this.length : end >>> 0
+
+  if (!val) val = 0
+
+  var i
+  if (typeof val === 'number') {
+    for (i = start; i < end; ++i) {
+      this[i] = val
+    }
+  } else {
+    var bytes = Buffer.isBuffer(val)
+      ? val
+      : utf8ToBytes(new Buffer(val, encoding).toString())
+    var len = bytes.length
+    for (i = 0; i < end - start; ++i) {
+      this[i + start] = bytes[i % len]
+    }
+  }
+
+  return this
+}
+
+// HELPER FUNCTIONS
+// ================
+
+var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
+
+function base64clean (str) {
+  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
+  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+  while (str.length % 4 !== 0) {
+    str = str + '='
+  }
+  return str
+}
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes (string, units) {
+  units = units || Infinity
+  var codePoint
+  var length = string.length
+  var leadSurrogate = null
+  var bytes = []
+
+  for (var i = 0; i < length; ++i) {
+    codePoint = string.charCodeAt(i)
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+      // last char was a lead
+      if (!leadSurrogate) {
+        // no lead yet
+        if (codePoint > 0xDBFF) {
+          // unexpected trail
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        } else if (i + 1 === length) {
+          // unpaired lead
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // valid lead
+        leadSurrogate = codePoint
+
+        continue
+      }
+
+      // 2 leads in a row
+      if (codePoint < 0xDC00) {
+        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+        leadSurrogate = codePoint
+        continue
+      }
+
+      // valid surrogate pair
+      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
+    } else if (leadSurrogate) {
+      // valid bmp char, but last char was a lead
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+    }
+
+    leadSurrogate = null
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint)
+    } else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x110000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else {
+      throw new Error('Invalid code point')
+    }
+  }
+
+  return bytes
+}
+
+function asciiToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str, units) {
+  var c, hi, lo
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    if ((units -= 2) < 0) break
+
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(base64clean(str))
+}
+
+function blitBuffer (src, dst, offset, length) {
+  for (var i = 0; i < length; ++i) {
+    if ((i + offset >= dst.length) || (i >= src.length)) break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+function isnan (val) {
+  return val !== val // eslint-disable-line no-self-compare
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(47);
+module.exports = __webpack_require__(7).Object.assign;
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
+
+module.exports = function(it){
+  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+  return it;
+};
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(4);
+module.exports = function(it){
+  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// false -> Array#indexOf
+// true  -> Array#includes
+var toIObject = __webpack_require__(11)
+  , toLength  = __webpack_require__(43)
+  , toIndex   = __webpack_require__(42);
+module.exports = function(IS_INCLUDES){
+  return function($this, el, fromIndex){
+    var O      = toIObject($this)
+      , length = toLength(O.length)
+      , index  = toIndex(fromIndex, length)
+      , value;
+    // Array#includes uses SameValueZero equality algorithm
+    if(IS_INCLUDES && el != el)while(length > index){
+      value = O[index++];
+      if(value != value)return true;
+    // Array#toIndex ignores holes, Array#includes - not
+    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
+      if(O[index] === el)return IS_INCLUDES || index || 0;
+    } return !IS_INCLUDES && -1;
+  };
+};
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = function(it){
+  return toString.call(it).slice(8, -1);
+};
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// optional / simple context binding
+var aFunction = __webpack_require__(22);
+module.exports = function(fn, that, length){
+  aFunction(fn);
+  if(that === undefined)return fn;
+  switch(length){
+    case 1: return function(a){
+      return fn.call(that, a);
+    };
+    case 2: return function(a, b){
+      return fn.call(that, a, b);
+    };
+    case 3: return function(a, b, c){
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function(/* ...args */){
+    return fn.apply(that, arguments);
+  };
+};
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(4)
+  , document = __webpack_require__(3).document
+  // in old IE typeof document.createElement is 'object'
+  , is = isObject(document) && isObject(document.createElement);
+module.exports = function(it){
+  return is ? document.createElement(it) : {};
+};
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports) {
+
+// IE 8- don't enum bug keys
+module.exports = (
+  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+).split(',');
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global    = __webpack_require__(3)
+  , core      = __webpack_require__(7)
+  , ctx       = __webpack_require__(26)
+  , hide      = __webpack_require__(31)
+  , PROTOTYPE = 'prototype';
+
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , IS_WRAP   = type & $export.W
+    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+    , expProto  = exports[PROTOTYPE]
+    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+    , key, own, out;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    if(own && key in exports)continue;
+    // export native or passed
+    out = own ? target[key] : source[key];
+    // prevent global pollution for namespaces
+    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+    // bind timers to global for call from export context
+    : IS_BIND && own ? ctx(out, global)
+    // wrap global constructors for prevent change them in library
+    : IS_WRAP && target[key] == out ? (function(C){
+      var F = function(a, b, c){
+        if(this instanceof C){
+          switch(arguments.length){
+            case 0: return new C;
+            case 1: return new C(a);
+            case 2: return new C(a, b);
+          } return new C(a, b, c);
+        } return C.apply(this, arguments);
+      };
+      F[PROTOTYPE] = C[PROTOTYPE];
+      return F;
+    // make static versions for prototype methods
+    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+    if(IS_PROTO){
+      (exports.virtual || (exports.virtual = {}))[key] = out;
+      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
+    }
+  }
+};
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library` 
+module.exports = $export;
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
+
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function(it, key){
+  return hasOwnProperty.call(it, key);
+};
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var dP         = __webpack_require__(34)
+  , createDesc = __webpack_require__(39);
+module.exports = __webpack_require__(1) ? function(object, key, value){
+  return dP.f(object, key, createDesc(1, value));
+} : function(object, key, value){
+  object[key] = value;
+  return object;
+};
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = !__webpack_require__(1) && !__webpack_require__(2)(function(){
+  return Object.defineProperty(__webpack_require__(27)('div'), 'a', {get: function(){ return 7; }}).a != 7;
+});
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// 19.1.2.1 Object.assign(target, source, ...)
+var getKeys  = __webpack_require__(37)
+  , gOPS     = __webpack_require__(35)
+  , pIE      = __webpack_require__(38)
+  , toObject = __webpack_require__(44)
+  , IObject  = __webpack_require__(9)
+  , $assign  = Object.assign;
+
+// should work with symbols and should have deterministic property order (V8 bug)
+module.exports = !$assign || __webpack_require__(2)(function(){
+  var A = {}
+    , B = {}
+    , S = Symbol()
+    , K = 'abcdefghijklmnopqrst';
+  A[S] = 7;
+  K.split('').forEach(function(k){ B[k] = k; });
+  return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
+}) ? function assign(target, source){ // eslint-disable-line no-unused-vars
+  var T     = toObject(target)
+    , aLen  = arguments.length
+    , index = 1
+    , getSymbols = gOPS.f
+    , isEnum     = pIE.f;
+  while(aLen > index){
+    var S      = IObject(arguments[index++])
+      , keys   = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S)
+      , length = keys.length
+      , j      = 0
+      , key;
+    while(length > j)if(isEnum.call(S, key = keys[j++]))T[key] = S[key];
+  } return T;
+} : $assign;
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject       = __webpack_require__(23)
+  , IE8_DOM_DEFINE = __webpack_require__(32)
+  , toPrimitive    = __webpack_require__(45)
+  , dP             = Object.defineProperty;
+
+exports.f = __webpack_require__(1) ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if(IE8_DOM_DEFINE)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
+
+exports.f = Object.getOwnPropertySymbols;
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var has          = __webpack_require__(30)
+  , toIObject    = __webpack_require__(11)
+  , arrayIndexOf = __webpack_require__(24)(false)
+  , IE_PROTO     = __webpack_require__(40)('IE_PROTO');
+
+module.exports = function(object, names){
+  var O      = toIObject(object)
+    , i      = 0
+    , result = []
+    , key;
+  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
+  // Don't enum bug & hidden keys
+  while(names.length > i)if(has(O, key = names[i++])){
+    ~arrayIndexOf(result, key) || result.push(key);
+  }
+  return result;
+};
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+var $keys       = __webpack_require__(36)
+  , enumBugKeys = __webpack_require__(28);
+
+module.exports = Object.keys || function keys(O){
+  return $keys(O, enumBugKeys);
+};
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports) {
+
+exports.f = {}.propertyIsEnumerable;
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports) {
+
+module.exports = function(bitmap, value){
+  return {
+    enumerable  : !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable    : !(bitmap & 4),
+    value       : value
+  };
+};
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var shared = __webpack_require__(41)('keys')
+  , uid    = __webpack_require__(46);
+module.exports = function(key){
+  return shared[key] || (shared[key] = uid(key));
+};
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3)
+  , SHARED = '__core-js_shared__'
+  , store  = global[SHARED] || (global[SHARED] = {});
+module.exports = function(key){
+  return store[key] || (store[key] = {});
+};
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toInteger = __webpack_require__(10)
+  , max       = Math.max
+  , min       = Math.min;
+module.exports = function(index, length){
+  index = toInteger(index);
+  return index < 0 ? max(index + length, 0) : min(index, length);
+};
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.15 ToLength
+var toInteger = __webpack_require__(10)
+  , min       = Math.min;
+module.exports = function(it){
+  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+};
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.13 ToObject(argument)
+var defined = __webpack_require__(8);
+module.exports = function(it){
+  return Object(defined(it));
+};
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = __webpack_require__(4);
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function(it, S){
+  if(!isObject(it))return it;
+  var fn, val;
+  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports) {
+
+var id = 0
+  , px = Math.random();
+module.exports = function(key){
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.3.1 Object.assign(target, source)
+var $export = __webpack_require__(29);
+
+$export($export.S + $export.F, 'Object', {assign: __webpack_require__(33)});
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports) {
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports) {
+
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global, Buffer) {var require;
+
+/* eslint no-undefined: 0 */
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+var assign = void 0;
+
+if (typeof Object.assign === 'function') {
+  assign = Object.assign;
+} else {
+  assign = function assign(target) {
+    if (target === undefined || target === null) {
+      throw new TypeError('Cannot convert undefined or null to object');
+    }
+
+    var output = Object(target);
+
+    var propertyObjects = [].slice.call(arguments, 1);
+
+    if (propertyObjects.length > 0) {
+      propertyObjects.forEach(function (source) {
+        if (source !== undefined && source !== null) {
+          var nextKey = void 0;
+
+          for (nextKey in source) {
+            if (source.hasOwnProperty(nextKey)) {
+              output[nextKey] = source[nextKey];
+            }
+          }
+        }
+      });
+    }
+
+    return output;
+  };
+}
+
+var assign$1 = assign;
+
+var includes = void 0;
+
+if (!Array.prototype.includes) {
+  includes = function includes(array, searchElement) {
+    var ObjectifiedArray = Object(array);
+    var length = parseInt(ObjectifiedArray.length, 10) || 0;
+
+    if (length === 0) {
+      return false;
+    }
+
+    var startIndex = parseInt(arguments[2], 10) || 0;
+    var index = void 0;
+
+    if (startIndex >= 0) {
+      index = startIndex;
+    } else {
+      index = length + startIndex;
+
+      if (index < 0) {
+        index = 0;
+      }
+    }
+
+    while (index < length) {
+      var currentElement = ObjectifiedArray[index];
+
+      /* eslint no-self-compare:0 */
+      if (searchElement === currentElement || searchElement !== searchElement && currentElement !== currentElement) {
+        // NaN !== NaN
+        return true;
+      }
+      index++;
+    }
+
+    return false;
+  };
+} else {
+  includes = function includes(array) {
+    var args = [].slice.call(arguments, 1);
+
+    return Array.prototype.includes.apply(array, args);
+  };
+}
+
+var includes$1 = includes;
+
+function wrap(func, superFunc) {
+  function superWrapper() {
+    var originalSuper = this['super'];
+
+    this['super'] = function () {
+      return superFunc.apply(this, arguments);
+    };
+
+    var ret = func.apply(this, arguments);
+
+    this['super'] = originalSuper;
+
+    return ret;
+  }
+
+  superWrapper.wrappedFunction = func;
+
+  return superWrapper;
+}
+
+function defineProperties(names, proto, destination) {
+  var parentProto = Object.getPrototypeOf(destination);
+
+  names.forEach(function (name) {
+    var descriptor = Object.getOwnPropertyDescriptor(proto, name);
+    var parentDescriptor = parentProto.hasOwnProperty(name) && Object.getOwnPropertyDescriptor(parentProto, name);
+
+    if (typeof parentDescriptor.value === 'function' && typeof descriptor.value === 'function') {
+      var wrappedFunction = wrap(descriptor.value, parentDescriptor.value);
+
+      Object.defineProperty(destination, name, { value: wrappedFunction });
+    } else {
+      Object.defineProperty(destination, name, descriptor);
+    }
+  });
+}
+
+function createClass(props) {
+  var parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Object;
+
+  var Constructor = wrap(props.constructor, parent);
+  var instancePropertyNames = Object.getOwnPropertyNames(props).filter(function (key) {
+    return !includes$1(['constructor', 'static'], key);
+  });
+
+  assign$1(Constructor, parent);
+
+  Constructor.prototype = Object.create(parent.prototype);
+  defineProperties(instancePropertyNames, props, Constructor.prototype);
+  Constructor.prototype.constructor = Constructor;
+
+  var staticProps = props['static'];
+
+  if (staticProps) {
+    var staticPropertyNames = Object.getOwnPropertyNames(staticProps);
+
+    defineProperties(staticPropertyNames, staticProps, Constructor);
+  }
+
+  return Constructor;
+}
+
+var CoreObject = createClass({
+  constructor: function constructor() {},
+
+
+  'static': {
+    extend: function extend(subClassProps) {
+      return createClass(subClassProps, this);
+    }
+  }
+});
+
+function wrapConsole(logCommand) {
+  var logMethod = function logMethod() {
+    var log = void 0;
+
+    /* eslint-disable no-console */
+    if (console[logCommand]) {
+      log = Function.prototype.bind.call(console[logCommand], console);
+    } else {
+      log = Function.prototype.bind.call(console.log, console);
+    }
+    log.apply(undefined, arguments);
+    /* eslint-enable no-console */
+  };
+
+  return function () {
+    var args = [].concat(Array.prototype.slice.call(arguments));
+
+    args.unshift('[JS-BUY-SDK]: ');
+    logMethod.apply(undefined, _toConsumableArray(args));
+  };
+}
+
+var Logger = CoreObject.extend({
+  /**
+   * Wrapper around the console log so in the future we can have better dev output.
+   * Also allows us to disable output in production.
+   * @private
+   * @class Logger
+   * @constructor
+   */
+  constructor: function constructor() {},
+
+  debug: wrapConsole('debug'),
+  info: wrapConsole('info'),
+  warn: wrapConsole('warn'),
+  error: wrapConsole('error')
+});
+
+var logger = new Logger();
+
+var Config = CoreObject.extend({
+  constructor: function constructor(attrs) {
+    var _this = this;
+
+    Object.keys(this.deprecatedProperties).forEach(function (key) {
+      if (attrs.hasOwnProperty(key)) {
+        var transformName = _this.deprecatedProperties[key];
+        var transform = _this[transformName];
+
+        transform(attrs[key], attrs);
+      }
+    });
+    this.requiredProperties.forEach(function (key) {
+      if (!attrs.hasOwnProperty(key)) {
+        throw new Error('new Config() requires the option \'' + key + '\'');
+      } else {
+        _this[key] = attrs[key];
+      }
+    });
+    this.optionalProperties.forEach(function (key) {
+      if (attrs.hasOwnProperty(key)) {
+        _this[key] = attrs[key];
+      }
+    });
+  },
+
+
+  /**
+   * An object with keys for deprecated properties and values as functions that
+   * will transform the value into a usable value. A depracation transform should
+   * have the value signature function(deprecated_value, config_to_be_transformed)
+   * @attribute deprecatedProperties
+   * @default { apiKey: this.transformApiKey, myShopifyDomain: this.transformMyShopifyDomain }
+   * @type Object
+   * @private
+   */
+  deprecatedProperties: {
+    apiKey: 'transformApiKey',
+    myShopifyDomain: 'transformMyShopifyDomain'
+  },
+
+  /**
+   * Transform the myShopifyDomain config to a domain config.
+   * @method transformMyShopifyDomain
+   * @static
+   * @private
+   * @param {String} subdomain The original subdomain on myshopify.com
+   * @param {Object} attrs. The config attributes to be transformed to a
+   * non-deprecated state.
+   * @return {Object} the transformed config attributes.
+   */
+  transformMyShopifyDomain: function transformMyShopifyDomain(subdomain, attrs) {
+    logger.warn('Config - ', 'myShopifyDomain is deprecated, please use domain and provide the full shop domain.');
+    attrs.domain = subdomain + '.myshopify.com';
+  },
+
+
+  /**
+   * Transform the apiKey config to an accessToken config.
+   * @method transformApiKey
+   * @static
+   * @private
+   * @param {String} apiKey The original api key
+   * @param {Object} attrs. The config attributes to be transformed to a
+   * non-deprecated state.
+   * @return {Object} the transformed config attributes.
+   */
+  transformApiKey: function transformApiKey(apiKey, attrs) {
+    logger.warn('Config - ', 'apiKey is deprecated, please use accessToken instead.');
+    attrs.accessToken = apiKey;
+  },
+
+
+  /**
+   * Properties that must be set on initializations
+   * @attribute requiredProperties
+   * @default ['accessToken', 'appId', 'myShopifyDomain']
+   * @type Array
+   * @private
+   */
+  requiredProperties: ['accessToken', 'appId', 'domain'],
+
+  /**
+   * Properties that may be set on initializations
+   * @attribute optionalProperties
+   * @default ['ajaxHeaders']
+   * @type Array
+   * @private
+   */
+  optionalProperties: ['ajaxHeaders'],
+
+  /**
+   * The accessToken for authenticating against shopify. This is your api client's
+   * storefront access token. Not the shared secret. Set during initialization.
+   * @attribute accessToken
+   * @default ''
+   * @type String
+   * @private
+   */
+  accessToken: '',
+
+  /**
+   * The apiKey for authenticating against shopify. This is your api client's
+   * public api token. Not the shared secret. Set during initialization.
+   * @attribute apiKey
+   * @default ''
+   * @type String
+   * @private
+   * @deprecated Use `config.accessToken` instead.
+   */
+  apiKey: '',
+
+  /**
+   * @attribute appId
+   * @default ''
+   * @type String
+   * @private
+   */
+  appId: '',
+
+  /**
+   * The domain that all the api requests will go to
+   * @attribute domain
+   * @default ''
+   * @type String
+   * @private
+   */
+  domain: '',
+
+  /**
+   * The subdomain of myshopify.io that all the api requests will go to
+   * @attribute myShopifyDomain
+   * @default ''
+   * @type String
+   * @private
+   * @deprecated Use `config.domain` instead.
+   */
+  myShopifyDomain: '',
+
+  /**
+   * @attribute ajaxHeaders
+   * @default {}
+   * @type Object
+   * @private
+   */
+  ajaxHeaders: {}
+});
+
+var version = 'v0.7.1-66ba4e4'; // eslint-disable-line
+
+var BaseModel = CoreObject.extend({
+  constructor: function constructor() {
+    var attrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var metaAttrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    this.attrs = attrs;
+
+    assign$1(this, metaAttrs);
+  },
+
+  attrs: null,
+  serializer: null,
+  adapter: null,
+  shopClient: null
+});
+
+/**
+  * Class for product option
+  * @class ProductOptionModel
+  * @constructor
+*/
+var ProductOptionModel = BaseModel.extend(Object.defineProperties({
+  constructor: function constructor() {
+    this['super'].apply(this, arguments);
+
+    this.selected = this.values[0];
+  }
+}, {
+  name: {
+
+    /**
+      * name of option. Example values: `"Size"`, `"Color"`, etc.
+      * @property name
+      * @readOnly
+      * @type String
+    */
+    get: function get() {
+      return this.attrs.name;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  values: {
+
+    /**
+      * an Array possible values for option. For instance if this option is a "Size" option an example value
+      * for values could be: `["Large", "Medium", "Small"]`
+      *
+      * @property values
+      * @readOnly
+      * @type Array
+    */
+    get: function get() {
+      return this.attrs.values;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  selected: {
+
+    /**
+      * get/set the currently selected option value with one of the values from the
+      * {{#crossLink "ProductOptionModel/values"}}ProductOptionModel.values{{/crossLink}} array. For
+      * instance if the option values array had the following `["Large", "Medium", "Small"]` setting `selected` to be
+      * `"Large"`, `"Medium"`, or `"Small"` would be valid any other value would throw an `Error`.
+      *
+      * @property selected
+      * @type String
+    */
+    get: function get() {
+      return this._selected;
+    },
+    set: function set(value) {
+      if (includes$1(this.values, value)) {
+        this._selected = value;
+      } else {
+        throw new Error('Invalid option selection for ' + this.name + '.');
+      }
+
+      return value;
+    },
+    configurable: true,
+    enumerable: true
+  }
+}));
+
+var variants = [{ name: 'pico', dimension: '16x16' }, { name: 'icon', dimension: '32x32' }, { name: 'thumb', dimension: '50x50' }, { name: 'small', dimension: '100x100' }, { name: 'compact', dimension: '160x160' }, { name: 'medium', dimension: '240x240' }, { name: 'large', dimension: '480x480' }, { name: 'grande', dimension: '600x600' }, { name: '1024x1024', dimension: '1024x1024' }, { name: '2048x2048', dimension: '2048x2048' }];
+
+/**
+* Class for image model
+* @class ImageModel
+*/
+var ImageModel = CoreObject.extend(Object.defineProperties({
+  constructor: function constructor(attrs) {
+    var _this2 = this;
+
+    Object.keys(attrs).forEach(function (key) {
+      _this2[key] = attrs[key];
+    });
+  }
+}, {
+  variants: {
+
+    /**
+      * Image variants available for an image. An example value of `imageVariant`:
+      * ```
+      * [
+      *   {
+      *     "name": "pico",
+      *     "dimensions": "16x16",
+      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_pico.jpg?v=1469046423"
+      *   },
+      *   {
+      *     "name": "compact",
+      *     "dimensions": "160x160",
+      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_compact.jpg?v=1469046423"
+      *   }
+      * ]
+      * ```
+      *
+      * @attribute variants
+      * @type {Array}
+    */
+    get: function get() {
+      var src = this.src;
+      var extensionIndex = src.lastIndexOf('.');
+      var pathAndBasename = src.slice(0, extensionIndex);
+      var extension = src.slice(extensionIndex);
+
+      variants.forEach(function (variant) {
+        variant.src = pathAndBasename + '_' + variant.name + extension;
+      });
+
+      return variants;
+    },
+    configurable: true,
+    enumerable: true
+  }
+}));
+
+/**
+  * Model for product variant
+  * @class ProductVariantModel
+  * @constructor
+*/
+var ProductVariantModel = BaseModel.extend(Object.defineProperties({
+  constructor: function constructor() {
+    this['super'].apply(this, arguments);
+  },
+
+
+  /**
+    * Get a checkout url for a specific product variant. You can
+    * optionally pass a quantity. If no quantity is passed then quantity
+    * will default to 1. The example below will grab a checkout url for
+    * 3 copies of the first variant:
+    * ```
+    * const checkoutURL = product.variants[ 0 ].checkoutUrl(3);
+    * ```
+    *
+    * @method checkoutUrl
+    * @param {Number} [quantity = 1] quantity of variants
+    * @public
+    * @return {String} Checkout URL
+  */
+  checkoutUrl: function checkoutUrl() {
+    var quantity = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+    var config = this.config;
+    var baseUrl = 'https://' + config.domain + '/cart';
+
+    var variantPath = this.id + ':' + parseInt(quantity, 10);
+
+    var query = 'access_token=' + config.accessToken + '&_fd=0';
+
+    return baseUrl + '/' + variantPath + '?' + query;
+  }
+}, {
+  id: {
+
+    /**
+      * Variant unique ID
+      * @property id
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.variant.id;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  productId: {
+
+    /**
+      * ID of product variant belongs to
+      * @property productId
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.product.id;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  title: {
+
+    /**
+      * Title of variant
+      * @property title
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.variant.title;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  productTitle: {
+
+    /**
+      * Title of product variant belongs to
+      * @property productTitle
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.product.title;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  compareAtPrice: {
+
+    /**
+      * Compare at price for variant. The `compareAtPrice` would be
+      * the price of the product previously before the product went on sale. For more info
+      * go <a href="https://docs.shopify.com/manual/products/promoting-marketing/sales" target="_blank">here</a>.
+      *
+      * If no `compareAtPrice` is set then this value will be `null`. An example value: `"5.00"`
+      * @property compareAtPrice
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.variant.compare_at_price;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  price: {
+
+    /**
+      * Price of the variant. The price will be in the following form: `"10.00"`
+      *
+      * @property price
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.variant.price;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  formattedPrice: {
+
+    /**
+      * Price of variant, formatted according to shop currency format string.
+      * For instance `"$10.00"`
+      *
+      * @property formattedPrice
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.variant.formatted_price;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  grams: {
+
+    /**
+      * Variant weight in grams. If no weight is defined grams will be `0`.
+      * @property grams
+      * @type {Number}
+    */
+    get: function get() {
+      return this.attrs.variant.grams;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  optionValues: {
+
+    /**
+      * Option values associated with this variant. Example `optionValues`:
+      * ```
+      * [
+      *   {
+      *     "name": "Size",
+      *     "option_id": 9165336518,
+      *     "value": "small"
+      *   },
+      *   {
+      *     "name": "Color",
+      *     "option_id": 9640532358,
+      *     "value": "blue"
+      *   }
+      * ]
+      * ````
+      *
+      * @property optionValues
+      * @type {Array|Object}
+    */
+    get: function get() {
+      return this.attrs.variant.option_values;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  available: {
+
+    /**
+      * Variant in stock. Always `true` if inventory tracking is disabled.
+      * @property available
+      * @type {Boolean}
+    */
+    get: function get() {
+      return this.attrs.variant.available;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  image: {
+
+    /**
+      * Image for variant. An example image `Object`:
+      * ```
+      * {
+      *   created_at: "2016-08-29T12:35:09-04:00",
+      *   id: 17690553350,
+      *   position: 1,
+      *   product_id: 8291029446,
+      *   src: "https://cdn.shopify.com/s/files/1/1019/0495/products/i11_c3334325-2d67-4623-8cd4-0a6b08aa1b83.jpg?v=1472488509",
+      *   updated_at: "2016-08-29T12:35:09-04:00",
+      *   variant_ids: [ 27690103238 ]
+      * }
+      * ```
+      *
+      * @property image
+      * @type {Object}
+    */
+    get: function get() {
+      var id = this.id;
+      var images = this.attrs.product.images;
+
+      var primaryImage = images[0];
+      var variantImage = images.filter(function (image) {
+        return image.variant_ids.indexOf(id) !== -1;
+      })[0];
+
+      var image = variantImage || primaryImage;
+
+      if (!image) {
+        return null;
+      }
+
+      return new ImageModel(image);
+    },
+    configurable: true,
+    enumerable: true
+  },
+  imageVariants: {
+
+    /**
+      * Image variants available for a variant. An example value of `imageVariant`:
+      * ```
+      * [
+      *   {
+      *     "name": "pico",
+      *     "dimensions": "16x16",
+      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_pico.jpg?v=1469046423"
+      *   },
+      *   {
+      *     "name": "compact",
+      *     "dimensions": "160x160",
+      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_compact.jpg?v=1469046423"
+      *   }
+      * ]
+      * ```
+      *
+      * @property imageVariant
+      * @type {Array}
+    */
+    get: function get() {
+      if (!this.image) {
+        return [];
+      }
+
+      return this.image.variants;
+    },
+    configurable: true,
+    enumerable: true
+  }
+}));
+
+var uniq = function uniq(array) {
+  return array.reduce(function (uniqueArray, item) {
+    if (uniqueArray.indexOf(item) < 0) {
+      uniqueArray.push(item);
+    }
+
+    return uniqueArray;
+  }, []);
+};
+
+var NO_IMAGE_URI = 'https://widgets.shopifyapps.com/assets/no-image.svg';
+
+/**
+   * Class for products returned by fetch('product')
+   * @class ProductModel
+   * @constructor
+ */
+var ProductModel = BaseModel.extend(Object.defineProperties({
+  constructor: function constructor() {
+    this['super'].apply(this, arguments);
+  }
+}, {
+  id: {
+
+    /**
+      * Product unique ID
+      *
+      * @property id
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.product_id;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  title: {
+
+    /**
+      * The product title
+      * @property title
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.title;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  description: {
+
+    /**
+      * A product description.
+      * @property description
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.body_html;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  images: {
+
+    /**
+      * An `Array` of `Objects` that contain meta data about an image including `src` of the images.
+      *
+      * An example image `Object`:
+      * ```
+      * {
+      *   created_at: "2016-08-29T12:35:09-04:00",
+      *   id: 17690553350,
+      *   position: 1,
+      *   product_id: 8291029446,
+      *   src: "https://cdn.shopify.com/s/files/1/1019/0495/products/i11_c3334325-2d67-4623-8cd4-0a6b08aa1b83.jpg?v=1472488509",
+      *   updated_at: "2016-08-29T12:35:09-04:00",
+      *   variant_ids: [ 27690103238 ]
+      * }
+      * ```
+      * @property images
+      * @type {Array} array of image objects.
+    */
+    get: function get() {
+      return this.attrs.images.map(function (image) {
+        return new ImageModel(image);
+      });
+    },
+    configurable: true,
+    enumerable: true
+  },
+  memoized: {
+    get: function get() {
+      this._memoized = this._memoized || {};
+
+      return this._memoized;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  options: {
+
+    /**
+     *  Get an array of {{#crossLink "ProductOptionModel"}}ProductOptionModels{{/crossLink}}.
+     *  {{#crossLink "ProductOptionModel"}}ProductOptionModels{{/crossLink}} can be used to
+     *  define the currently `selectedVariant` from which you can get a checkout url
+     *  ({{#crossLink "ProductVariantModel/checkoutUrl"}}ProductVariantModel.checkoutUrl{{/crossLink}}) or can
+     *  be added to a cart ({{#crossLink "CartModel/createLineItemsFromVariants"}}CartModel.createLineItemsFromVariants{{/crossLink}}).
+     *
+     *  Below is an example on how to create html for option selections:
+     * ```javascript
+     *  // the following will create an Array of HTML to create multiple select inputs
+     *  // global callbacks are also created which will set the option as selected
+     *  var elements = product.options.map(function(option) {
+     *    // we'll create a callback in global scope
+     *    // which will be called when the select's value changes
+     *    var callBackName = option.name + 'onChange';
+     *    window[ callBackName ] = function(select) {
+     *      // set the products option to be selected
+     *      option.selected = select.value;
+     *    };
+     *
+     *    // return a string which will be HTML for the select
+     *    return '<select name="' + option.name + '" onchange="'callBackName'(this)">' + option.values.map(function(value) {
+     *      return '<option value="' + value + '">' + value + '</option>';
+     *    }) + '</select>';
+     *  });
+     * ```
+     *
+     * @property options
+     * @type {Array|ProductOptionModel}
+     */
+    get: function get() {
+      if (this.memoized.options) {
+        return this.memoized.options;
+      }
+
+      var baseOptions = this.attrs.options;
+      var variants$$1 = this.variants;
+
+      this.memoized.options = baseOptions.map(function (option) {
+        var name = option.name;
+
+        var dupedValues = variants$$1.reduce(function (valueList, variant) {
+          var optionValueForOption = variant.optionValues.filter(function (optionValue) {
+            return optionValue.name === option.name;
+          })[0];
+
+          valueList.push(optionValueForOption.value);
+
+          return valueList;
+        }, []);
+
+        var values = uniq(dupedValues);
+
+        return new ProductOptionModel({ name: name, values: values });
+      });
+
+      return this.memoized.options;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  variants: {
+
+    /**
+      * An `Array` of {{#crossLink "ProductVariantModel"}}ProductVariantModel's{{/crossLink}}
+      * @property variants
+      * @type {Array|ProductVariantModel} array of ProductVariantModel instances.
+    */
+    get: function get() {
+      var _this3 = this;
+
+      return this.attrs.variants.map(function (variant) {
+        return new ProductVariantModel({ variant: variant, product: _this3 }, { config: _this3.config });
+      });
+    },
+    configurable: true,
+    enumerable: true
+  },
+  selections: {
+
+    /**
+      * A read only `Array` of Strings represented currently selected option values. eg. `["Large", "Red"]`
+      * @property selections
+      * @type {Array | String}
+    */
+    get: function get() {
+      return this.options.map(function (option) {
+        return option.selected;
+      });
+    },
+    configurable: true,
+    enumerable: true
+  },
+  selectedVariant: {
+
+    /**
+      * Retrieve variant for currently selected options. By default the first value in each
+      * option is selected which means `selectedVariant` will never be `null`.
+      *
+      * With a `selectedVariant` you can create checkout url
+      * ({{#crossLink "ProductVariantModel/checkoutUrl"}}ProductVariantModel.checkoutUrl{{/crossLink}}) or it can
+      * be added to a cart ({{#crossLink "CartModel/createLineItemsFromVariants"}}CartModel.createLineItemsFromVariants{{/crossLink}}).
+      *
+      * @property selectedVariant
+      * @type {ProductVariantModel}
+    */
+    get: function get() {
+      var variantTitle = this.selections.join(' / ');
+
+      return this.variants.filter(function (variant) {
+        return variant.title === variantTitle;
+      })[0] || null;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  selectedVariantImage: {
+
+    /**
+      * Retrieve image for currently selected variantImage. An example image Object would look like this:
+      * ```
+      * {
+      *   created_at: "2016-08-29T12:35:09-04:00",
+      *   id: 17690553350,
+      *   position: 1,
+      *   product_id: 8291029446,
+      *   src: "https://cdn.shopify.com/s/files/1/1019/0495/products/i11_c3334325-2d67-4623-8cd4-0a6b08aa1b83.jpg?v=1472488509",
+      *   updated_at: "2016-08-29T12:35:09-04:00",
+      *   variant_ids: [ 27690103238 ]
+      * }
+      * ```
+      *
+      * @property selectedVariantImage
+      * @type {Object}
+    */
+    get: function get() {
+      if (!this.selectedVariant) {
+        return null;
+      }
+
+      return this.selectedVariant.image;
+    },
+    configurable: true,
+    enumerable: true
+  }
+}));
+
+var ListingsSerializer = CoreObject.extend({
+  constructor: function constructor(config) {
+    this.config = config;
+  },
+  rootKeyForType: function rootKeyForType(type) {
+    return type.slice(0, -1) + '_listing';
+  },
+
+
+  models: {
+    collections: BaseModel,
+    products: ProductModel
+  },
+
+  modelForType: function modelForType(type) {
+    return this.models[type];
+  },
+  deserializeSingle: function deserializeSingle(type) {
+    var singlePayload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var metaAttrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+    var modelAttrs = singlePayload[this.rootKeyForType(type)];
+    var model = this.modelFromAttrs(type, modelAttrs, metaAttrs);
+
+    return model;
+  },
+  deserializeMultiple: function deserializeMultiple(type) {
+    var _this4 = this;
+
+    var collectionPayload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var metaAttrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+    var models = collectionPayload[this.rootKeyForType(type) + 's'];
+
+    return models.map(function (attrs) {
+      var model = _this4.modelFromAttrs(type, attrs, metaAttrs);
+
+      return model;
+    });
+  },
+  modelFromAttrs: function modelFromAttrs(type, attrs, metaAttrs) {
+    var Model = this.modelForType(type);
+
+    metaAttrs.config = this.config;
+
+    return new Model(attrs, metaAttrs);
+  }
+});
+
+function authToUrl(url, opts) {
+  var authorization = void 0;
+
+  if (opts.headers) {
+    Object.keys(opts.headers).forEach(function (key) {
+      if (key.toLowerCase() === 'authorization') {
+        authorization = opts.headers[key];
+      }
+    });
+  }
+
+  if (authorization) {
+    var hashedKey = authorization.split(' ').slice(-1)[0];
+
+    try {
+      var plainKey = atob(hashedKey);
+
+      var newUrl = void 0;
+
+      if (url.indexOf('?') > -1) {
+        newUrl = url + '&_x_http_authorization=' + plainKey;
+      } else {
+        newUrl = url + '?_x_http_authorization=' + plainKey;
+      }
+
+      return newUrl;
+    } catch (e) {
+      // atob choked on non-encoded data. Therefore, not a form of auth we
+      // support.
+      //
+      // NOOP
+      //
+    }
+  }
+
+  /* eslint newline-before-return: 0 */
+  return url;
+}
+
+function ie9Ajax(method, url, opts) {
+  return new Promise(function (resolve, reject) {
+    var xdr = new XDomainRequest();
+
+    xdr.onload = function () {
+      try {
+        var json = JSON.parse(xdr.responseText);
+
+        resolve({ json: json, originalResponse: xdr, isJSON: true });
+      } catch (e) {
+        resolve({ text: xdr.responseText, originalResponse: xdr, isText: true });
+      }
+    };
+
+    function handleError() {
+      reject(new Error('There was an error with the XDR'));
+    }
+
+    xdr.onerror = handleError;
+    xdr.ontimeout = handleError;
+
+    xdr.open(method, authToUrl(url, opts));
+    xdr.send(opts.data);
+  });
+}
+
+function isNodeLikeEnvironment() {
+  var windowAbsent = typeof window === 'undefined';
+  var requirePresent = "function" === 'function';
+
+  return windowAbsent && requirePresent;
+}
+
+function checkStatus(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return response;
+  }
+
+  var error = new Error(response.statusText);
+
+  error.status = response.status;
+  error.response = response;
+  throw error;
+}
+
+function parseResponse(response) {
+  return response.json().then(function (json) {
+    return { json: json, originalResponse: response, isJSON: true };
+  })['catch'](function () {
+    var responseClone = response.clone();
+
+    return responseClone.text().then(function (text) {
+      return { text: text, originalResponse: responseClone, isText: true };
+    });
+  });
+}
+
+function ajax(method, url) {
+  var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  // we need to check that we're not running in Node
+  // before we should check if this is ie9
+  if (!isNodeLikeEnvironment()) {
+    var xhr = new XMLHttpRequest();
+
+    if (!('withCredentials' in xhr)) {
+      return ie9Ajax.apply(undefined, arguments);
+    }
+  }
+
+  opts.method = method;
+  opts.mode = 'cors';
+
+  return fetch(url, opts).then(checkStatus).then(parseResponse);
+}
+
+var ListingsAdapter = CoreObject.extend(Object.defineProperties({
+  ajax: ajax,
+
+  constructor: function constructor(config) {
+    this.config = config;
+  },
+  pathForType: function pathForType(type) {
+    return '/' + type.slice(0, -1) + '_listings';
+  },
+  buildUrl: function buildUrl(singleOrMultiple, type, idOrQuery) {
+    switch (singleOrMultiple) {
+      case 'multiple':
+        return this.buildMultipleUrl(type, idOrQuery);
+      case 'single':
+        return this.buildSingleUrl(type, idOrQuery);
+      default:
+        return '';
+    }
+  },
+  buildMultipleUrl: function buildMultipleUrl(type) {
+    var query = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var url = '' + this.baseUrl + this.pathForType(type);
+    var paramNames = Object.keys(query);
+
+    if (paramNames.length > 0) {
+      var queryString = paramNames.map(function (key) {
+        var value = void 0;
+
+        if (Array.isArray(query[key])) {
+          value = query[key].join(',');
+        } else {
+          value = query[key];
+        }
+
+        return key + '=' + encodeURIComponent(value);
+      }).join('&');
+
+      return url + '?' + queryString;
+    }
+
+    return url;
+  },
+  buildSingleUrl: function buildSingleUrl(type, id) {
+    return '' + this.baseUrl + this.pathForType(type) + '/' + id;
+  },
+  fetchMultiple: function fetchMultiple() /* type, [query] */{
+    var url = this.buildUrl.apply(this, ['multiple'].concat(Array.prototype.slice.call(arguments)));
+
+    return this.ajax('GET', url, { headers: this.headers }).then(function (response) {
+      return response.json;
+    });
+  },
+  fetchSingle: function fetchSingle() /* type, id */{
+    var url = this.buildUrl.apply(this, ['single'].concat(Array.prototype.slice.call(arguments)));
+
+    return this.ajax('GET', url, { headers: this.headers }).then(function (response) {
+      return response.json;
+    });
+  }
+}, {
+  base64AccessToken: {
+    get: function get() {
+      return btoa(this.config.accessToken);
+    },
+    configurable: true,
+    enumerable: true
+  },
+  baseUrl: {
+    get: function get() {
+      var _config = this.config,
+          domain = _config.domain,
+          appId = _config.appId;
+
+
+      return 'https://' + domain + '/api/apps/' + appId;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  headers: {
+    get: function get() {
+      return assign$1({}, {
+        Authorization: 'Basic ' + this.base64AccessToken,
+        'Content-Type': 'application/json',
+        'X-SDK-Variant': 'javascript',
+        'X-SDK-Version': version
+
+      }, this.config.ajaxHeaders);
+    },
+    configurable: true,
+    enumerable: true
+  }
+}));
+
+var GUID_KEY = 'shopify-buy-uuid';
+
+/**
+ * A cart stores an Array of `CartLineItemModel`'s in it's `lineItems` property.
+ * @class CartLineItemModel
+ * @constructor
+ */
+var CartLineItemModel = BaseModel.extend(Object.defineProperties({
+  constructor: function constructor() {
+    this['super'].apply(this, arguments);
+  }
+}, {
+  id: {
+
+    /**
+     * A line item ID.
+     * @property id
+     * @readOnly
+     * @type {String}
+     */
+    get: function get() {
+      return this.attrs[GUID_KEY];
+    },
+    configurable: true,
+    enumerable: true
+  },
+  variant_id: {
+
+    /**
+     * ID of line item variant.
+     * @property variant_id
+     * @readOnly
+     * @type {String}
+     */
+    get: function get() {
+      return this.attrs.variant_id;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  product_id: {
+
+    /**
+     * ID of variant's product.
+     * @property product_id
+     * @readOnly
+     * @type {String}
+     */
+    get: function get() {
+      return this.attrs.product_id;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  image: {
+
+    /**
+     * Variant's image.
+     * Example `Object` returned:
+     * ```
+     * {
+     *    "id": 18723183238,
+     *    "created_at": "2016-09-14T17:12:12-04:00",
+     *    "position": 1,
+     *    "updated_at": "2016-09-14T17:12:12-04:00",
+     *    "product_id": 8569911558,
+     *    "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/Mop__three_different_mop_handles.jpg?v=1473887532",
+     *    "variant_ids": []
+     *  }
+     * ```
+     * @property image
+     * @readOnly
+     * @type {Object}
+     */
+    get: function get() {
+      if (!this.attrs.image) {
+        return null;
+      }
+
+      return new ImageModel(this.attrs.image);
+    },
+    configurable: true,
+    enumerable: true
+  },
+  imageVariants: {
+
+    /**
+      * Image variants available for a variant. An example value of `imageVariant`:
+      * ```
+      * [
+      *   {
+      *     "name": "pico",
+      *     "dimensions": "16x16",
+      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_pico.jpg?v=1469046423"
+      *   },
+      *   {
+      *     "name": "compact",
+      *     "dimensions": "160x160",
+      *     "src": "https://cdn.shopify.com/s/files/1/1019/0495/products/alien_146ef7c1-26e9-4e96-96e6-9d37128d0005_compact.jpg?v=1469046423"
+      *   }
+      * ]
+      * ```
+      *
+      * @property imageVariant
+      * @type {Array}
+    */
+    get: function get() {
+      if (!this.image) {
+        return [];
+      }
+
+      return this.image.variants;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  title: {
+
+    /**
+     * Product title of variant's parent product.
+     * @property title
+     * @readOnly
+     * @type {String}
+     */
+    get: function get() {
+      return this.attrs.title;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  quantity: {
+
+    /**
+     * Count of variants to order.
+     * @property quantity
+     * @type {Number}
+     */
+    get: function get() {
+      return this.attrs.quantity;
+    },
+    set: function set(value) {
+      var parsedValue = parseInt(value, 10);
+
+      if (parsedValue < 0) {
+        throw new Error('Quantities must be positive');
+      } else if (parsedValue !== parseFloat(value)) {
+        /* incidentally, this covers all NaN values, because NaN !== Nan */
+        throw new Error('Quantities must be whole numbers');
+      }
+
+      this.attrs.quantity = parsedValue;
+
+      return this.attrs.quantity;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  properties: {
+
+    /**
+     * Customization information for a product.
+     * <a href="https://help.shopify.com/themes/customization/products/get-customization-information-for-products" target="_blank">
+     * See here for more info
+     * </a>.
+     * @property properties
+     * @type {Object}
+     * @private
+     */
+    get: function get() {
+      return this.attrs.properties || {};
+    },
+    set: function set(value) {
+      this.attrs.properties = value || {};
+
+      return value;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  variant_title: {
+
+    /**
+     * Title of variant.
+     * @property variant_title
+     * @readOnly
+     * @type {String}
+     */
+    get: function get() {
+      return this.attrs.variant_title;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  price: {
+
+    /**
+     * Price of the variant. For example: `"5.00"`.
+     * @property price
+     * @readOnly
+     * @type {String}
+     */
+    get: function get() {
+      return this.attrs.price;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  compare_at_price: {
+
+    /**
+      * Compare at price for variant. The `compareAtPrice` would be
+      * the price of the product previously before the product went on sale. For more info
+      * go <a href="https://docs.shopify.com/manual/products/promoting-marketing/sales" target="_blank">here</a>.
+      *
+      * If no `compareAtPrice` is set then this value will be `null`. An example value: `"5.00"`.
+      * @property compareAtPrice
+      * @readOnly
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs.compare_at_price;
+    },
+    configurable: true,
+    enumerable: true
+  },
+  line_price: {
+
+    /**
+     * The total price for this line item. For instance if the variant costs `1.50` and you have a quantity
+     * of 2 then `line_price` will be `3.00`.
+     * @property line_price
+     * @readOnly
+     * @type {String}
+     */
+    get: function get() {
+      return (this.quantity * parseFloat(this.price)).toFixed(2);
+    },
+    configurable: true,
+    enumerable: true
+  },
+  grams: {
+
+    /**
+     * Variant's weight in grams. If no weight is set then `0` is returned.
+     * @property grams
+     * @readOnly
+     * @type {Number}
+     */
+    get: function get() {
+      return this.attrs.grams;
+    },
+    configurable: true,
+    enumerable: true
+  }
+}));
+
+/* eslint no-undefined: 0 complexity: 0 */
+var GUID_PREFIX = 'shopify-buy.' + Date.now();
+
+var GUID_DESC = {
+  writable: true,
+  configurable: true,
+  enumerable: true,
+  value: null
+};
+
+var uuidSeed = 0;
+
+function uuid() {
+  return ++uuidSeed;
+}
+
+var numberCache = {};
+var stringCache = {};
+
+function setGuidFor(obj) {
+  if (obj && obj[GUID_KEY]) {
+    return obj[GUID_KEY];
+  }
+
+  if (obj === undefined) {
+    return '(undefined)';
+  }
+
+  if (obj === null) {
+    return '(null)';
+  }
+
+  var type = typeof obj === 'undefined' ? 'undefined' : _typeof(obj);
+  var id = void 0;
+
+  switch (type) {
+    case 'number':
+      id = numberCache[obj];
+
+      if (!id) {
+        id = numberCache[obj] = 'nu' + obj;
+      }
+
+      break;
+
+    case 'string':
+      id = stringCache[obj];
+
+      if (!id) {
+        id = stringCache[obj] = 'st' + uuid();
+      }
+
+      break;
+
+    case 'boolean':
+      if (obj) {
+        id = '(true)';
+      } else {
+        id = '(false)';
+      }
+
+      break;
+
+    default:
+      if (obj === Object) {
+        id = '(Object)';
+        break;
+      }
+
+      if (obj === Array) {
+        id = '(Array)';
+        break;
+      }
+
+      id = GUID_PREFIX + '.' + uuid();
+
+      if (obj[GUID_KEY] === null) {
+        obj[GUID_KEY] = id;
+      } else {
+        GUID_DESC.value = id;
+        Object.defineProperty(obj, GUID_KEY, GUID_DESC);
+      }
+  }
+
+  return id;
+}
+
+/* global global */
+
+var globalNamespace = void 0;
+
+if (typeof global === 'undefined') {
+  globalNamespace = window;
+} else {
+  globalNamespace = global;
+}
+
+function set(key, value) {
+  if (!globalNamespace[key]) {
+    globalNamespace[key] = value;
+  }
+}
+
+function get(key) {
+  return globalNamespace[key];
+}
+
+var globalVars = { set: set, get: get };
+
+function objectsEqual(one, two) {
+  if (one === two) {
+    return true;
+  }
+
+  return Object.keys(one).every(function (key) {
+    if (one[key] instanceof Date) {
+      return one[key].toString() === two[key].toString();
+    } else if (_typeof(one[key]) === 'object') {
+      return objectsEqual(one[key], two[key]);
+    }
+
+    return one[key] === two[key];
+  });
+}
+
+/**
+* Class for cart model
+* @class CartModel
+*/
+var CartModel = BaseModel.extend(Object.defineProperties({
+  constructor: function constructor() {
+    this['super'].apply(this, arguments);
+  },
+
+
+  /**
+    * Add items to the cart. Updates cart's `lineItems` based on variants passed in.
+    * ```javascript
+    * cart.addVariants({variant: variantObject, quantity: 1}).then(cart => {
+    *   // the cart has created line items
+    * });
+    * ```
+    * @deprecated `createLineItemsFromVariants` will be used in the future as it's more descriptive
+    * @method addVariants
+    * @param {Object} item - One or more variants
+    * @param {ProductVariantModel} item.variant - variant object
+    * @param {Number} item.quantity - quantity
+    * @param {Object} [moreItems...] - further objects defining `variant` and `quantity` maybe passed in
+    * @private
+    * @return {Promise|CartModel} - the cart instance.
+  */
+  addVariants: function addVariants() {
+    logger.warn('CartModel - ', 'addVariants is deprecated, please use createLineItemsFromVariants instead');
+
+    return this.createLineItemsFromVariants.apply(this, arguments);
+  },
+
+
+  /**
+    * Add items to the cart. Updates cart's `lineItems` based on variants passed in.
+    * ```javascript
+    * cart.createLineItemsFromVariants({variant: variantObject, quantity: 1}).then(cart => {
+    *   // the cart has created line items
+    * });
+    * ```
+    * @method createLineItemsFromVariants
+    * @param {Object} item - One or more variants
+    * @param {ProductVariantModel} item.variant - variant object
+    * @param {Number} item.quantity - quantity
+    * @param {Object} [moreItems...] - further objects defining `variant` and `quantity` maybe passed in
+    * @public
+    * @return {Promise|CartModel} - the cart instance.
+  */
+  createLineItemsFromVariants: function createLineItemsFromVariants() {
+    var newLineItems = [].concat(Array.prototype.slice.call(arguments)).map(function (item) {
+      var lineItem = {
+        image: item.variant.image,
+        image_variants: item.variant.imageVariants,
+        variant_id: item.variant.id,
+        product_id: item.variant.productId,
+        title: item.variant.productTitle,
+        quantity: parseInt(item.quantity, 10),
+        properties: item.properties || {},
+        variant_title: item.variant.title,
+        price: item.variant.price,
+        compare_at_price: item.variant.compareAtPrice,
+        grams: item.variant.grams
+      };
+
+      setGuidFor(lineItem);
+
+      return lineItem;
+    });
+    var existingLineItems = this.attrs.line_items;
+
+    existingLineItems.push.apply(existingLineItems, _toConsumableArray(newLineItems));
+
+    var dedupedLineItems = existingLineItems.reduce(function (itemAcc, item) {
+      var matchingItem = itemAcc.filter(function (existingItem) {
+        return existingItem.variant_id === item.variant_id && objectsEqual(existingItem.properties, item.properties);
+      })[0];
+
+      if (matchingItem) {
+        matchingItem.quantity = matchingItem.quantity + item.quantity;
+      } else {
+        itemAcc.push(item);
+      }
+
+      return itemAcc;
+    }, []);
+
+    // Users may pass negative numbers and remove items. This ensures there's no
+    // item with a quantity of zero or less.
+    this.attrs.line_items = dedupedLineItems.reduce(function (itemAcc, item) {
+      if (item.quantity >= 1) {
+        itemAcc.push(item);
+      }
+
+      return itemAcc;
+    }, []);
+
+    return this.updateModel();
+  },
+
+
+  /**
+    * Update a line item quantity based on line item id
+    * ```javascript
+    * // This example changes the quantity for the first line item to 2
+    * const firstLineItemId = cart.lineItems[0].id;
+    *
+    * cart.updateLineItem(firstLineItemId, 2).then(cart => {
+    *   // the cart has updated the line item
+    * });
+    * ```
+    * @method updateLineItem
+    * @param {String} id - line item ID
+    * @param {Number} quantity - new quantity for line item
+    * @throws {Error} if line item with ID is not in cart.
+    * @public
+    * @return {Promise|CartModel} - the cart instance
+  */
+  updateLineItem: function updateLineItem(id, quantity) {
+    if (quantity < 1) {
+      return this.removeLineItem(id);
+    }
+
+    var lineItem = this.lineItems.filter(function (item) {
+      return item.id === id;
+    })[0];
+
+    if (lineItem) {
+      lineItem.quantity = quantity;
+
+      return this.updateModel();
+    }
+
+    return new Promise(function (resolve, reject) {
+      reject(new Error('line item with id: ' + id + ' not found in cart#' + this.id));
+    });
+  },
+
+
+  /**
+    * Remove a line item from cart based on line item id
+    * ```javascript
+    * // This example removes the first line item
+    * const firstLineItemId = cart.lineItems[0].id;
+    *
+    * cart.removeLineItem(firstLineItemId).then(cart => {
+    *   // the cart has removed the line item
+    * });
+    * ```
+    *
+    * @method removeLineItem
+    * @param {String} id - line item ID
+    * @throws {Error} if line item with ID is not in cart.
+    * @public
+    * @return {Promise|CartModel} - the cart instance
+  */
+  removeLineItem: function removeLineItem(id) {
+    var oldLength = this.lineItems.length;
+    var newLineItems = this.lineItems.filter(function (item) {
+      return item.id !== id;
+    });
+    var newLength = newLineItems.length;
+
+    if (newLength < oldLength) {
+      this.attrs.line_items = newLineItems.map(function (item) {
+        return item.attrs;
+      });
+
+      return this.updateModel();
+    }
+
+    return new Promise(function (resolve, reject) {
+      reject(new Error('line item with id: ' + id + ' not found in cart#' + this.id));
+    });
+  },
+
+
+  /**
+    * Remove all line items from cart
+    * ```javascript
+    * // This example removes all line items from the cart
+    * cart.clearLineItems().then(cart => {
+    *   // the cart has removed all line items
+    * });
+    * @method clearLineItems
+    * @public
+    * @return {Promise|CartModel} - the cart instance
+  */
+  clearLineItems: function clearLineItems() {
+    this.attrs.line_items = [];
+
+    return this.updateModel();
+  },
+
+
+  /**
+    * Force update of cart model on server. This function will only be used in advanced situations and does not need to be called
+    * explicitly to update line items. It is automatically called after
+    * {{#crossLink "CartModel/createLineItemsFromVariants"}}{{/crossLink}},
+    * {{#crossLink "CartModel/updateLineItem"}}{{/crossLink}},
+    * {{#crossLink "CartModel/removeLineItem"}}{{/crossLink}},
+    * and {{#crossLink "CartModel/removeLineItem"}}{{/crossLink}}
+    *
+    * @method updateModel
+    * @public
+    * @return {Promise|CartModel} - the cart instance
+  */
+  updateModel: function updateModel() {
+    var _this5 = this;
+
+    return this.shopClient.update('carts', this).then(function (updateCart) {
+      assign$1(_this5.attrs, updateCart.attrs);
+
+      return _this5;
+    });
+  }
+}, {
+  id: {
+
+    /**
+      * get ID for current cart
+      * @property id
+      * @readOnly
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs[GUID_KEY];
+    },
+    configurable: true,
+    enumerable: true
+  },
+  lineItems: {
+
+    /**
+      * Get an `Array` of {{#crossLink "CartLineItemModel"}}CartLineItemModel's{{/crossLink}}
+      * @property lineItems
+      * @readOnly
+      * @type {Array}
+    */
+    get: function get() {
+      return (this.attrs.line_items || []).map(function (item) {
+        return new CartLineItemModel(item);
+      });
+    },
+    configurable: true,
+    enumerable: true
+  },
+  lineItemCount: {
+
+    /**
+      * Gets the total quantity of all line items. Example: you've added two variants with quantities 3 and 2. `lineItemCount` will be 5.
+      * @property lineItemCount
+      * @readOnly
+      * @type {Number}
+    */
+    get: function get() {
+      return this.lineItems.reduce(function (total, item) {
+        return total + item.quantity;
+      }, 0);
+    },
+    configurable: true,
+    enumerable: true
+  },
+  subtotal: {
+
+    /**
+      * Get current subtotal price for all line items. Example: two items have been added to the cart that cost $1.25
+      * then the subtotal will be `2.50`
+      *
+      * @property subtotal
+      * @readOnly
+      * @type {String}
+    */
+    get: function get() {
+      var subtotal = this.lineItems.reduce(function (runningTotal, lineItem) {
+        return runningTotal + parseFloat(lineItem.line_price);
+      }, 0);
+
+      return subtotal.toFixed(2);
+    },
+    configurable: true,
+    enumerable: true
+  },
+  checkoutUrl: {
+
+    /**
+      * Get checkout URL for current cart
+      * @property checkoutUrl
+      * @readOnly
+      * @type {String}
+    */
+    get: function get() {
+      var config = this.config;
+      var baseUrl = 'https://' + config.domain + '/cart';
+      var ga = globalVars.get('ga');
+
+      var variantPath = this.lineItems.map(function (item) {
+        return item.variant_id + ':' + item.quantity;
+      });
+
+      var query = 'access_token=' + config.accessToken + '&_fd=0';
+
+      if (typeof ga === 'function') {
+        var linkerParam = void 0;
+
+        ga(function (tracker) {
+          linkerParam = tracker.get('linkerParam');
+        });
+
+        if (linkerParam) {
+          query += '&' + linkerParam;
+        }
+      }
+
+      return baseUrl + '/' + variantPath + '?' + query;
+    },
+    configurable: true,
+    enumerable: true
+  }
+}));
+
+var CartSerializer = CoreObject.extend({
+  constructor: function constructor(config) {
+    this.config = config;
+  },
+  rootKeyForType: function rootKeyForType(type) {
+    return type.slice(0, -1);
+  },
+  modelForType: function modelForType() /* type */{
+    return CartModel;
+  },
+  deserializeSingle: function deserializeSingle(type) {
+    var singlePayload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var metaAttrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+    var modelAttrs = singlePayload[this.rootKeyForType(type)];
+    var model = this.modelFromAttrs(type, modelAttrs, metaAttrs);
+
+    return model;
+  },
+  modelFromAttrs: function modelFromAttrs(type, attrs, metaAttrs) {
+    var Model = this.modelForType(type);
+
+    metaAttrs.config = this.config;
+
+    return new Model(attrs, metaAttrs);
+  },
+  serialize: function serialize(type, model) {
+    var root = this.rootKeyForType(type);
+    var payload = {};
+    var attrs = assign$1({}, model.attrs);
+
+    payload[root] = attrs;
+
+    delete attrs.attributes;
+
+    Object.keys(attrs).forEach(function (key) {
+      var value = attrs[key];
+
+      if (value === null || typeof value === 'string' && value.length === 0) {
+        delete attrs[key];
+      }
+    });
+
+    return payload;
+  }
+});
+
+var ReferenceModel = BaseModel.extend(Object.defineProperties({
+
+  /**
+    * Class for reference model
+    * @private
+    * @class ReferenceModel
+    * @constructor
+  */
+  constructor: function constructor(attrs) {
+    if (Object.keys(attrs).indexOf('referenceId') < 0) {
+      throw new Error('Missing key referenceId of reference. References to null are not allowed');
+    }
+
+    this['super'].apply(this, arguments);
+  }
+}, {
+  id: {
+
+    /**
+      * get the ID for current reference (not what it refers to, but its own unique identifier)
+      * @property id
+      * @type {String}
+    */
+    get: function get() {
+      return this.attrs[GUID_KEY];
+    },
+    configurable: true,
+    enumerable: true
+  },
+  referenceId: {
+    get: function get() {
+      return this.attrs.referenceId;
+    },
+    set: function set(value) {
+      this.attrs.referenceId = value;
+
+      return value;
+    },
+    configurable: true,
+    enumerable: true
+  }
+}));
+
+var ReferenceSerializer = CoreObject.extend({
+  constructor: function constructor(config) {
+    this.config = config;
+  },
+  modelForType: function modelForType() /* type */{
+    return ReferenceModel;
+  },
+  deserializeSingle: function deserializeSingle(type) {
+    var singlePayload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var metaAttrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+    var Model = this.modelForType(type);
+
+    return new Model(singlePayload, metaAttrs);
+  },
+  serialize: function serialize(type, model) {
+    var attrs = assign$1({}, model.attrs);
+
+    return attrs;
+  }
+});
+
+var Store = CoreObject.extend({
+  constructor: function constructor() {
+    this.localStorageAvailable = this.storageAvailable('localStorage');
+    this.cache = {};
+  },
+  setItem: function setItem(key, value) {
+    if (this.localStorageAvailable) {
+      localStorage.setItem(key, JSON.stringify(value));
+    } else {
+      this.cache[key] = value;
+    }
+
+    return value;
+  },
+  getItem: function getItem(key) {
+    if (this.localStorageAvailable) {
+      var stringValue = localStorage.getItem(key);
+
+      try {
+        return JSON.parse(stringValue);
+      } catch (e) {
+        return null;
+      }
+    } else {
+      return this.cache[key] || null;
+    }
+  },
+  storageAvailable: function storageAvailable(type) {
+    try {
+      var storage = globalVars.get(type);
+      var x = '__storage_test__';
+
+      storage.setItem(x, x);
+      storage.removeItem(x);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+});
+
+var LocalStorageAdapter = CoreObject.extend({
+  constructor: function constructor() {
+    this.store = new Store();
+  },
+  idKeyForType: function idKeyForType() /* type */{
+    return GUID_KEY;
+  },
+  fetchSingle: function fetchSingle(type, id) {
+    var _this6 = this;
+
+    return new Promise(function (resolve, reject) {
+      var value = _this6.store.getItem(_this6.storageKey(type, id));
+
+      if (value === null) {
+        reject(new Error(type + '#' + id + ' not found'));
+
+        return;
+      }
+
+      resolve(value);
+    });
+  },
+  create: function create(type, payload) {
+    var _this7 = this;
+
+    return new Promise(function (resolve) {
+      var id = _this7.identify(payload);
+
+      _this7.store.setItem(_this7.storageKey(type, id), payload);
+      resolve(payload);
+    });
+  },
+  update: function update(type, id, payload) {
+    var _this8 = this;
+
+    return new Promise(function (resolve) {
+      _this8.store.setItem(_this8.storageKey(type, id), payload);
+      resolve(payload);
+    });
+  },
+  storageKey: function storageKey(type, id) {
+    return type + '.' + id;
+  },
+  identify: function identify(payload) {
+    var keys = Object.keys(payload);
+
+    if (keys.length === 1 && _typeof(payload[keys[0]]) === 'object') {
+      return setGuidFor(payload[keys[0]]);
+    }
+
+    return setGuidFor(payload);
+  }
+});
+
+/**
+ * @module shopify-buy
+ * @submodule shop-client
+ */
+
+function fetchFactory(fetchType, type) {
+  var func = void 0;
+
+  switch (fetchType) {
+    case 'all':
+      func = function func() {
+        return this.fetchAll(type);
+      };
+      break;
+    case 'one':
+      func = function func() {
+        return this.fetch.apply(this, [type].concat(Array.prototype.slice.call(arguments)));
+      };
+      break;
+    case 'query':
+      func = function func() {
+        return this.fetchQuery.apply(this, [type].concat(Array.prototype.slice.call(arguments)));
+      };
+      break;
+  }
+
+  return func;
+}
+
+var ShopClient = CoreObject.extend(Object.defineProperties({
+  /**
+   * @class ShopClient
+   * @constructor
+   */
+  constructor: function constructor(config) {
+    this.config = config;
+
+    this.serializers = {
+      products: ListingsSerializer,
+      collections: ListingsSerializer,
+      carts: CartSerializer,
+      references: ReferenceSerializer
+    };
+
+    this.adapters = {
+      products: ListingsAdapter,
+      collections: ListingsAdapter,
+      carts: LocalStorageAdapter,
+      references: LocalStorageAdapter
+    };
+  },
+
+
+  config: null,
+
+  /**
+   * Fetch all of a `type`, returning a promise.
+   *
+   * ```javascript
+   * client.fetchAll('products').then(products => {
+   *   // do things with products
+   * });
+   * ```
+   *
+   * @method fetchAll
+   * @private
+   * @param {String} type The pluralized name of the type, in lower case.
+   * @return {Promise|Array} a promise resolving with an array of `type`
+   */
+  fetchAll: function fetchAll(type) {
+    var _this9 = this;
+
+    var adapter = new this.adapters[type](this.config);
+
+    return adapter.fetchMultiple(type).then(function (payload) {
+      return _this9.deserialize(type, payload, adapter, null, { multiple: true });
+    });
+  },
+
+
+  /**
+   * Fetch one of a `type`, returning a promise.
+   *
+   * ```javascript
+   * client.fetch('products', 123).then(product => {
+   *   // do things with the product
+   * });
+   * ```
+   *
+   * @method fetch
+   * @private
+   * @param {String} type The pluralized name of the type, in lower case.
+   * @param {String|Number} id a unique identifier
+   * @return {Promise|BaseModel} a promise resolving with a single instance of
+   * `type` expressed as a `BaseModel`.
+   */
+  fetch: function fetch(type, id) {
+    var _this10 = this;
+
+    var adapter = new this.adapters[type](this.config);
+
+    return adapter.fetchSingle(type, id).then(function (payload) {
+      return _this10.deserialize(type, payload, adapter, null, { single: true });
+    });
+  },
+
+
+  /**
+   * Fetch many of a `type`, that match `query`
+   *
+   * ```javascript
+   * client.fetchQuery('products', { collection_id: 456 }).then(products => {
+   *   // do things with the products
+   * });
+   * ```
+   *
+   * @method fetchQuery
+   * @private
+   * @param {String} type The pluralized name of the type, in lower case.
+   * @param {Object} query a query sent to the api server.
+   * @return {Promise|Array} a promise resolving with an array of `type`.
+   */
+  fetchQuery: function fetchQuery(type, query) {
+    var _this11 = this;
+
+    var adapter = new this.adapters[type](this.config);
+
+    return adapter.fetchMultiple(type, query).then(function (payload) {
+      return _this11.deserialize(type, payload, adapter, null, { multiple: true });
+    });
+  },
+
+
+  /**
+   * Create an instance of `type`, optionally including `modelAttrs`.
+   *
+   * ```javascript
+   * client.create('carts', { line_items: [ ... ] }).then(cart => {
+   *   // do things with the cart.
+   * });
+   * ```
+   *
+   * @method create
+   * @private
+   * @param {String} type The pluralized name of the type, in lower case.
+   * @param {Object} [modelAttrs={}] attributes representing the internal state
+   * of the model to be persisted.
+   * @return {Promise|CartModel} a promise resolving with a single instance of
+   * `type`
+   */
+  create: function create(type) {
+    var _this12 = this;
+
+    var modelAttrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var adapter = new this.adapters[type](this.config);
+    var serializer = new this.serializers[type](this.config);
+    var Model = serializer.modelForType(type);
+    var model = new Model(modelAttrs, { shopClient: this });
+    var attrs = serializer.serialize(type, model);
+
+    return adapter.create(type, attrs).then(function (payload) {
+      return _this12.deserialize(type, payload, adapter, serializer, { single: true });
+    });
+  },
+
+
+  /**
+   * Create an instance of `type`, optionally including `attrs`.
+   *
+   * ```javascript
+   * client.create('carts', { line_items: [ ... ] }).then(cart => {
+   *   // do things with the cart.
+   * });
+   * ```
+   *
+   * @method update
+   * @private
+   * @param {String} type The pluralized name of the type, in lower case.
+   * @param {BaseModel} updatedModel The model that represents new state to
+   * to persist.
+   * @return {Promise|CartModel} a promise resolving with a single instance of
+   * `type`
+   */
+  update: function update(type, updatedModel) {
+    var _this13 = this;
+
+    var adapter = updatedModel.adapter;
+    var serializer = updatedModel.serializer;
+    var serializedModel = serializer.serialize(type, updatedModel);
+    var id = updatedModel.attrs[adapter.idKeyForType(type)];
+
+    return adapter.update(type, id, serializedModel).then(function (payload) {
+      return _this13.deserialize(type, payload, adapter, serializer, { single: true });
+    });
+  },
+
+
+  /**
+   * Proxy to serializer's deserialize.
+   *
+   * @method deserialize
+   * @private
+   * @param {String} type The pluralized name of the type, in lower case.
+   * @param {Object} payload The raw payload returned by the adapter.
+   * @param {BaseAdapter} adapter The adapter that yielded the payload.
+   * @param {BaseSerializer} existingSerializer The serializer to attach. If
+   * none is passed, then `this.deserialize` will create one for the type.
+   * @param {Object} opts Options that determine which deserialization method to
+   * use.
+   * @param {Boolean} opts.multiple true when the payload represents multiple
+   * models
+   * @param {Boolean} opts.single true when the payload represents one model.
+   * @return {BaseModel} an instance of `type` reified into a model.
+   */
+  deserialize: function deserialize(type, payload, adapter, existingSerializer) {
+    var opts = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+
+    var serializer = existingSerializer || new this.serializers[type](this.config);
+    var meta = { shopClient: this, adapter: adapter, serializer: serializer, type: type };
+    var serializedPayload = void 0;
+
+    if (opts.multiple) {
+      serializedPayload = serializer.deserializeMultiple(type, payload, meta);
+    } else {
+      serializedPayload = serializer.deserializeSingle(type, payload, meta);
+    }
+
+    return serializedPayload;
+  },
+
+
+  /**
+    * Creates a {{#crossLink "CartModel"}}CartModel{{/crossLink}} instance.
+    *
+    * ```javascript
+    * client.createCart().then(cart => {
+    *   // do something with cart
+    * });
+    * ```
+    *
+    * @method createCart
+    * @public
+    * @return {Promise|CartModel} - new cart instance.
+  */
+  createCart: function createCart() {
+    var userAttrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    var baseAttrs = {
+      line_items: []
+    };
+    var attrs = {};
+
+    assign$1(attrs, baseAttrs);
+    assign$1(attrs, userAttrs);
+
+    return this.create('carts', attrs);
+  },
+
+
+  /**
+    * Updates an existing {{#crossLink "CartModel"}}CartModel{{/crossLink}} instance and persists it to localStorage.
+    *
+    * ```javascript
+    * client.createCart().then(cart => {
+    *   cart.lineItems = [
+    *     // ...
+    *   ];
+    *   client.updateCart(cart);
+    * });
+    * ```
+    *
+    * @param {CartModel} updatedCart an updated CartModel
+    * @method updateCart
+    * @private
+    * @return {Promise|CartModel} - updated cart instance.
+  */
+  updateCart: function updateCart(updatedCart) {
+    return this.update('carts', updatedCart);
+  },
+
+
+  /**
+   * Retrieve a previously created cart by its key.
+   *
+   * ```javascript
+   * client.fetchCart('shopify-buy.1459804699118.2').then(cart => {
+   *   console.log(cart); // The retrieved cart
+   * });
+   *
+   * @method fetchCart
+   * @public
+   * @param {String} id The cart's unique identifier
+   * @return {Promise|CartModel} The cart model.
+   *
+   */
+  fetchCart: fetchFactory('one', 'carts'),
+
+  /**
+   * This function will return an `Array` of products from your store
+   * ```
+   * client.fetchAllProducts()
+   * .then(function(products) {
+   *   // all products in store
+   * });
+   * ```
+   *
+   * @method fetchAllProducts
+   * @public
+   * @return {Promise|Array} The product models.
+   */
+  fetchAllProducts: fetchFactory('all', 'products'),
+
+  /**
+   * This function will return an `Array` of collections from your store
+   * ```
+   * client.fetchAllCollections()
+   * .then(function(collections) {
+   *
+   * });
+   * ```
+   *
+   * @method fetchAllCollections
+   * @public
+   * @return {Promise|Array} The collection models.
+   */
+  fetchAllCollections: fetchFactory('all', 'collections'),
+
+  /**
+   * Fetch one product by its ID.
+   *
+   * ```javascript
+   * client.fetchProduct('8569911558').then(product => {
+   *   console.log(product); // The product with an ID of '8569911558'
+   * });
+   * ```
+   *
+   * @method fetchProduct
+   * @public
+   * @param {String|Number} id a unique identifier
+   * @return {Promise|BaseModel} The product model with the specified ID.
+   */
+  fetchProduct: fetchFactory('one', 'products'),
+
+  /**
+   * Fetch one collection by its ID.
+   *
+   * ```javascript
+   * client.fetchCollection('336903494').then(collection => {
+   *   console.log(collection); // The collection with an ID of '336903494'
+   * });
+   * ```
+   *
+   * @method fetchCollection
+   * @public
+   * @param {String|Number} id a unique identifier
+   * @return {Promise|BaseModel} The collection model with the specified ID.
+   */
+  fetchCollection: fetchFactory('one', 'collections'),
+
+  /**
+   * Fetches a list of products matching a specified query.
+   *
+   * ```javascript
+   * client.fetchQueryProducts({ collection_id: '336903494', tag: ['hats'] }).then(products => {
+   *   console.log(products); // An array of products in collection '336903494' having the tag 'hats'
+   * });
+   * ```
+   * @method fetchQueryProducts
+   * @public
+   * @param {Object} query A query sent to the api server containing one or more of:
+   *   @param {String|Number} [query.collection_id] The ID of a collection to retrieve products from
+   *   @param {Array} [query.tag] A list of tags to filter the products by. Accepts up to 10 tags.
+   *   @param {Array} [query.product_ids] A list of product IDs to retrieve
+   *   @param {String|Number} [query.page=1] The page offset number of the current lookup (based on the `limit`)
+   *   @param {String|Number} [query.limit=50] The number of products to retrieve per page
+   *   @param {String} [query.handle] The handle of the product to look up
+   *   @param {String} [query.updated_at_min] Products updated since the supplied timestamp (format: 2008-12-31 03:00)
+   *   @param {String} [query.sort_by] Will modify how products are ordered. Possible values are:
+   *                                   `"updated_at"`, `"best-selling"`, `"title-ascending"`, `"title-descending"`,
+   *                                   `"price-descending"`, `"price-ascending"`, `"created-descending"`, `"created-ascending"`,
+   *                                   or `"collection-default"`. Using `"collection-default"` means that products will be ordered
+   *                                   the using the custom ordering defined in your Shopify Admin. Default value `"collection-default"`.
+   * @return {Promise|Array} The product models.
+   */
+  fetchQueryProducts: fetchFactory('query', 'products'),
+
+  /**
+   * Fetches a list of collections matching a specified query.
+   *
+   * ```javascript
+   * client.fetchQueryCollections({page: 2, limit: 20}).then(collections => {
+   *   console.log(collections); // An array of collection resources
+   * });
+   * ```
+   *
+   * @method fetchQueryCollections
+   * @public
+   * @param {Object} query a query sent to the api server.
+   *   @param {String|Number} [query.page=1] the page offset number of the current lookup (based on the `limit`)
+   *   @param {String|Number} [query.limit=50] the number of collections to retrieve per page
+   * @return {Promise|Array} The collection models.
+   */
+  fetchQueryCollections: fetchFactory('query', 'collections'),
+
+  /**
+   * This method looks up a reference in localStorage to the most recent cart.
+   * If one is not found, creates one. If the cart the reference points to
+   * doesn't exist, create one and store the new reference.
+   *
+   * ```javascript
+   * client.fetchRecentCart().then(cart => {
+   *  // do stuff with the cart
+   * });
+   * ```
+   *
+   * @method fetchRecentCart
+   * @public
+   * @return {Promise|CartModel} The cart.
+   */
+  fetchRecentCart: function fetchRecentCart() {
+    var _this14 = this;
+
+    return this.fetch('references', this.config.domain + '.recent-cart').then(function (reference) {
+      var cartId = reference.referenceId;
+
+      return _this14.fetchCart(cartId);
+    })['catch'](function () {
+      return _this14.createCart().then(function (cart) {
+        var refAttrs = {
+          referenceId: cart.id
+        };
+
+        refAttrs[GUID_KEY] = _this14.config.domain + '.recent-cart';
+
+        _this14.create('references', refAttrs);
+
+        return cart;
+      });
+    });
+  }
+}, {
+  serializers: {
+    /**
+     * @attribute
+     * @default {
+     *  products: ListingsAdapter,
+     *  collections: ListingsAdapter,
+     *  carts: CartAdapter
+     * }
+     * @type Object
+     * @protected
+     */
+    // Prevent leaky state
+    get: function get() {
+      return assign$1({}, this.shadowedSerializers);
+    },
+    set: function set(values) {
+      this.shadowedSerializers = assign$1({}, values);
+    },
+    configurable: true,
+    enumerable: true
+  },
+  adapters: {
+    get: function get() {
+      return assign$1({}, this.shadowedAdapters);
+    },
+    set: function set(values) {
+      this.shadowedAdapters = assign$1({}, values);
+    },
+    configurable: true,
+    enumerable: true
+  }
+}));
+
+/* globals require */
+
+if (isNodeLikeEnvironment()) {
+  /* this indirection is needed because babel throws errors when
+   * transpiling require('node-fetch') using `amd` plugin with babel6
+   */
+  var localRequire = require;
+  var _fetch = __webpack_require__(54);
+
+  globalVars.set('fetch', _fetch);
+  globalVars.set('Response', _fetch.Response);
+}
+
+/* global Buffer */
+
+if (isNodeLikeEnvironment()) {
+  globalVars.set('btoa', function (string) {
+    return new Buffer(string).toString('base64');
+  });
+}
+
+/**
+ * @module shopify-buy
+ * @submodule shopify
+ */
+
+/**
+ * `ShopifyBuy` only defines one function {{#crossLink "ShopifyBuy/buildClient"}}{{/crossLink}} which can
+ * be used to build a {{#crossLink "ShopClient"}}{{/crossLink}} to query your store using the
+ * provided
+ * {{#crossLink "ShopifyBuy/buildClient/configAttrs:accessToken"}}`accessToken`{{/crossLink}},
+ * {{#crossLink "ShopifyBuy/buildClient/configAttrs:appId"}}`appId`{{/crossLink}},
+ * and {{#crossLink "ShopifyBuy/buildClient/configAttrs:domain"}}`domain`{{/crossLink}}.
+ * @class ShopifyBuy
+ * @static
+ */
+var Shopify = {
+  ShopClient: ShopClient,
+  Config: Config,
+  version: version,
+  NO_IMAGE_URI: NO_IMAGE_URI,
+
+  /**
+   * Create a ShopClient. This is the main entry point to the SDK.
+   *
+   * ```javascript
+   * const client = ShopifyBuy.buildClient({
+   *   accessToken: 'bf081e860bc9dc1ce0654fdfbc20892d',
+   *   appId: 6,
+   *   myShopifyDomain: 'your-shop-subdomain.myshopify.com', //Deprecated. Use `domain` instead
+   *   domain: 'embeds.myshopify.com'
+   * });
+   * ```
+   *
+   * @method buildClient
+   * @for ShopifyBuy
+   * @static
+   * @public
+   * @param {Object} configAttrs An object of required config data such as: `accessToken`, `appId`, `domain`
+   * @param {String} configAttrs.accessToken An access token for your store. Documentation how to get a token:
+   *   https://help.shopify.com/api/sdks/custom-storefront/js-buy-sdk/getting-started#generate-javascript-buy-sdk-credentials
+   * @param {String} configAttrs.appId Typically will be 6 which is the Buy Button App Id. For more info on App Id see:
+   *   https://help.shopify.com/api/sdks/js-buy-sdk/getting-started#app-id
+   * @param {String} configAttrs.domain Your shop's full `myshopify.com` domain. For example: `embeds.myshopify.com`
+   * @param {String} configAttrs.myShopifyDomain You shop's `myshopify.com` domain. [deprecated Use configAttrs.domain]
+   * @return {ShopClient} a client for the shop using your api credentials which you can use to query your store.
+   */
+  buildClient: function buildClient() {
+    var configAttrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    var config = new this.Config(configAttrs);
+
+    return new this.ShopClient(config);
+  }
+};
+
+module.exports = Shopify;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(20).Buffer))
+
+/***/ }),
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/*!
@@ -31445,336 +32314,65 @@ return Vue$3;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 14 */
+/* 53 */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if(!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if(!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
-
-var _events = __webpack_require__(16);
-
-var bus = new _events.EventEmitter();
-
-exports.default = bus;
+exports.default = {
+    name: 'price',
+    template: '<span class="wpshop-product-price">{{ price }}</span>',
+    computed: {
+        // TODO: Fix - how to find current selected variant?
+        price: function price() {
+            return 'TODO: Fix price template'; /* _.get(this.$root, 'product.attrs.price') */
+        }
+    }
+};
 
 /***/ }),
-/* 15 */,
-/* 16 */
-/***/ (function(module, exports) {
-
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      } else {
-        // At least give some kind of context to the user
-        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
-        err.context = er;
-        throw err;
-      }
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    args = Array.prototype.slice.call(arguments, 1);
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else if (listeners) {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.prototype.listenerCount = function(type) {
-  if (this._events) {
-    var evlistener = this._events[type];
-
-    if (isFunction(evlistener))
-      return 1;
-    else if (evlistener)
-      return evlistener.length;
-  }
-  return 0;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  return emitter.listenerCount(type);
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-
-/***/ }),
-/* 17 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31784,550 +32382,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
-    name: 'title',
-    template: '<span class="wpshop-product-title">{{ title }}</span>',
+    name: 'description',
+    template: '<span class="wpshop-product-description" v-html="description"></span>',
     computed: {
-        title: function title() {
-            return _.get(this.$root, 'product.attrs.title');
+        description: function description() {
+            return _.get(this.$root, 'product.attrs.body_html');
         }
     }
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// Thank's IE8 for his funny defineProperty
-module.exports = !__webpack_require__(19)(function(){
-  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
-});
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-module.exports = function(exec){
-  try {
-    return !!exec();
-  } catch(e){
-    return true;
-  }
-};
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-module.exports = function(it){
-  return typeof it === 'object' ? it !== null : typeof it === 'function';
-};
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-var core = module.exports = {version: '2.4.0'};
-if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports) {
-
-// 7.2.1 RequireObjectCoercible(argument)
-module.exports = function(it){
-  if(it == undefined)throw TypeError("Can't call method on  " + it);
-  return it;
-};
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = __webpack_require__(33);
-module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
-  return cof(it) == 'String' ? it.split('') : Object(it);
-};
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports) {
-
-// 7.1.4 ToInteger
-var ceil  = Math.ceil
-  , floor = Math.floor;
-module.exports = function(it){
-  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
-};
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = __webpack_require__(24)
-  , defined = __webpack_require__(23);
-module.exports = function(it){
-  return IObject(defined(it));
-};
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(29), __esModule: true };
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _assign = __webpack_require__(27);
-
-var _assign2 = _interopRequireDefault(_assign);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _assign2.default || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-
-    for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
-    }
-  }
-
-  return target;
-};
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(55);
-module.exports = __webpack_require__(22).Object.assign;
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports) {
-
-module.exports = function(it){
-  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
-  return it;
-};
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isObject = __webpack_require__(21);
-module.exports = function(it){
-  if(!isObject(it))throw TypeError(it + ' is not an object!');
-  return it;
-};
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// false -> Array#indexOf
-// true  -> Array#includes
-var toIObject = __webpack_require__(26)
-  , toLength  = __webpack_require__(51)
-  , toIndex   = __webpack_require__(50);
-module.exports = function(IS_INCLUDES){
-  return function($this, el, fromIndex){
-    var O      = toIObject($this)
-      , length = toLength(O.length)
-      , index  = toIndex(fromIndex, length)
-      , value;
-    // Array#includes uses SameValueZero equality algorithm
-    if(IS_INCLUDES && el != el)while(length > index){
-      value = O[index++];
-      if(value != value)return true;
-    // Array#toIndex ignores holes, Array#includes - not
-    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
-      if(O[index] === el)return IS_INCLUDES || index || 0;
-    } return !IS_INCLUDES && -1;
-  };
-};
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports) {
-
-var toString = {}.toString;
-
-module.exports = function(it){
-  return toString.call(it).slice(8, -1);
-};
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// optional / simple context binding
-var aFunction = __webpack_require__(30);
-module.exports = function(fn, that, length){
-  aFunction(fn);
-  if(that === undefined)return fn;
-  switch(length){
-    case 1: return function(a){
-      return fn.call(that, a);
-    };
-    case 2: return function(a, b){
-      return fn.call(that, a, b);
-    };
-    case 3: return function(a, b, c){
-      return fn.call(that, a, b, c);
-    };
-  }
-  return function(/* ...args */){
-    return fn.apply(that, arguments);
-  };
-};
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isObject = __webpack_require__(21)
-  , document = __webpack_require__(20).document
-  // in old IE typeof document.createElement is 'object'
-  , is = isObject(document) && isObject(document.createElement);
-module.exports = function(it){
-  return is ? document.createElement(it) : {};
-};
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports) {
-
-// IE 8- don't enum bug keys
-module.exports = (
-  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
-).split(',');
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var global    = __webpack_require__(20)
-  , core      = __webpack_require__(22)
-  , ctx       = __webpack_require__(34)
-  , hide      = __webpack_require__(39)
-  , PROTOTYPE = 'prototype';
-
-var $export = function(type, name, source){
-  var IS_FORCED = type & $export.F
-    , IS_GLOBAL = type & $export.G
-    , IS_STATIC = type & $export.S
-    , IS_PROTO  = type & $export.P
-    , IS_BIND   = type & $export.B
-    , IS_WRAP   = type & $export.W
-    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
-    , expProto  = exports[PROTOTYPE]
-    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
-    , key, own, out;
-  if(IS_GLOBAL)source = name;
-  for(key in source){
-    // contains in native
-    own = !IS_FORCED && target && target[key] !== undefined;
-    if(own && key in exports)continue;
-    // export native or passed
-    out = own ? target[key] : source[key];
-    // prevent global pollution for namespaces
-    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
-    // bind timers to global for call from export context
-    : IS_BIND && own ? ctx(out, global)
-    // wrap global constructors for prevent change them in library
-    : IS_WRAP && target[key] == out ? (function(C){
-      var F = function(a, b, c){
-        if(this instanceof C){
-          switch(arguments.length){
-            case 0: return new C;
-            case 1: return new C(a);
-            case 2: return new C(a, b);
-          } return new C(a, b, c);
-        } return C.apply(this, arguments);
-      };
-      F[PROTOTYPE] = C[PROTOTYPE];
-      return F;
-    // make static versions for prototype methods
-    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
-    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
-    if(IS_PROTO){
-      (exports.virtual || (exports.virtual = {}))[key] = out;
-      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
-    }
-  }
-};
-// type bitmap
-$export.F = 1;   // forced
-$export.G = 2;   // global
-$export.S = 4;   // static
-$export.P = 8;   // proto
-$export.B = 16;  // bind
-$export.W = 32;  // wrap
-$export.U = 64;  // safe
-$export.R = 128; // real proto method for `library` 
-module.exports = $export;
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports) {
-
-var hasOwnProperty = {}.hasOwnProperty;
-module.exports = function(it, key){
-  return hasOwnProperty.call(it, key);
-};
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var dP         = __webpack_require__(42)
-  , createDesc = __webpack_require__(47);
-module.exports = __webpack_require__(18) ? function(object, key, value){
-  return dP.f(object, key, createDesc(1, value));
-} : function(object, key, value){
-  object[key] = value;
-  return object;
-};
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = !__webpack_require__(18) && !__webpack_require__(19)(function(){
-  return Object.defineProperty(__webpack_require__(35)('div'), 'a', {get: function(){ return 7; }}).a != 7;
-});
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-// 19.1.2.1 Object.assign(target, source, ...)
-var getKeys  = __webpack_require__(45)
-  , gOPS     = __webpack_require__(43)
-  , pIE      = __webpack_require__(46)
-  , toObject = __webpack_require__(52)
-  , IObject  = __webpack_require__(24)
-  , $assign  = Object.assign;
-
-// should work with symbols and should have deterministic property order (V8 bug)
-module.exports = !$assign || __webpack_require__(19)(function(){
-  var A = {}
-    , B = {}
-    , S = Symbol()
-    , K = 'abcdefghijklmnopqrst';
-  A[S] = 7;
-  K.split('').forEach(function(k){ B[k] = k; });
-  return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
-}) ? function assign(target, source){ // eslint-disable-line no-unused-vars
-  var T     = toObject(target)
-    , aLen  = arguments.length
-    , index = 1
-    , getSymbols = gOPS.f
-    , isEnum     = pIE.f;
-  while(aLen > index){
-    var S      = IObject(arguments[index++])
-      , keys   = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S)
-      , length = keys.length
-      , j      = 0
-      , key;
-    while(length > j)if(isEnum.call(S, key = keys[j++]))T[key] = S[key];
-  } return T;
-} : $assign;
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var anObject       = __webpack_require__(31)
-  , IE8_DOM_DEFINE = __webpack_require__(40)
-  , toPrimitive    = __webpack_require__(53)
-  , dP             = Object.defineProperty;
-
-exports.f = __webpack_require__(18) ? Object.defineProperty : function defineProperty(O, P, Attributes){
-  anObject(O);
-  P = toPrimitive(P, true);
-  anObject(Attributes);
-  if(IE8_DOM_DEFINE)try {
-    return dP(O, P, Attributes);
-  } catch(e){ /* empty */ }
-  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
-  if('value' in Attributes)O[P] = Attributes.value;
-  return O;
-};
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports) {
-
-exports.f = Object.getOwnPropertySymbols;
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var has          = __webpack_require__(38)
-  , toIObject    = __webpack_require__(26)
-  , arrayIndexOf = __webpack_require__(32)(false)
-  , IE_PROTO     = __webpack_require__(48)('IE_PROTO');
-
-module.exports = function(object, names){
-  var O      = toIObject(object)
-    , i      = 0
-    , result = []
-    , key;
-  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
-  // Don't enum bug & hidden keys
-  while(names.length > i)if(has(O, key = names[i++])){
-    ~arrayIndexOf(result, key) || result.push(key);
-  }
-  return result;
-};
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys       = __webpack_require__(44)
-  , enumBugKeys = __webpack_require__(36);
-
-module.exports = Object.keys || function keys(O){
-  return $keys(O, enumBugKeys);
-};
-
-/***/ }),
-/* 46 */
-/***/ (function(module, exports) {
-
-exports.f = {}.propertyIsEnumerable;
-
-/***/ }),
-/* 47 */
-/***/ (function(module, exports) {
-
-module.exports = function(bitmap, value){
-  return {
-    enumerable  : !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable    : !(bitmap & 4),
-    value       : value
-  };
-};
-
-/***/ }),
-/* 48 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var shared = __webpack_require__(49)('keys')
-  , uid    = __webpack_require__(54);
-module.exports = function(key){
-  return shared[key] || (shared[key] = uid(key));
-};
-
-/***/ }),
-/* 49 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var global = __webpack_require__(20)
-  , SHARED = '__core-js_shared__'
-  , store  = global[SHARED] || (global[SHARED] = {});
-module.exports = function(key){
-  return store[key] || (store[key] = {});
-};
-
-/***/ }),
-/* 50 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var toInteger = __webpack_require__(25)
-  , max       = Math.max
-  , min       = Math.min;
-module.exports = function(index, length){
-  index = toInteger(index);
-  return index < 0 ? max(index + length, 0) : min(index, length);
-};
-
-/***/ }),
-/* 51 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 7.1.15 ToLength
-var toInteger = __webpack_require__(25)
-  , min       = Math.min;
-module.exports = function(it){
-  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
-};
-
-/***/ }),
-/* 52 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 7.1.13 ToObject(argument)
-var defined = __webpack_require__(23);
-module.exports = function(it){
-  return Object(defined(it));
-};
-
-/***/ }),
-/* 53 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = __webpack_require__(21);
-// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-// and the second argument - flag - preferred type is a string
-module.exports = function(it, S){
-  if(!isObject(it))return it;
-  var fn, val;
-  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
-  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
-  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
-  throw TypeError("Can't convert object to primitive value");
-};
-
-/***/ }),
-/* 54 */
-/***/ (function(module, exports) {
-
-var id = 0
-  , px = Math.random();
-module.exports = function(key){
-  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-};
-
-/***/ }),
-/* 55 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.3.1 Object.assign(target, source)
-var $export = __webpack_require__(37);
-
-$export($export.S + $export.F, 'Object', {assign: __webpack_require__(41)});
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ })
 /******/ ]);

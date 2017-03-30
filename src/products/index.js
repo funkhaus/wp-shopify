@@ -14,7 +14,7 @@ export default () => {
         if ( !propsData.productId ) return
 
         // init vue instance
-        new prodCmp({ el, propsData, template: el.innerHTML })
+        new prodCmp({ el, propsData, template: '<div class="product-wrapper">' + el.innerHTML + '</div>' })
     })
 
 }
