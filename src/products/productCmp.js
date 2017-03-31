@@ -17,7 +17,7 @@ export default (options) => {
 
     const productInner = {
         name: 'product-inner',
-        template
+        template: '<div class="product-wrapper">' + template + '</div>'
     }
 
     return new Vue({
@@ -28,27 +28,28 @@ export default (options) => {
         data () {
             return {
                 propsData: {...propsData},
-                product: null,
-                loading: false,
-                hasVariants: false,
-                productUnavailable: false
+                product: null
             }
         },
         mounted () {
-            this.loading = true
             shopClient.fetchProduct(this.propsData.productId)
                 .then(product => this.product = product)
-                .then(() => this.loading = false)
-                .then(() => {
-                    // Adds/removes hasVariants and productUnavailable classes
-                    this.hasVariants = this.product.variants && this.product.variants.length > 1
-                    this.productUnavailable = !this.product.attrs.available
-                })
         },
         template: `
-            <div :class="['wshop-product-module', { loading }, { hasVariants }, { productUnavailable }]">
+            <div :class="['wshop-product-module', { loading }, { 'has-variants': hasVariants }, { 'product-unavailable': productUnavailable }]">
                 <product-inner></product-inner>
-            </div>`.trim()
+            </div>`.trim(),
+        computed: {
+            hasVariants () {
+                return _.get(this.product, 'variants.length') > 1
+            },
+            productUnavailable () {
+                return _.get(this.product, 'attrs.available')
+            },
+            loading () {
+                return this.product === null
+            }
+        }
     })
 
 }
