@@ -1,6 +1,8 @@
 ## What
 wp-shopify is an integration tool built with for Wordpress (custom post type: `wps-product`) with the [Shopify Buy API](https://help.shopify.com/api/sdks/js-buy-sdk) and [Vue.js](https://vuejs.org/).
 
+wp-shopify treats anything wrapped in an element with a `data-product-id` as a Vue template.
+
 ## How
 Assuming a Shopify product with the ID 12345:
 
