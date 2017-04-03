@@ -1,22 +1,42 @@
+import imagesLoaded from 'imagesloaded'
+
 export default {
     name: 'image',
     template: `<img
-        :class="[ 'wps-product-image', { loading } ]"
+        :class="[ 'wp-shopify-image', { loading } ]"
         :src="url"
         />`.trim(),
     props: {
-        index: {
-            default: 0,
-            type: Number
+        image: {
+            type: Object,
+            default: null
         }
     },
+    data () {
+        return {
+            loading: true
+        }
+    },
+    mounted () { this.runLoading() },
+    watch: {
+        url () { this.runLoading() }
+    },
     computed: {
-        url(){
-            return _.get( this.$root, 'product.attrs.images[' + this.index + '].src' )
+        url () {
+            return this.image ?
+                this.image.src :
+                _.get( this.$root, 'product.attrs.images[0].src' )
         },
-        loading(){
-            // TODO: Image loading classes
-            return true
+        width () {
+            return this.$el.width
+        }
+    },
+    methods: {
+        runLoading () {
+            this.loading = true
+            imagesLoaded( this.$el, () => {
+                this.loading = false
+            })
         }
     }
 }

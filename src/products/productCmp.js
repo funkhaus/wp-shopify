@@ -7,6 +7,7 @@ import priceCmp from './components/price'
 import descriptionCmp from './components/description'
 import typeCmp from './components/type'
 import imageCmp from './components/image'
+import galleryCmp from './components/gallery'
 
 // Register all product components here
 Vue.component('product-title', titleCmp)
@@ -14,6 +15,7 @@ Vue.component('product-price', priceCmp)
 Vue.component('product-description', descriptionCmp)
 Vue.component('product-type', typeCmp);
 Vue.component('product-image', imageCmp)
+Vue.component('product-gallery', galleryCmp)
 
 // Set up the product's Vue instance
 export default (options) => {
