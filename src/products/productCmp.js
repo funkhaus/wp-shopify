@@ -40,6 +40,7 @@ export default (options) => {
         mounted () {
             shopClient.fetchProduct(this.propsData.productId)
                 .then(product => this.product = product)
+                .then( ()=> console.log(this.product.selectedVariant) )
         },
         template: `
             <div :class="['wshop-product-module', { loading }, { 'has-variants': hasVariants }, { 'product-unavailable': productUnavailable }]">

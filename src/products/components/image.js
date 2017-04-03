@@ -23,9 +23,11 @@ export default {
     },
     computed: {
         url () {
-            return this.image ?
-                this.image.src :
-                _.get( this.$root, 'product.attrs.images[0].src' )
+            const manualImageSrc = _.get(this, 'image.src')
+            const variantImageSrc = _.get( this.$root, 'product.selectedVariant.image.src' )
+            const firstImageSrc = _.get( this.$root, 'product.images[0].src' )
+
+            return manualImageSrc || variantImageSrc || firstImageSrc
         },
         width () {
             return this.$el.width
