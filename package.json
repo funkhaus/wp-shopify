@@ -27,6 +27,8 @@
     "lodash": "^4.17.4",
     "shopify-buy": "^0.7.1",
     "vue": "^2.2.6",
+    "vue-loader": "^11.3.4",
+    "vue-template-compiler": "^2.2.6",
     "webpack": "^2.3.2"
   }
 }

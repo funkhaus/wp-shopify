@@ -2,12 +2,12 @@ import shopClient from 'src/shopClient'
 import bus from 'src/bus'
 
 // Import product components
-import titleCmp from './components/title'
+import titleCmp from './components/title.vue'
 import priceCmp from './components/price'
-import descriptionCmp from './components/description'
-import typeCmp from './components/type'
-import imageCmp from './components/image'
-import galleryCmp from './components/gallery'
+import descriptionCmp from './components/description.vue'
+import typeCmp from './components/type.vue'
+import imageCmp from './components/image.vue'
+import galleryCmp from './components/gallery.vue'
 
 // Register all product components here
 Vue.component('product-title', titleCmp)
