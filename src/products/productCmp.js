@@ -3,11 +3,12 @@ import bus from 'src/bus'
 
 // Import product components
 import titleCmp from './components/title.vue'
-import priceCmp from './components/price'
+import priceCmp from './components/price.vue'
 import descriptionCmp from './components/description.vue'
 import typeCmp from './components/type.vue'
 import imageCmp from './components/image.vue'
 import galleryCmp from './components/gallery.vue'
+import selectCmp from './components/select.vue'
 
 // Register all product components here
 Vue.component('product-title', titleCmp)
@@ -16,6 +17,7 @@ Vue.component('product-description', descriptionCmp)
 Vue.component('product-type', typeCmp);
 Vue.component('product-image', imageCmp)
 Vue.component('product-gallery', galleryCmp)
+Vue.component('product-select', selectCmp)
 
 // Set up the product's Vue instance
 export default (options) => {
@@ -40,7 +42,6 @@ export default (options) => {
         mounted () {
             shopClient.fetchProduct(this.propsData.productId)
                 .then(product => this.product = product)
-                .then( ()=> console.log(this.product.selectedVariant) )
         },
         template: `
             <div :class="['wshop-product-module', { loading }, { 'has-variants': hasVariants }, { 'product-unavailable': productUnavailable }]">
@@ -55,6 +56,12 @@ export default (options) => {
             },
             loading () {
                 return this.product === null
+            },
+            product () {
+                return this.product
+            },
+            selectedVariant () {
+                return _.get(this.product, 'selectedVariant')
             }
         }
     })

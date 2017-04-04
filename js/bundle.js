@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 18);
+/******/ 	return __webpack_require__(__webpack_require__.s = 21);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -17156,75 +17156,10 @@
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(67)(module), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(73)(module), __webpack_require__(0)))
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// Thank's IE8 for his funny defineProperty
-module.exports = !__webpack_require__(3)(function(){
-  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
-});
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = function(exec){
-  try {
-    return !!exec();
-  } catch(e){
-    return true;
-  }
-};
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = function(it){
-  return typeof it === 'object' ? it !== null : typeof it === 'function';
-};
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports) {
 
 // this module is a runtime utility for cleaner component module output and will
@@ -17279,6 +17214,71 @@ module.exports = function normalizeComponent (
   }
 }
 
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// Thank's IE8 for his funny defineProperty
+module.exports = !__webpack_require__(4)(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = function(exec){
+  try {
+    return !!exec();
+  } catch(e){
+    return true;
+  }
+};
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
 
 /***/ }),
 /* 7 */
@@ -17431,6 +17431,132 @@ Object.defineProperty(exports, "__esModule", {
 //
 //
 //
+//
+//
+//
+//
+//
+
+exports.default = {
+    name: 'gallery',
+    computed: {
+        images: function images() {
+            return _.get(this.$root, 'product.attrs.images') || [];
+        }
+    }
+};
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _imagesloaded = __webpack_require__(57);
+
+var _imagesloaded2 = _interopRequireDefault(_imagesloaded);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    name: 'image',
+    props: {
+        image: {
+            type: Object,
+            default: null
+        }
+    },
+    data: function data() {
+        return {
+            loading: true
+        };
+    },
+    mounted: function mounted() {
+        this.runLoading();
+    },
+
+    watch: {
+        url: function url() {
+            this.runLoading();
+        }
+    },
+    computed: {
+        url: function url() {
+            var manualImageSrc = _.get(this, 'image.src');
+            var variantImageSrc = _.get(this.$root, 'product.selectedVariant.image.src');
+            var firstImageSrc = _.get(this.$root, 'product.images[0].src');
+
+            return manualImageSrc || variantImageSrc || firstImageSrc;
+        },
+        width: function width() {
+            return this.$el.width;
+        }
+    },
+    methods: {
+        runLoading: function runLoading() {
+            var _this = this;
+
+            this.loading = true;
+            (0, _imagesloaded2.default)(this.$el, function () {
+                _this.loading = false;
+            });
+        }
+    }
+}; //
+//
+//
+//
+//
+//
+//
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+//
+//
+//
+//
+
+exports.default = {
+    name: 'price',
+    computed: {
+        price: function price() {
+            return _.get(this.$root, 'selectedVariant.attrs.variant.price');
+        }
+    }
+};
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+//
+//
+//
+//
+//
 
 exports.default = {
     name: 'title',
@@ -17443,7 +17569,7 @@ exports.default = {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 16 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17468,7 +17594,7 @@ exports.default = {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 17 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17485,7 +17611,7 @@ var bus = new _events.EventEmitter();
 exports.default = bus;
 
 /***/ }),
-/* 18 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17508,29 +17634,6 @@ $(document).ready(function () {
 });
 
 /***/ }),
-/* 19 */,
-/* 20 */,
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = {
-    name: 'price',
-    template: '<span class="wpshop-product-price">{{ price }}</span>',
-    computed: {
-        // TODO: See image.js for selected variant fallbacks
-        price: function price() {
-            return 'TODO: Fix price template'; /* _.get(this.$root, 'product.attrs.price') */
-        }
-    }
-};
-
-/***/ }),
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -17549,15 +17652,15 @@ var _shopClient = __webpack_require__(7);
 
 var _shopClient2 = _interopRequireDefault(_shopClient);
 
-var _bus = __webpack_require__(17);
+var _bus = __webpack_require__(20);
 
 var _bus2 = _interopRequireDefault(_bus);
 
-var _title = __webpack_require__(61);
+var _title = __webpack_require__(64);
 
 var _title2 = _interopRequireDefault(_title);
 
-var _price = __webpack_require__(21);
+var _price = __webpack_require__(63);
 
 var _price2 = _interopRequireDefault(_price);
 
@@ -17565,30 +17668,35 @@ var _description = __webpack_require__(60);
 
 var _description2 = _interopRequireDefault(_description);
 
-var _type = __webpack_require__(62);
+var _type = __webpack_require__(65);
 
 var _type2 = _interopRequireDefault(_type);
 
-var _image = __webpack_require__(70);
+var _image = __webpack_require__(62);
 
 var _image2 = _interopRequireDefault(_image);
 
-var _gallery = __webpack_require__(73);
+var _gallery = __webpack_require__(61);
 
 var _gallery2 = _interopRequireDefault(_gallery);
+
+var _select = __webpack_require__(76);
+
+var _select2 = _interopRequireDefault(_select);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Register all product components here
-
+Vue.component('product-title', _title2.default);
 
 // Import product components
-Vue.component('product-title', _title2.default);
+
 Vue.component('product-price', _price2.default);
 Vue.component('product-description', _description2.default);
 Vue.component('product-type', _type2.default);
 Vue.component('product-image', _image2.default);
 Vue.component('product-gallery', _gallery2.default);
+Vue.component('product-select', _select2.default);
 
 // Set up the product's Vue instance
 
@@ -17619,8 +17727,6 @@ exports.default = function (options) {
 
             _shopClient2.default.fetchProduct(this.propsData.productId).then(function (product) {
                 return _this.product = product;
-            }).then(function () {
-                return console.log(_this.product.selectedVariant);
             });
         },
 
@@ -17634,11 +17740,17 @@ exports.default = function (options) {
             },
             loading: function loading() {
                 return this.product === null;
+            },
+            product: function product() {
+                return this.product;
+            },
+            selectedVariant: function selectedVariant() {
+                return _.get(this.product, 'selectedVariant');
             }
         }
     });
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(66), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(72), __webpack_require__(0)))
 
 /***/ }),
 /* 23 */
@@ -19591,7 +19703,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 27 */
@@ -19613,7 +19725,7 @@ module.exports = function(it){
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(5);
+var isObject = __webpack_require__(6);
 module.exports = function(it){
   if(!isObject(it))throw TypeError(it + ' is not an object!');
   return it;
@@ -19684,8 +19796,8 @@ module.exports = function(fn, that, length){
 /* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(5)
-  , document = __webpack_require__(4).document
+var isObject = __webpack_require__(6)
+  , document = __webpack_require__(5).document
   // in old IE typeof document.createElement is 'object'
   , is = isObject(document) && isObject(document.createElement);
 module.exports = function(it){
@@ -19705,7 +19817,7 @@ module.exports = (
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global    = __webpack_require__(4)
+var global    = __webpack_require__(5)
   , core      = __webpack_require__(8)
   , ctx       = __webpack_require__(32)
   , hide      = __webpack_require__(37)
@@ -19782,7 +19894,7 @@ module.exports = function(it, key){
 
 var dP         = __webpack_require__(40)
   , createDesc = __webpack_require__(45);
-module.exports = __webpack_require__(2) ? function(object, key, value){
+module.exports = __webpack_require__(3) ? function(object, key, value){
   return dP.f(object, key, createDesc(1, value));
 } : function(object, key, value){
   object[key] = value;
@@ -19793,7 +19905,7 @@ module.exports = __webpack_require__(2) ? function(object, key, value){
 /* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = !__webpack_require__(2) && !__webpack_require__(3)(function(){
+module.exports = !__webpack_require__(3) && !__webpack_require__(4)(function(){
   return Object.defineProperty(__webpack_require__(33)('div'), 'a', {get: function(){ return 7; }}).a != 7;
 });
 
@@ -19812,7 +19924,7 @@ var getKeys  = __webpack_require__(43)
   , $assign  = Object.assign;
 
 // should work with symbols and should have deterministic property order (V8 bug)
-module.exports = !$assign || __webpack_require__(3)(function(){
+module.exports = !$assign || __webpack_require__(4)(function(){
   var A = {}
     , B = {}
     , S = Symbol()
@@ -19845,7 +19957,7 @@ var anObject       = __webpack_require__(29)
   , toPrimitive    = __webpack_require__(51)
   , dP             = Object.defineProperty;
 
-exports.f = __webpack_require__(2) ? Object.defineProperty : function defineProperty(O, P, Attributes){
+exports.f = __webpack_require__(3) ? Object.defineProperty : function defineProperty(O, P, Attributes){
   anObject(O);
   P = toPrimitive(P, true);
   anObject(Attributes);
@@ -19930,7 +20042,7 @@ module.exports = function(key){
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(4)
+var global = __webpack_require__(5)
   , SHARED = '__core-js_shared__'
   , store  = global[SHARED] || (global[SHARED] = {});
 module.exports = function(key){
@@ -19975,7 +20087,7 @@ module.exports = function(it){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = __webpack_require__(5);
+var isObject = __webpack_require__(6);
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
 // and the second argument - flag - preferred type is a string
 module.exports = function(it, S){
@@ -23569,7 +23681,7 @@ if (isNodeLikeEnvironment()) {
    * transpiling require('node-fetch') using `amd` plugin with babel6
    */
   var localRequire = require;
-  var _fetch = __webpack_require__(68);
+  var _fetch = __webpack_require__(74);
 
   globalVars.set('fetch', _fetch);
   globalVars.set('Response', _fetch.Response);
@@ -23640,17 +23752,17 @@ var Shopify = {
 
 module.exports = Shopify;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(26).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(26).Buffer))
 
 /***/ }),
 /* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Component = __webpack_require__(6)(
+var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(14),
   /* template */
-  __webpack_require__(64),
+  __webpack_require__(68),
   /* scopeId */
   null,
   /* cssModules */
@@ -23680,11 +23792,113 @@ module.exports = Component.exports
 /* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Component = __webpack_require__(6)(
+var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(15),
   /* template */
-  __webpack_require__(63),
+  __webpack_require__(71),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/products/components/gallery.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] gallery.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-9bf1f0ec", Component.options)
+  } else {
+    hotAPI.reload("data-v-9bf1f0ec", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(16),
+  /* template */
+  __webpack_require__(69),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/products/components/image.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] image.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-38103513", Component.options)
+  } else {
+    hotAPI.reload("data-v-38103513", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(17),
+  /* template */
+  __webpack_require__(66),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/products/components/price.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] price.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-2498d3fe", Component.options)
+  } else {
+    hotAPI.reload("data-v-2498d3fe", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(18),
+  /* template */
+  __webpack_require__(67),
   /* scopeId */
   null,
   /* cssModules */
@@ -23711,14 +23925,14 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 62 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Component = __webpack_require__(6)(
+var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(16),
+  __webpack_require__(19),
   /* template */
-  __webpack_require__(65),
+  __webpack_require__(70),
   /* scopeId */
   null,
   /* cssModules */
@@ -23745,7 +23959,24 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 63 */
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', {
+    staticClass: "wpshop-product-price"
+  }, [_vm._v(_vm._s(_vm.price))])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-2498d3fe", module.exports)
+  }
+}
+
+/***/ }),
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -23762,7 +23993,7 @@ if (false) {
 }
 
 /***/ }),
-/* 64 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -23782,7 +24013,29 @@ if (false) {
 }
 
 /***/ }),
-/* 65 */
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('img', {
+    class: ['wp-shopify-image', {
+      loading: _vm.loading
+    }],
+    attrs: {
+      "src": _vm.url
+    }
+  })
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-38103513", module.exports)
+  }
+}
+
+/***/ }),
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -23799,7 +24052,31 @@ if (false) {
 }
 
 /***/ }),
-/* 66 */
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "wps-product-gallery"
+  }, _vm._l((_vm.images), function(image, index) {
+    return _c('product-image', {
+      key: index,
+      attrs: {
+        "image": image
+      }
+    })
+  }))
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-9bf1f0ec", module.exports)
+  }
+}
+
+/***/ }),
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/*!
@@ -33119,10 +33396,10 @@ return Vue$3;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 67 */
+/* 73 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -33150,139 +33427,13 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 68 */
+/* 74 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 69 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(_) {
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _imagesloaded = __webpack_require__(57);
-
-var _imagesloaded2 = _interopRequireDefault(_imagesloaded);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    name: 'image',
-    props: {
-        image: {
-            type: Object,
-            default: null
-        }
-    },
-    data: function data() {
-        return {
-            loading: true
-        };
-    },
-    mounted: function mounted() {
-        this.runLoading();
-    },
-
-    watch: {
-        url: function url() {
-            this.runLoading();
-        }
-    },
-    computed: {
-        url: function url() {
-            var manualImageSrc = _.get(this, 'image.src');
-            var variantImageSrc = _.get(this.$root, 'product.selectedVariant.image.src');
-            var firstImageSrc = _.get(this.$root, 'product.images[0].src');
-
-            return manualImageSrc || variantImageSrc || firstImageSrc;
-        },
-        width: function width() {
-            return this.$el.width;
-        }
-    },
-    methods: {
-        runLoading: function runLoading() {
-            var _this = this;
-
-            this.loading = true;
-            (0, _imagesloaded2.default)(this.$el, function () {
-                _this.loading = false;
-            });
-        }
-    }
-}; //
-//
-//
-//
-//
-//
-//
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 70 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(6)(
-  /* script */
-  __webpack_require__(69),
-  /* template */
-  __webpack_require__(71),
-  /* scopeId */
-  null,
-  /* cssModules */
-  null
-)
-Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/products/components/image.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] image.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-38103513", Component.options)
-  } else {
-    hotAPI.reload("data-v-38103513", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('img', {
-    class: ['wp-shopify-image', {
-      loading: _vm.loading
-    }],
-    attrs: {
-      "src": _vm.url
-    }
-  })
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-38103513", module.exports)
-  }
-}
-
-/***/ }),
-/* 72 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33300,34 +33451,40 @@ Object.defineProperty(exports, "__esModule", {
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 exports.default = {
-    name: 'gallery',
     computed: {
-        images: function images() {
-            return _.get(this.$root, 'product.attrs.images') || [];
+        options: function options() {
+            return _.get(this.$root, 'product.options');
         }
     }
 };
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 73 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Component = __webpack_require__(6)(
+var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(72),
+  __webpack_require__(75),
   /* template */
-  __webpack_require__(74),
+  __webpack_require__(77),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/products/components/gallery.vue"
+Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/products/components/select.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] gallery.vue: functional components are not supported with templates, they should use render functions.")}
+if (Component.options.functional) {console.error("[vue-loader] select.vue: functional components are not supported with templates, they should use render functions.")}
 
 /* hot reload */
 if (false) {(function () {
@@ -33336,9 +33493,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-9bf1f0ec", Component.options)
+    hotAPI.createRecord("data-v-803c4218", Component.options)
   } else {
-    hotAPI.reload("data-v-9bf1f0ec", Component.options)
+    hotAPI.reload("data-v-803c4218", Component.options)
   }
 })()}
 
@@ -33346,25 +33503,28 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 74 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "wps-product-gallery"
-  }, _vm._l((_vm.images), function(image) {
-    return _c('product-image', {
+    staticClass: "wpshop-product-select"
+  }, _vm._l((_vm.options), function(option) {
+    return _c('select', [_c('option', {
       attrs: {
-        "image": image
+        "selected": "",
+        "disabled": ""
       }
-    })
+    }, [_vm._v(_vm._s(option.name))]), _vm._v(" "), _vm._l((option.values), function(value) {
+      return _c('option', [_vm._v("\n            " + _vm._s(value) + "\n        ")])
+    })], 2)
   }))
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-9bf1f0ec", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-803c4218", module.exports)
   }
 }
 

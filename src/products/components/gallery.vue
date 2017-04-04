@@ -1,9 +1,10 @@
 <template>
     <div class="wps-product-gallery">
         <product-image
-            v-for="image in images"
-            :image="image">
-        </product-image>
+            v-for="(image, index) in images"
+            :image="image"
+            :key="index"
+        ></product-image>
     </div>
 </template>
 
