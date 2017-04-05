@@ -1,11 +1,16 @@
 <template>
-    <div class="wpshop-product-select">
+    <div class="wpshop-product-select" v-if="options && options.length" @click="log">
 
-        <select v-for="option in options" >
+        <select v-for="option in options" v-model="option.selected">
 
-            <option selected disabled>{{ option.name }}</option>
+            <option disabled>
+                {{ option.name }}
+            </option>
 
-            <option v-for="value in option.values">
+            <option
+                v-for="value in option.values"
+                :value="value"
+            >
                 {{ value }}
             </option>
 
@@ -19,6 +24,11 @@
         computed: {
             options () {
                 return _.get(this.$root, 'product.options')
+            }
+        },
+        methods: {
+            log(){
+                console.log(this.$root.product)
             }
         }
     }

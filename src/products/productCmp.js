@@ -9,6 +9,7 @@ import typeCmp from './components/type.vue'
 import imageCmp from './components/image.vue'
 import galleryCmp from './components/gallery.vue'
 import selectCmp from './components/select.vue'
+import radioCmp from './components/radio.vue'
 
 // Register all product components here
 Vue.component('product-title', titleCmp)
@@ -18,6 +19,7 @@ Vue.component('product-type', typeCmp);
 Vue.component('product-image', imageCmp)
 Vue.component('product-gallery', galleryCmp)
 Vue.component('product-select', selectCmp)
+Vue.component('product-radio', radioCmp)
 
 // Set up the product's Vue instance
 export default (options) => {
