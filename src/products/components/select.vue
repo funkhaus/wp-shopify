@@ -1,34 +1,26 @@
 <template>
-    <div class="wpshop-product-select" v-if="options && options.length" @click="log">
+    <div class="wpshop-product-select" v-if="options && options.length">
 
-        <select v-for="option in options" v-model="option.selected">
-
-            <option disabled>
-                {{ option.name }}
-            </option>
-
-            <option
-                v-for="value in option.values"
-                :value="value"
-            >
-                {{ value }}
-            </option>
-
-        </select>
+        <product-option
+            v-for="(option, i) in $root.product.options"
+            :key="i"
+            input-mode="select"
+            :option="option">
+        </product-option>
 
     </div>
 </template>
 
 <script>
+    import productOption from './product-option.vue'
+
     export default {
+        components: {
+            'product-option': productOption
+        },
         computed: {
             options () {
                 return _.get(this.$root, 'product.options')
-            }
-        },
-        methods: {
-            log(){
-                console.log(this.$root.product)
             }
         }
     }

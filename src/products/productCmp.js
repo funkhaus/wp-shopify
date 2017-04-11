@@ -44,6 +44,12 @@ export default (options) => {
         mounted () {
             shopClient.fetchProduct(this.propsData.productId)
                 .then(product => this.product = product)
+
+            this.$on('option-changed', (optName, value) => {
+                const index = _.findIndex(this.product.options, option => option.name == optName)
+                this.product.options[index].selected = value
+                this.$forceUpdate()
+            })
         },
         template: `
             <div :class="['wshop-product-module', { loading }, { 'has-variants': hasVariants }, { 'product-unavailable': productUnavailable }]">

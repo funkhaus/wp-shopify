@@ -17600,40 +17600,35 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
+var _productOption = __webpack_require__(81);
+
+var _productOption2 = _interopRequireDefault(_productOption);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
+    components: {
+        'product-option': _productOption2.default
+    },
     computed: {
         options: function options() {
             return _.get(this.$root, 'product.options');
         }
-    },
-    methods: {
-        log: function log() {
-            console.log(this.$root.product);
-        }
     }
-};
+}; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
@@ -17826,6 +17821,14 @@ exports.default = function (options) {
 
             _shopClient2.default.fetchProduct(this.propsData.productId).then(function (product) {
                 return _this.product = product;
+            });
+
+            this.$on('option-changed', function (optName, value) {
+                var index = _.findIndex(_this.product.options, function (option) {
+                    return option.name == optName;
+                });
+                _this.product.options[index].selected = value;
+                _this.$forceUpdate();
             });
         },
 
@@ -24269,40 +24272,15 @@ if (false) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return (_vm.options && _vm.options.length) ? _c('div', {
-    staticClass: "wpshop-product-select",
-    on: {
-      "click": _vm.log
-    }
-  }, _vm._l((_vm.options), function(option) {
-    return _c('select', {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: (option.selected),
-        expression: "option.selected"
-      }],
-      on: {
-        "change": function($event) {
-          var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
-            return o.selected
-          }).map(function(o) {
-            var val = "_value" in o ? o._value : o.value;
-            return val
-          });
-          option.selected = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-        }
-      }
-    }, [_c('option', {
+    staticClass: "wpshop-product-select"
+  }, _vm._l((_vm.$root.product.options), function(option, i) {
+    return _c('product-option', {
+      key: i,
       attrs: {
-        "disabled": ""
+        "input-mode": "select",
+        "option": option
       }
-    }, [_vm._v("\n            " + _vm._s(option.name) + "\n        ")]), _vm._v(" "), _vm._l((option.values), function(value) {
-      return _c('option', {
-        domProps: {
-          "value": value
-        }
-      }, [_vm._v("\n            " + _vm._s(value) + "\n        ")])
-    })], 2)
+    })
   })) : _vm._e()
 },staticRenderFns: []}
 module.exports.render._withStripped = true
@@ -33693,6 +33671,132 @@ module.exports = function(module) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(82),
+  /* template */
+  __webpack_require__(83),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/products/components/product-option.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] product-option.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-28be1cea", Component.options)
+  } else {
+    hotAPI.reload("data-v-28be1cea", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+exports.default = {
+
+    props: {
+        'input-mode': {
+            type: String,
+            default: 'select'
+        },
+        option: {
+            type: Object,
+            default: null
+        }
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        this.$root.$on('option-changed', function () {
+            _this.$forceUpdate();
+        });
+    }
+};
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "wpshop-option"
+  }, [(_vm.inputMode == 'select') ? _c('select', {
+    on: {
+      "change": function($event) {
+        _vm.$root.$emit('option-changed', _vm.option.name, $event.target.value)
+      }
+    }
+  }, [_c('option', {
+    attrs: {
+      "disabled": ""
+    }
+  }, [_vm._v(_vm._s(_vm.option.name))]), _vm._v(" "), _vm._l((_vm.option.values), function(value) {
+    return _c('option', {
+      domProps: {
+        "selected": _vm.option.selected == value,
+        "value": value
+      }
+    }, [_vm._v("\n            " + _vm._s(value) + "\n        ")])
+  })], 2) : _c('form', [_vm._v("\n        RADIO\n    ")])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-28be1cea", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);
