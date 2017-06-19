@@ -32,13 +32,13 @@ And a custom line-items template like this (contained in `wshop-templates/cart-l
 ```html
 <script type="text/template" id="cart-line-item">
     Cart Item: <%= data.quantity %> <%= data.title %>(s)
-
+    
     <% if( data.attrs.product_type ){ // A sample data attribute from Shopify %>
         <%= data.attrs.product_type %>
     <% } else { %>
         No product type specified!
     <% } %>
-
+    
     <span data-cart="remove">Remove</span>
 
 </script>
@@ -62,26 +62,26 @@ Checkout [Links to Shopify checkout]
 ## Installation
 
 1. *Shopify:* Set up a Shopify store and enable the [Buy Button Channel](https://www.shopify.com/buy-button).
-1. Create an Access Token by going to the Buy Button Extensions page at *your-store*.myshopify.com/admin/apps/private/extensions and clicking **Create Token** in the top right corner.
-1. *Wordpress:* Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to __Settings > WP-Shopify__.
-1. Enter your Access Token (from step 2), Shopify domain (*your-store*.myshopify.com), and app ID in the wp-shopify settings. More info here on where to find that Shopify info can be found [here]( https://help.shopify.com/api/guides/api-credentials).
+1. Create an access token by going to the Buy Button Extensions page at your-site.myshopify.com/admin/apps/private/extensions and clicking **Create Extension** in the top right corner.
+1. *Wordpress:* Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to __Tools > Shopify__. 
+1. Put your API key (the access token from step 2 above), Shopify domain, and app ID in the wp-shopify settings. More info here on where to find that Shopify info can be found [here]( https://help.shopify.com/api/guides/api-credentials).
 
 ## How to Use
 First, link a Shopify product and a Wordpress page:
 
 1. Create a product in Shopify.
 1. EITHER: Link your product(s) to your site automatically:
-    1. Go to __Settings > WP-Shopify__ in your WP backend and hit Refresh Products. Your products will auto-populate from your Shopify store.
+    1. Go to Tools > Shopify in your WP backend and hit Refresh Products. Your products will auto-populate from your Shopify store.
 1. OR link your product(s) manually:
     1. Create a product in the new "Products" section on your WP admin bar.
-    1. You should see a new metabox in your new Product that has a field for the product ID. Fill in the product ID from your Shopify store.
+    1. You should see a new metabox in your new Product that has a field for the product ID. Fill in the product ID from your Shopify store. 
         * The easiest way to find the ID of a product is to navigate to the "edit" page for that product within Shopify, and copy the last section of the URL for that page. For example, if when editing the product your url is *example.myshopify.com/admin/products/__12345__*, then the ID for that product is __12345__.
 
 Next, prepare the markup for the product pages:
 
 1. wp-shopify products are a custom post type called `wps-product`. To set the template for a single product, create `single-wps-product.php`.
 1. **Wrap your product in an element with `data-product-id` set correctly.** For example, when in the Loop:
-
+    
         <div class="product-wrapper" data-product-id="<?php the_product_id(); ?>">
             <!-- the_product_id() will fill in the product ID - see "Advanced -> Convenience Functions" below -->
         </div>
@@ -92,7 +92,7 @@ Finally, prepare the markup for the cart page:
 1. **Wrap your cart in an element with `data-cart-id` set.** `data-cart-id` can be left blank:
 
         <div data-cart-id=""></div>
-
+        
 1. Fill the wrapper with `data-cart` shortcuts and/or custom Underscore templates. See Cart Templates below for examples.
 
 ## Product Templates
@@ -169,11 +169,11 @@ Custom Underscore cart templates are set up in the same way as custom product te
 
 When you add new product(s) to your Shopify store, you'll need to refresh your products in Wordpress.
 
-From your WP backend, go to __Settings > WP-Shopify__, set your refresh preferences with the checkboxes, and hit 'Refresh Products.' This will automatically pull product data from your linked Shopify store into Wordpress.
+From your WP backend, go to Tools > Shopify, set your refresh preferences with the checkboxes, and hit 'Refresh Products.' This will automatically pull product data from your linked Shopify store into Wordpress.
 
 ### Permalink Structure Slug
 
-You'll see this option under __Settings > WP-Shopify__. Changing its value will rewrite the store's parent directory:
+You'll see this option under Tools > Shopify. Changing its value will rewrite the store's parent directory:
 
 ```
 // Permalink Structure Slug set to 'store'
@@ -197,17 +197,17 @@ There are a few events available for you to hook into:
 * `wshop.cartEmpty` is triggered on `jQuery(document)` when rendering a cart with 0 items in it.
 * `wshop.allProductsRendered` is triggered on `jQuery(document)` when all product blocks have finised rendering.
 
-For example:
+For example: 
 ```js
-jQuery(document).on('wshop.productAdded'), function(){
-    console.log('Product added!');
+jQuery(document).on('wshop.productAdded'), function(){ 
+    console.log('Product added!'); 
 });
 ```
 
 ### Wrapper Classes
 There are informational classes added to product wrappers upon rendering:
 * `has-variants` will be added to any product that has variants on Shopify.
-* `product-unavailable` will be added to any product whose inventory is less than or equal to 0 (or is unavailable for any other reason).
+* `product-unavailable` will be added to any product whose inventory is less than or equal to 0 (or is unavailable for any other reason). 
 
 There are also classes added to cart wrappers upon rendering:
 * `empty-cart` will be added to an empty cart.
@@ -230,8 +230,8 @@ The `data-product="add-to-cart"` element will only add one of a given product to
 // js
 jQuery('#example').on('click', function(){
     // the custom quantity (any integer)
-    var quantity = 5;
-
+    var quantity = 5; 
+    
     // bind `wshop.addToCart` to `this`, then pass the custom quantity
     wshop.addToCart.bind(this)(quantity);
 });

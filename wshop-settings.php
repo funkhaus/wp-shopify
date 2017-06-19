@@ -18,12 +18,12 @@
             wp_enqueue_script('wshop-refresh', array('jquery', 'shopify-sdk'));
 
             wp_localize_script('wshop-refresh', 'wshopVars', array(
-                'apiKey'                => get_option('wshop_api_key'),
-                'domain'                => get_option('wshop_domain'),
-                'appId'                 => get_option('wshop_app_id'),
-                'processLink'           => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
-                'getAllProductsLink'    => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
-                'removeOldProductsLink' => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products')
+                'apiKey'            => get_option('wshop_api_key'),
+                'domain'            => get_option('wshop_domain'),
+                'appId'             => get_option('wshop_app_id'),
+                'processLink'              => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
+                'getAllProductsLink'       => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
+                'removeOldProductsLink'     => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products')
             ));
         }
     }
@@ -44,7 +44,7 @@
 				<table class="form-table">
 					<tbody>
 						<tr valign="top">
-							<th scope="row"><label for="wshop_api_key">Access Token:</label></th>
+							<th scope="row"><label for="wshop_api_key">API Key:</label></th>
 							<td>
 								<input name="wshop_api_key" type="text" title="" id="wshop_api_key" value="<?php echo get_option('wshop_api_key'); ?>">
 							</td>
