@@ -164,6 +164,11 @@ Custom Underscore cart templates are set up in the same way as custom product te
 </script>
 ```
 
+## Collection Templates
+You can render lists of Collections, which link to pages with products contained in those Collections.
+
+* `data-collection-list` - Lists out all collections using the `collection-list` template.
+
 ## Advanced
 ### Updating Products
 
