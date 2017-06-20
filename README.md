@@ -1,5 +1,4 @@
 ## TODO
-* Add Collections taxonomy
 * Dump ids/permalinks as key-value pair via `wp_localize_script`
 * Hide Products
 
@@ -169,12 +168,11 @@ Custom Underscore cart templates are set up in the same way as custom product te
 </script>
 ```
 
-## Collection Templates
+## Collections
 
-taxonomy: `wps-collection`
-each Collection is a term
+The plugin imports Shopify Collections as a custom taxonomy called `wps_collection`. It automatically sets up Products with the correct Collection(s) when refreshing the store.
 
-You can render lists of Collections, which link to pages with products contained in those Collections.
+To set up custom collection templates, create `taxonomy-wps_collection.php` in your theme (see the [Template Hierarchy](https://developer.wordpress.org/files/2014/10/template-hierarchy.png)).
 
 * `data-collection-list` - Lists out all collections using the `collection-list` template.
 
