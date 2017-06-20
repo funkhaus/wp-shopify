@@ -8,6 +8,8 @@ var wshopRefresh = {
     shopClient: null,
     productsLeft: 0,
     processedIDs: [],
+    processedCollections: [],
+    collections: [],
 
     init: function(){
         wshopRefresh.initShopify();
@@ -25,10 +27,18 @@ var wshopRefresh = {
             // Disable button
             jQuery('#wpshopify-refresh-button').prop('disabled', true);
 
-            // Request all products from this user's shop
-            wshopRefresh.shopClient.fetchQueryProducts({
-                limit: 1000
-            }).then(wshopRefresh.processAllProducts);
+            // Request all products and collectionsfrom this user's shop
+            Promise.all([
+
+                wshopRefresh.shopClient.fetchQueryProducts({ limit: 1000 }),
+                wshopRefresh.shopClient.fetchAllCollections()
+
+            ]).then(([ products, collections ]) => {
+
+                wshopRefresh.collections = collections;
+
+                wshopRefresh.processAllProducts(products);
+            });
 
         });
 
@@ -52,7 +62,7 @@ var wshopRefresh = {
         wshopRefresh.totalProducts = products.length;
 
         // Clear processed IDs
-        wshopRefresh.processedIDs.length = 0;
+        wshopRefresh.processedIDs = [];
 
         // Clear message
         jQuery('.refresh-message').html('<li>Received ' + products.length + ' product(s) from Shopify...</li>');
@@ -138,7 +148,10 @@ var wshopRefresh = {
             if( ! extraProductPages.length ){
                 // No products to remove, so wrap it all up!
                 jQuery('.refresh-message').prepend('<li>No old products to clean up.</li>');
-                wshopRefresh.completeRefresh();
+
+                // Refresh collections
+                wshopRefresh.processAllCollections();
+
                 return;
             }
 
@@ -152,8 +165,78 @@ var wshopRefresh = {
             }).done(function(message){
                 // Add status update and finish the process
                 jQuery('.refresh-message').prepend('<li>Removed ' + extraProductPages.length + ' old product(s).</li>');
-                wshopRefresh.completeRefresh();
+
+                // Refresh collections
+                wshopRefresh.processAllCollections();
             });
+        });
+
+    },
+
+    processAllCollections: function(){
+
+        // Clear processed collections
+        wshopRefresh.processedCollections = [];
+
+        // Clear message
+        jQuery('.refresh-message').prepend('<li>Received ' + wshopRefresh.collections.length + ' collection(s) from Shopify...</li>');
+
+        // Finish refresh
+        //wshopRefresh.completeRefresh();
+
+        // Kick off processing loop
+        wshopRefresh.processNextCollection();
+
+    },
+
+    processNextCollection: function(){
+
+        var nextCollection = wshopRefresh.collections.shift();
+
+        var collection = {
+            id: nextCollection.attrs.collection_id,
+            title: nextCollection.attrs.title,
+            handle: nextCollection.attrs.handle
+        }
+
+        // Create term if it doesn't exist yet
+        jQuery.ajax({
+            type: 'POST',
+            url: wshopRefresh.vars.processTermLink,
+            data: {
+                title: collection.title,
+                slug: collection.handle,
+                description: collection.id
+            }
+        }).done(function(result){
+
+            jQuery('.refresh-message').prepend('<li>' + result + '</li>');
+
+
+            wshopRefresh.shopClient.fetchQueryProducts({ limit: 1000, collection_id: nextCollection.attrs.collection_id })
+                .then(result => {
+
+                    // Save products in this category
+                    var ids = [];
+
+                    result.forEach(function(product){
+                        ids.push(product.id);
+                    });
+
+                    collection['products'] = ids;
+
+                    wshopRefresh.processedCollections.push(collection);
+
+                    // TODO: add terms
+
+                    if( wshopRefresh.collections.length > 0 ){
+                        wshopRefresh.processNextCollection();
+                    } else {
+                        wshopRefresh.completeRefresh();
+                    }
+
+                });
+
         });
 
     },

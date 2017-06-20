@@ -61,7 +61,7 @@
     		'update_item'       => __( 'Update Collection', 'textdomain' ),
     		'add_new_item'      => __( 'Add New Collection', 'textdomain' ),
     		'new_item_name'     => __( 'New Collection Name', 'textdomain' ),
-    		'menu_name'         => __( 'Collection', 'textdomain' ),
+    		'menu_name'         => __( 'Collections', 'textdomain' ),
     	);
 
     	$args = array(
@@ -73,7 +73,7 @@
     		'rewrite'           => array( 'slug' => get_option('wshop_collections_slug') ),
     	);
 
-        register_taxonomy( 'collections', 'wps-product', $args );
+        register_taxonomy( 'wps_collection', 'wps-product', $args );
 
     }
     add_action('init', 'wshop_create_custom_taxonomy', 10);

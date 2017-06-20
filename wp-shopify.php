@@ -153,4 +153,44 @@
 
     add_action('wp_ajax_wps_remove_products', 'wps_remove_products');
 
+    function wps_process_term(){
+
+        $title = $_POST['title'];
+        $slug = $_POST['slug'];
+        $description = $_POST['description'];
+
+        $term = get_term_by('slug', $slug, 'wps_collection');
+
+        if( $term ){
+
+            wp_update_term( $term->ID, 'wps_collection', array(
+                'name'          => $title,
+                'slug'          => $slug,
+                'description'   => $description
+            ));
+
+            echo 'Updated collection ' . $title . '.';
+
+        } else {
+
+            wp_insert_term(
+                $title,
+                'wps_collection',
+                array(
+                    'description'   => $description,
+                    'slug'          => $slug,
+                )
+            );
+
+            echo 'Created collection ' . $title . '.';
+        }
+
+
+
+        die();
+
+    }
+
+    add_action('wp_ajax_wps_process_term', 'wps_process_term');
+
 ?>

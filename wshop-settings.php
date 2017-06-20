@@ -23,7 +23,9 @@
                 'appId'             => get_option('wshop_app_id'),
                 'processLink'              => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
                 'getAllProductsLink'       => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
-                'removeOldProductsLink'     => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products')
+                'removeOldProductsLink'     => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products'),
+                'processTermLink'           => get_admin_url(null, '/admin-ajax.php?action=wps_process_term'),
+                'addTermLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_add_term')
             ));
         }
     }
