@@ -103,8 +103,6 @@ var wshop = {
 
         });
 
-
-
     },
 
     initProducts: function(){

@@ -1,4 +1,9 @@
-## What
+## TODO
+* Add Collections taxonomy
+* Dump ids/permalinks as key-value pair via `wp_localize_script`
+* Hide Products
+
+## What 
 wp-shopify is an integration tool built around the [Shopify Buy API](https://help.shopify.com/api/sdks/js-buy-sdk).
 
 wp-shopify integrates a basic Shopify store into a Wordpress site quickly and cleanly. You can write templates and develop a theme just as you normally would, pulling product and cart data straight from Shopify and leveraging the API for all the hard work.
@@ -165,6 +170,10 @@ Custom Underscore cart templates are set up in the same way as custom product te
 ```
 
 ## Collection Templates
+
+taxonomy: `wps-collection`
+each Collection is a term
+
 You can render lists of Collections, which link to pages with products contained in those Collections.
 
 * `data-collection-list` - Lists out all collections using the `collection-list` template.

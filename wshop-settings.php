@@ -67,6 +67,12 @@
 								<input name="wshop_rewrite_slug" type="text" title="" id="wshop_rewrite_slug" value="<?php echo get_option('wshop_rewrite_slug'); ?>">
 							</td>
                         </tr>
+                        <tr valign="top">
+							<th scope="row"><label for="wshop_collections_slug">Collections permalink:</label></th>
+							<td>
+								<input name="wshop_collections_slug" type="text" title="" id="wshop_collections_slug" value="<?php echo get_option('wshop_collections_slug'); ?>">
+							</td>
+                        </tr>
 					</tbody>
 				</table>
 				<p class="submit">
@@ -118,6 +124,7 @@
         register_setting('wshop_settings', 'wshop_domain', 'remove_protocol');
         register_setting('wshop_settings', 'wshop_app_id');
         register_setting('wshop_settings', 'wshop_rewrite_slug');
+        register_setting('wshop_settings', 'wshop_collections_slug');
     }
     add_action('admin_init', 'wshop_settings_init');
 

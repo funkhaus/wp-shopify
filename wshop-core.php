@@ -46,6 +46,39 @@
     add_action('init', 'wshop_create_custom_post', 10);
 
 /*
+ * Add custom taxonomy
+ */
+    function wshop_create_custom_taxonomy(){
+
+        $labels = array(
+    		'name'              => _x( 'Collections', 'taxonomy general name', 'textdomain' ),
+    		'singular_name'     => _x( 'Collection', 'taxonomy singular name', 'textdomain' ),
+    		'search_items'      => __( 'Search Collections', 'textdomain' ),
+    		'all_items'         => __( 'All Collections', 'textdomain' ),
+    		'parent_item'       => __( 'Parent Collection', 'textdomain' ),
+    		'parent_item_colon' => __( 'Parent Collection:', 'textdomain' ),
+    		'edit_item'         => __( 'Edit Collection', 'textdomain' ),
+    		'update_item'       => __( 'Update Collection', 'textdomain' ),
+    		'add_new_item'      => __( 'Add New Collection', 'textdomain' ),
+    		'new_item_name'     => __( 'New Collection Name', 'textdomain' ),
+    		'menu_name'         => __( 'Collection', 'textdomain' ),
+    	);
+
+    	$args = array(
+    		'hierarchical'      => true,
+    		'labels'            => $labels,
+    		'show_ui'           => true,
+    		'show_admin_column' => true,
+    		'query_var'         => true,
+    		'rewrite'           => array( 'slug' => get_option('wshop_collections_slug') ),
+    	);
+
+        register_taxonomy( 'collections', 'wps-product', $args );
+
+    }
+    add_action('init', 'wshop_create_custom_taxonomy', 10);
+
+/*
  * Enqueue Custom Scripts
  */
     function wshop_frontend_scripts() {

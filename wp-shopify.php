@@ -30,6 +30,7 @@
     function set_wps_rewrite_slug(){
         if( get_option('wshop_rewrite_slug') == '' ){
             update_option( 'wshop_rewrite_slug', 'store' );
+            update_option( 'wshop_collections_slug', 'collections' );
             flush_rewrite_rules();
         }
     }
