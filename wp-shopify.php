@@ -70,6 +70,9 @@
             );
             wp_update_post($args);
 
+            // Remove all terms from this product (we'll re-add them in wps_add_term below)
+            wp_set_object_terms( $target_post->ID, '', 'wps_collection' );
+
             $output = 'Updated existing Product ' . $title . '.';
 
         } else {
@@ -185,12 +188,51 @@
             echo 'Created collection ' . $title . '.';
         }
 
-
-
         die();
 
     }
 
     add_action('wp_ajax_wps_process_term', 'wps_process_term');
+
+    // Add terms to specified products
+    function wps_add_term(){
+
+
+        // Product IDs
+        $ids = $_POST['ids'];
+        $slug = $_POST['slug'];
+        $title = $_POST['title'];
+
+        if( !$ids ){
+            echo '<li>No products in collection ' . $title . ' found, continuing...</li>';
+            die();
+        }
+
+        $ids = explode(',', $ids);
+        $term = get_term_by('slug', $slug, 'wps_collection');
+
+        foreach( $ids as $id ){
+
+            $args = array(
+            	'posts_per_page'    => 1,
+            	'post_type'         => 'wps-product',
+            	'meta_key'          => '_wshop_product_id',
+            	'meta_value'        => $id
+            );
+            $target_post = reset(get_posts( $args ));
+
+            wp_set_object_terms( $target_post->ID, $slug, 'wps_collection', true );
+
+            echo '<li>Added collection ' . $title . ' to product ' . $target_post->post_title . '...</li>';
+
+        }
+
+        die();
+
+    }
+
+    add_action('wp_ajax_wps_add_term', 'wps_add_term');
+
+
 
 ?>

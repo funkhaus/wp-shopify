@@ -181,9 +181,6 @@ var wshopRefresh = {
         // Clear message
         jQuery('.refresh-message').prepend('<li>Received ' + wshopRefresh.collections.length + ' collection(s) from Shopify...</li>');
 
-        // Finish refresh
-        //wshopRefresh.completeRefresh();
-
         // Kick off processing loop
         wshopRefresh.processNextCollection();
 
@@ -208,10 +205,9 @@ var wshopRefresh = {
                 slug: collection.handle,
                 description: collection.id
             }
-        }).done(function(result){
+        }).done(function(message){
 
-            jQuery('.refresh-message').prepend('<li>' + result + '</li>');
-
+            jQuery('.refresh-message').prepend('<li>' + message + '</li>');
 
             wshopRefresh.shopClient.fetchQueryProducts({ limit: 1000, collection_id: nextCollection.attrs.collection_id })
                 .then(result => {
@@ -227,13 +223,24 @@ var wshopRefresh = {
 
                     wshopRefresh.processedCollections.push(collection);
 
-                    // TODO: add terms
+                    jQuery.ajax({
+                        type: 'POST',
+                        url: wshopRefresh.vars.addTermLink,
+                        data: {
+                            ids: ids.join(','),
+                            slug: collection.handle,
+                            title: collection.title
+                        }
+                    }).done(function(termMessages){
 
-                    if( wshopRefresh.collections.length > 0 ){
-                        wshopRefresh.processNextCollection();
-                    } else {
-                        wshopRefresh.completeRefresh();
-                    }
+                        jQuery('.refresh-message').prepend(termMessages);
+
+                        if( wshopRefresh.collections.length > 0 ){
+                            wshopRefresh.processNextCollection();
+                        } else {
+                            wshopRefresh.completeRefresh();
+                        }
+                    });
 
                 });
 
