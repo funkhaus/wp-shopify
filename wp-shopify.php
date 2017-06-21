@@ -161,6 +161,7 @@
         $title = $_POST['title'];
         $slug = $_POST['slug'];
         $description = $_POST['description'];
+        $image = $_POST['image'];
 
         $term = get_term_by('slug', $slug, 'wps_collection');
 
@@ -176,7 +177,7 @@
 
         } else {
 
-            wp_insert_term(
+            $term = wp_insert_term(
                 $title,
                 'wps_collection',
                 array(
@@ -185,8 +186,13 @@
                 )
             );
 
+
+
             echo 'Created collection ' . $title . '.';
         }
+
+        // Insert featured image meta
+        update_term_meta( $term->term_id, '_wps_collection_image', $image );
 
         die();
 

@@ -1,6 +1,7 @@
 ## TODO
-* Dump ids/permalinks as key-value pair via `wp_localize_script`
 * Hide Products
+* Delete unused Collections
+* Ordering
 
 ## What 
 wp-shopify is an integration tool built around the [Shopify Buy API](https://help.shopify.com/api/sdks/js-buy-sdk).

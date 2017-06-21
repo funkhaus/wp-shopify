@@ -193,7 +193,8 @@ var wshopRefresh = {
         var collection = {
             id: nextCollection.attrs.collection_id,
             title: nextCollection.attrs.title,
-            handle: nextCollection.attrs.handle
+            handle: nextCollection.attrs.handle,
+            image: nextCollection.attrs.image ? nextCollection.attrs.image.src : false
         }
 
         // Create term if it doesn't exist yet
@@ -203,7 +204,8 @@ var wshopRefresh = {
             data: {
                 title: collection.title,
                 slug: collection.handle,
-                description: collection.id
+                description: collection.id,
+                image: collection.image
             }
         }).done(function(message){
 
