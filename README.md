@@ -173,6 +173,8 @@ Custom Underscore cart templates are set up in the same way as custom product te
 
 The plugin imports Shopify Collections as a custom taxonomy called `wps_collection`. It automatically sets up Products with the correct Collection(s) when refreshing the store.
 
+TODO: Document `_wps_collection_image` metadata 
+
 To set up custom collection templates, create `taxonomy-wps_collection.php` in your theme (see the [Template Hierarchy](https://developer.wordpress.org/files/2014/10/template-hierarchy.png)).
 
 * `data-collection-list` - Lists out all collections using the `collection-list` template.
