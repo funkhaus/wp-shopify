@@ -18,11 +18,11 @@
             wp_enqueue_script('wshop-refresh', array('jquery', 'shopify-sdk'));
 
             wp_localize_script('wshop-refresh', 'wshopVars', array(
-                'apiKey'            => get_option('wshop_api_key'),
-                'domain'            => get_option('wshop_domain'),
-                'appId'             => get_option('wshop_app_id'),
-                'processLink'              => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
-                'getAllProductsLink'       => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
+                'apiKey'                    => get_option('wshop_api_key'),
+                'domain'                    => get_option('wshop_domain'),
+                'appId'                     => get_option('wshop_app_id'),
+                'processLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
+                'getAllProductsLink'        => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
                 'removeOldProductsLink'     => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products'),
                 'processTermLink'           => get_admin_url(null, '/admin-ajax.php?action=wps_process_term'),
                 'addTermLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_add_term')
@@ -81,7 +81,7 @@
 					<input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
 				</p>
 			</form>
-		</div><!-- END Wrap -->
+		</div>
 
 		<?php /* Only draw 'refresh' section if plugin is linked to Shopify store */ if( !empty(get_option('wshop_api_key')) and !empty(get_option('wshop_domain')) and !empty(get_option('wshop_app_id')) ) : ?>
 

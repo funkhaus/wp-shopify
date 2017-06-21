@@ -4,87 +4,30 @@
 * Ordering
 
 ## What 
-wp-shopify is an integration tool built around the [Shopify Buy API](https://help.shopify.com/api/sdks/js-buy-sdk).
+wp-shopify is an integration tool built around the [Shopify Buy Button API](https://help.shopify.com/api/sdks/js-buy-sdk).
 
-wp-shopify integrates a basic Shopify store into a Wordpress site quickly and cleanly. You can write templates and develop a theme just as you normally would, pulling product and cart data straight from Shopify and leveraging the API for all the hard work.
+It consists of two parts:
 
-## Examples
-Assuming we have a product on Shopify with the following information:
-* *Name:* Foo
-* *Price:* $50
-* *Description:* Sample Description
+* A tool to keep your Wordpress site synced to your Shopify store, and
+* A set of convenience templating functions to ease the Wordpress store creation process.
 
-We can create a template like this:
-```html
-<div data-product-id="<?php the_product_id(); ?>">
+## How
 
-    My product's name is <span data-product="title"></span>.
-    My price is $<span data-product="price"></span>.
-    Click <span data-product="add-to-cart">here</span> to add me to the cart.
-
-</div>
-
-<div data-cart-id="">
-
-    <div data-cart="line-items"></div>
-    <a data-cart="checkout">Checkout</a>
-
-</div>
-```
-
-And a custom line-items template like this (contained in `wshop-templates/cart-line-item.php`):
-
-```html
-<script type="text/template" id="cart-line-item">
-    Cart Item: <%= data.quantity %> <%= data.title %>(s)
+### Installation
+1. Set up Shopify:
+    1. Set up a Shopify store and enable the [Buy Button Channel](https://www.shopify.com/buy-button).
+    1. Create an __access token__ by going to the Buy Button Extensions page at `your-site.myshopify.com/admin/apps/private/extensions` and clicking `Create Extension` in the top right corner.
+1. Set up Wordpress:
+    1. Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to `Settings > WP-Shopify`. 
+    1. Put your __access token__, Shopify domain, and app ID in the WP-Shopify settings. More info on where to find that info [here]( https://help.shopify.com/api/guides/api-credentials).
+    1. Go to `Tools > Shopify` in your WP backend and hit Refresh Products. Your products and collections will auto-populate from your Shopify store.
     
-    <% if( data.attrs.product_type ){ // A sample data attribute from Shopify %>
-        <%= data.attrs.product_type %>
-    <% } else { %>
-        No product type specified!
-    <% } %>
-    
-    <span data-cart="remove">Remove</span>
+### Templating
 
-</script>
-```
+In the Installation step, you synced your product data to your Shopify store. Now you'll define how to display that data on your Wordpress site.
 
-Which will render like this:
-
-```html
-
-My product's name is Foo.
-My price is $50.
-Click here to add me to the cart. [Clicking 'here' adds the item to the cart, as shown below]
-
-Cart Item: 1 Foo(s)
-No product type specified!
-Remove [Clicking removes this item from the cart]
-Checkout [Links to Shopify checkout]
-
-```
-
-## Installation
-
-1. *Shopify:* Set up a Shopify store and enable the [Buy Button Channel](https://www.shopify.com/buy-button).
-1. Create an access token by going to the Buy Button Extensions page at your-site.myshopify.com/admin/apps/private/extensions and clicking **Create Extension** in the top right corner.
-1. *Wordpress:* Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to __Tools > Shopify__. 
-1. Put your API key (the access token from step 2 above), Shopify domain, and app ID in the wp-shopify settings. More info here on where to find that Shopify info can be found [here]( https://help.shopify.com/api/guides/api-credentials).
-
-## How to Use
-First, link a Shopify product and a Wordpress page:
-
-1. Create a product in Shopify.
-1. EITHER: Link your product(s) to your site automatically:
-    1. Go to Tools > Shopify in your WP backend and hit Refresh Products. Your products will auto-populate from your Shopify store.
-1. OR link your product(s) manually:
-    1. Create a product in the new "Products" section on your WP admin bar.
-    1. You should see a new metabox in your new Product that has a field for the product ID. Fill in the product ID from your Shopify store. 
-        * The easiest way to find the ID of a product is to navigate to the "edit" page for that product within Shopify, and copy the last section of the URL for that page. For example, if when editing the product your url is *example.myshopify.com/admin/products/__12345__*, then the ID for that product is __12345__.
-
-Next, prepare the markup for the product pages:
-
-1. wp-shopify products are a custom post type called `wps-product`. To set the template for a single product, create `single-wps-product.php`.
+1. Your Shopify products are a custom post type called `wps-product`. This gives you full access to Wordpress's built-in post type functionality - see [this page](https://codex.wordpress.org/Post_Types#Custom_Post_Type_Templates) for more details.
+1. 
 1. **Wrap your product in an element with `data-product-id` set correctly.** For example, when in the Loop:
     
         <div class="product-wrapper" data-product-id="<?php the_product_id(); ?>">
@@ -171,13 +114,13 @@ Custom Underscore cart templates are set up in the same way as custom product te
 
 ## Collections
 
-The plugin imports Shopify Collections as a custom taxonomy called `wps_collection`. It automatically sets up Products with the correct Collection(s) when refreshing the store.
+The plugin imports Shopify Collections as a custom taxonomy called `wps_collection`. 
+
+Each Collection in Shopify becomes a term in the `wps_collection` taxonomy. 
 
 TODO: Document `_wps_collection_image` metadata 
 
 To set up custom collection templates, create `taxonomy-wps_collection.php` in your theme (see the [Template Hierarchy](https://developer.wordpress.org/files/2014/10/template-hierarchy.png)).
-
-* `data-collection-list` - Lists out all collections using the `collection-list` template.
 
 ## Advanced
 ### Updating Products
@@ -308,6 +251,6 @@ __wp-shopify__
 
 http://funkhaus.us
 
-Version: 1.1
+Version: 1.2 - Added Collections capability
 
 Requires at least WP 3.8
