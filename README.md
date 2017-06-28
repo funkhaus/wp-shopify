@@ -27,7 +27,6 @@ It consists of two parts:
 In the Installation step, you synced your product data to your Shopify store. Now you'll define how to display that data on your Wordpress site.
 
 1. Your Shopify products are a custom post type called `wps-product`. This gives you full access to Wordpress's built-in post type functionality - see [this page](https://codex.wordpress.org/Post_Types#Custom_Post_Type_Templates) for more details.
-1. 
 1. **Wrap your product in an element with `data-product-id` set correctly.** For example, when in the Loop:
     
         <div class="product-wrapper" data-product-id="<?php the_product_id(); ?>">
@@ -116,11 +115,13 @@ Custom Underscore cart templates are set up in the same way as custom product te
 
 The plugin imports Shopify Collections as a custom taxonomy called `wps_collection`. 
 
-Each Collection in Shopify becomes a term in the `wps_collection` taxonomy. 
+Each Collection in Shopify becomes a term in the `wps_collection` taxonomy.
 
-TODO: Document `_wps_collection_image` metadata 
+Each term has a custom piece of metadata called `_wps_collection_image` that contains the URL to the image associated with a Collection. You can set this image on Shopify, then show the image on your site like this:
 
-To set up custom collection templates, create `taxonomy-wps_collection.php` in your theme (see the [Template Hierarchy](https://developer.wordpress.org/files/2014/10/template-hierarchy.png)).
+`<image src="<?php echo $your_term->_wps_collection_image; ?>">` 
+
+All functions having to do with `wps_collection` terms fall under standard Wordpress methods for dealing with custom taxonomies and terms - for example, to set up custom collection templates, create `taxonomy-wps_collection.php` in your theme (see the [Template Hierarchy](https://developer.wordpress.org/files/2014/10/template-hierarchy.png)). 
 
 ## Advanced
 ### Updating Products

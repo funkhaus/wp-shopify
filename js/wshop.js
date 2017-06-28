@@ -5,7 +5,6 @@ var wshop = {
         wshop.initShopify();
         wshop.initCart();
         wshop.initProducts();
-        wshop.initCollectionLists();
 
     },
 
@@ -89,19 +88,6 @@ var wshop = {
             this.initCart();
 
         }
-
-    },
-
-    initCollectionLists: function(){
-
-        // render any category lists
-        wshop.shopClient.fetchAllCollections().then(function(collections){
-
-            jQuery('*[data-collection-list]').each(function(){
-                wshop.renderTemplate.bind(this)('collection-list', collections);
-            });
-
-        });
 
     },
 
