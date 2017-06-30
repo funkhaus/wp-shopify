@@ -5,13 +5,13 @@ It consists of two parts:
 * A __syncing__ tool to keep your Wordpress site connected to your Shopify store, and
 * A set of __templating__ functions to make building a store and a shopping cart easier.
 
-## Table of Contents
+# Table of Contents
 1. [Installation](#installation)
 1. [Syncing](#syncing)
 1. [Templating Products](#templating-products)
 
 
-## Installation
+# Installation
 1. Set up Shopify:
     1. Set up a Shopify store and enable the [Buy Button Channel](https://www.shopify.com/buy-button).
     1. Create an __access token__ by going to the Buy Button Extensions page at `your-site.myshopify.com/admin/apps/private/extensions` and clicking `Create Extension` in the top right corner.
@@ -21,10 +21,10 @@ It consists of two parts:
     1. Go to `Tools > Shopify` in your WP backend and hit Refresh Products. Your products and collections will auto-populate from your Shopify store.
 
 
-## Syncing
+# Syncing
 If you followed the steps in [Installation](#installation), your Wordpress site will now be synced to your Shopify Products and Collections.
 
-### Products
+## Products
 
 Products are stored as a custom post type called `wps-product`.
 
@@ -32,17 +32,17 @@ The product ID meta field (stored under the key `_wshop_product_id` on a `wps-pr
 
 The data on Shopify is treated as the source of truth for all product information except Collections.
 
-### Collections
+## Collections
 
 wp-shopify imports Collections as a custom taxonomy called `wps_collection`.
 
 Each Collection in Shopify becomes a term in the `wps_collection` taxonomy.
 
-##### Collection Images
+### Collection Images
 
 Each term has a custom piece of metadata called `_wps_collection_image` that contains the URL to the image associated with a Collection. You can set this image on Shopify, then show the image on your site like this:   `<image src="<?php echo $your_term->_wps_collection_image; ?>">`
 
-## Templating Products
+# Templating Products
 
 Once your Shopify data has been synced to your Wordpress site, you can start templating products and collections easily.
 
@@ -50,9 +50,9 @@ The cardinal rule of wp-shopify templating is this:
 
 __Any element with the `data-product-id` attribute set to a valid Product ID will turn into a product template.__
 
-### Example
+## Example
 
-#### Single Products
+### Single Products
 
 Let's say your site, `example.com`, has wp-shopify set up and synced. Your store permalink is set to `store` and your first product, `Tofu`, is ready to be sold.
 
@@ -79,7 +79,7 @@ There are a couple things going here:
     * wp-shopify includes `get_the_product_id()`, which returns the product ID attached to a page, and `the_product_id()`, which echoes that ID. See [Convenience Functions](#convenience-functions) below.
 * Finally, we included a custom component called `product-title`, which renders the product title. We'll cover more about wp-shopify templating components later.
 
-#### Product Archives
+### Product Archives
 
 Let's say you've added a new product, `Seitan`, to your store, and you want to create an archive for products.
 
