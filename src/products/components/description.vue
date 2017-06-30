@@ -1,5 +1,9 @@
 <template>
-    <span class="wpshop-product-description" v-html="description"></span>
+    <span class="product-description-wrap">
+        <slot name="before"></slot>
+        <span class="wpshop-product-description" v-html="description"></span>
+        <slot></slot>
+    </span>
 </template>
 
 <script>

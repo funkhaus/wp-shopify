@@ -8,8 +8,12 @@ import descriptionCmp from './components/description.vue'
 import typeCmp from './components/type.vue'
 import imageCmp from './components/image.vue'
 import galleryCmp from './components/gallery.vue'
+
+// TODO: Make <select> and <radio> components switch the selected variant
 import selectCmp from './components/select.vue'
 import radioCmp from './components/radio.vue'
+
+import addButtonCmp from './components/addButton.vue'
 
 // Register all product components here
 Vue.component('product-title', titleCmp)
@@ -20,6 +24,7 @@ Vue.component('product-image', imageCmp)
 Vue.component('product-gallery', galleryCmp)
 Vue.component('product-select', selectCmp)
 Vue.component('product-radio', radioCmp)
+Vue.component('product-add', addButtonCmp)
 
 // Set up the product's Vue instance
 export default (options) => {
@@ -45,7 +50,8 @@ export default (options) => {
             shopClient.fetchProduct(this.propsData.productId)
                 .then(product => this.product = product)
 
-            this.$on('option-changed', (optName, value) => {
+            this.$on('optionChanged', (optName, value) => {
+                console.log(optName, value)
                 const index = _.findIndex(this.product.options, option => option.name == optName)
                 this.product.options[index].selected = value
                 this.$forceUpdate()
@@ -60,7 +66,7 @@ export default (options) => {
                 return _.get(this.product, 'variants.length') > 1
             },
             productUnavailable () {
-                return _.get(this.product, 'attrs.available')
+                return ! _.get(this.product, 'attrs.available')
             },
             loading () {
                 return this.product === null

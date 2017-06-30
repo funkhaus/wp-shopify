@@ -290,64 +290,11 @@ var wshop = {
  */
     renderProduct: function(){
 
-        // get elem
-        $productBlock = jQuery(this);
-
-        // get product object from data-att
-        var product = $productBlock.data('product');
-
-        // do nothing if no product
-        if ( ! product ) return;
-
-        // add classes if need be
-        if ( product.variants && product.variants.length > 1 ){
-            $productBlock.addClass('has-variants');
-        }
-        if ( ! product.attrs.available ){
-            $productBlock.addClass('product-unavailable');
-        }
-
         // track image index (products with multiple images)
         var currentImage = 0;
 
         // find all elems within by data-att
         $productBlock.find('*[data-product]').each(function(i){
-
-            // set title, price, description
-            if ( jQuery(this).attr('data-product') == 'title' ) jQuery(this).text( product.title );
-            if ( jQuery(this).attr('data-product') == 'price' ) jQuery(this).text( product.selectedVariant.price );
-            if ( jQuery(this).attr('data-product') == 'description' ) jQuery(this).html( product.description );
-            // set product type
-            if ( jQuery(this).attr('data-product') == 'type' ) jQuery(this).text( product.attrs.product_type );
-
-            // set images
-            if ( jQuery(this).attr('data-product') == 'image' ){
-
-                // if product has images
-                if ( product.images.length ){
-
-                    // get image from product object
-                    var img = new Image();
-                    img.onload = function() {
-                        var $image = jQuery(img);
-
-                        // add image into this element
-                        jQuery(this).append($image);
-
-                        // trigger image-loaded event
-                        jQuery(this).trigger('wshop.imageLoaded');
-
-                    }.bind(this);
-
-                    // Set src and load image
-                    var targetImage = product.images[currentImage].src;
-                    img.src = targetImage;
-
-                    // increment
-                    currentImage++;
-                }
-
-            }
 
             // set select
             if ( jQuery(this).attr('data-product') == 'select' && product.variants.length > 1 ){

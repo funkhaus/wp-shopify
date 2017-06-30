@@ -1,6 +1,6 @@
 <template>
     <div class="wpshop-product-radio" v-if="options && options.length">
-
+        <slot name="before"></slot>
         <span v-for="option in options">
 
             <span>{{ option.name }}</span>
@@ -22,7 +22,7 @@
             </span>
 
         </span>
-
+        <slot></slot>
     </div>
 </template>
 

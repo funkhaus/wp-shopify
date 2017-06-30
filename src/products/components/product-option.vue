@@ -1,9 +1,9 @@
 <template>
     <div class="wpshop-option">
-
+        <slot name="before"></slot>
         <select
             v-if="inputMode == 'select'"
-            @change="$root.$emit('option-changed', option.name, $event.target.value)">
+            @change="$root.$emit('optionChanged', option.name, $event.target.value)">
 
             <option disabled>{{ option.name }}</option>
 
@@ -19,7 +19,7 @@
         <form v-else>
             RADIO
         </form>
-
+        <slot></slot>
     </div>
 </template>
 

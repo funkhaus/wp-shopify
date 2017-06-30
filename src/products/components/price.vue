@@ -1,5 +1,9 @@
 <template>
-    <span class="wpshop-product-price">{{ price }}</span>
+    <span class="price-wrap">
+        <slot name="before"></slot>
+        <span class="wpshop-product-price">{{ price }}</span>
+        <slot></slot>
+    </span>
 </template>
 
 <script>

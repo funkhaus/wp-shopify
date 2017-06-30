@@ -117,7 +117,11 @@ There are a few things to note here:
     * This is because the `data-product-id` container is replaced with a `<div>`, no matter what the original's type - an `<li data-product-id="...">` would become a `<div>`.
 * We can still use normal WP templating functions like `the_permalink()` in the Vue template.
 
+## Reference
 
+All custom components contain two [slots](https://vuejs.org/v2/guide/components.html#Named-Slots), one named `before` and one fallback slot that is rendered below the component's content.
+
+* `product-add` - Creates a button that fires the `addToCart` event.
 
 ## Cart Templates (TODO)
 

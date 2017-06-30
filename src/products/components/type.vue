@@ -1,5 +1,9 @@
 <template>
-    <span class="wpshop-product-type">{{ type }}</span>
+    <span class="type-wrap">
+        <slot name="before"></slot>
+        <span class="wpshop-product-type">{{ type }}</span>
+        <slot></slot>
+    </span>
 </template>
 
 <script>

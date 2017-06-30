@@ -17405,6 +17405,10 @@ Object.defineProperty(exports, "__esModule", {
 //
 //
 //
+//
+//
+//
+//
 
 exports.default = {
     name: 'description',
@@ -17426,6 +17430,8 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+//
+//
 //
 //
 //
@@ -17515,6 +17521,10 @@ exports.default = {
 //
 //
 //
+//
+//
+//
+//
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
@@ -17527,6 +17537,10 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+//
+//
+//
+//
 //
 //
 //
@@ -17704,6 +17718,10 @@ Object.defineProperty(exports, "__esModule", {
 //
 //
 //
+//
+//
+//
+//
 
 exports.default = {
     name: 'title',
@@ -17725,6 +17743,10 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+//
+//
+//
+//
 //
 //
 //
@@ -17832,13 +17854,20 @@ var _radio = __webpack_require__(68);
 
 var _radio2 = _interopRequireDefault(_radio);
 
+var _addButton = __webpack_require__(84);
+
+var _addButton2 = _interopRequireDefault(_addButton);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Register all product components here
+Vue.component('product-title', _title2.default);
+
+// TODO: Make <select> and <radio> components switch the selected variant
 
 
 // Import product components
-Vue.component('product-title', _title2.default);
+
 Vue.component('product-price', _price2.default);
 Vue.component('product-description', _description2.default);
 Vue.component('product-type', _type2.default);
@@ -17846,6 +17875,7 @@ Vue.component('product-image', _image2.default);
 Vue.component('product-gallery', _gallery2.default);
 Vue.component('product-select', _select2.default);
 Vue.component('product-radio', _radio2.default);
+Vue.component('product-add', _addButton2.default);
 
 // Set up the product's Vue instance
 
@@ -17878,7 +17908,8 @@ exports.default = function (options) {
                 return _this.product = product;
             });
 
-            this.$on('option-changed', function (optName, value) {
+            this.$on('optionChanged', function (optName, value) {
+                console.log(optName, value);
                 var index = _.findIndex(_this.product.options, function (option) {
                     return option.name == optName;
                 });
@@ -17893,7 +17924,7 @@ exports.default = function (options) {
                 return _.get(this.product, 'variants.length') > 1;
             },
             productUnavailable: function productUnavailable() {
-                return _.get(this.product, 'attrs.available');
+                return !_.get(this.product, 'attrs.available');
             },
             loading: function loading() {
                 return this.product === null;
@@ -24226,8 +24257,10 @@ module.exports = Component.exports
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('span', {
+    staticClass: "price-wrap"
+  }, [_vm._t("before"), _vm._v(" "), _c('span', {
     staticClass: "wpshop-product-price"
-  }, [_vm._v(_vm._s(_vm.price))])
+  }, [_vm._v(_vm._s(_vm.price))]), _vm._v(" "), _vm._t("default")], 2)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -24243,8 +24276,10 @@ if (false) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('span', {
+    staticClass: "title-wrap"
+  }, [_vm._t("before"), _vm._v(" "), _c('span', {
     staticClass: "wpshop-product-title"
-  }, [_vm._v(_vm._s(_vm.title))])
+  }, [_vm._v(_vm._s(_vm.title))]), _vm._v(" "), _vm._t("default")], 2)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -24260,11 +24295,13 @@ if (false) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('span', {
+    staticClass: "product-description-wrap"
+  }, [_vm._t("before"), _vm._v(" "), _c('span', {
     staticClass: "wpshop-product-description",
     domProps: {
       "innerHTML": _vm._s(_vm.description)
     }
-  })
+  }), _vm._v(" "), _vm._t("default")], 2)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -24281,10 +24318,10 @@ if (false) {
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "wpshop-option"
-  }, [(_vm.inputMode == 'select') ? _c('select', {
+  }, [_vm._t("before"), _vm._v(" "), (_vm.inputMode == 'select') ? _c('select', {
     on: {
       "change": function($event) {
-        _vm.$root.$emit('option-changed', _vm.option.name, $event.target.value)
+        _vm.$root.$emit('optionChanged', _vm.option.name, $event.target.value)
       }
     }
   }, [_c('option', {
@@ -24298,7 +24335,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "value": value
       }
     }, [_vm._v("\n            " + _vm._s(value) + "\n        ")])
-  })], 2) : _c('form', [_vm._v("\n        RADIO\n    ")])])
+  })], 2) : _c('form', [_vm._v("\n        RADIO\n    ")]), _vm._v(" "), _vm._t("default")], 2)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -24315,7 +24352,7 @@ if (false) {
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return (_vm.options && _vm.options.length) ? _c('div', {
     staticClass: "wpshop-product-radio"
-  }, _vm._l((_vm.options), function(option) {
+  }, [_vm._t("before"), _vm._v(" "), _vm._l((_vm.options), function(option) {
     return _c('span', [_c('span', [_vm._v(_vm._s(option.name))]), _vm._v(" "), _vm._l((option.values), function(value) {
       return _c('span', [_c('input', _vm._b({
         directives: [{
@@ -24343,7 +24380,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         for: option.name + '-' + value
       }), [_vm._v("\n                " + _vm._s(value) + "\n            ")])])
     })], 2)
-  })) : _vm._e()
+  }), _vm._v(" "), _vm._t("default")], 2) : _vm._e()
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -24358,14 +24395,16 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('img', {
+  return _c('div', {
+    staticClass: "wps-image-wrap"
+  }, [_vm._t("before"), _vm._v(" "), _c('img', {
     class: ['wp-shopify-image', {
       loading: _vm.loading
     }],
     attrs: {
       "src": _vm.url
     }
-  })
+  }), _vm._v(" "), _vm._t("default")], 2)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -24381,8 +24420,10 @@ if (false) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('span', {
+    staticClass: "type-wrap"
+  }, [_vm._t("before"), _vm._v(" "), _c('span', {
     staticClass: "wpshop-product-type"
-  }, [_vm._v(_vm._s(_vm.type))])
+  }, [_vm._v(_vm._s(_vm.type))]), _vm._v(" "), _vm._t("default")], 2)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -24399,7 +24440,7 @@ if (false) {
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return (_vm.options && _vm.options.length) ? _c('div', {
     staticClass: "wpshop-product-select"
-  }, _vm._l((_vm.$root.product.options), function(option, i) {
+  }, [_vm._t("before"), _vm._v(" "), _vm._l((_vm.$root.product.options), function(option, i) {
     return _c('product-option', {
       key: i,
       attrs: {
@@ -24407,7 +24448,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "option": option
       }
     })
-  })) : _vm._e()
+  }), _vm._v(" "), _vm._t("default")], 2) : _vm._e()
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -24424,14 +24465,14 @@ if (false) {
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "wps-product-gallery"
-  }, _vm._l((_vm.images), function(image, index) {
+  }, [_vm._t("before"), _vm._v(" "), _vm._l((_vm.images), function(image, index) {
     return _c('product-image', {
       key: index,
       attrs: {
         "image": image
       }
     })
-  }))
+  }), _vm._v(" "), _vm._t("default")], 2)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -34166,6 +34207,74 @@ module.exports = function(module) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(85),
+  /* template */
+  __webpack_require__(86),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/products/components/addButton.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] addButton.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-e9cf422a", Component.options)
+  } else {
+    hotAPI.reload("data-v-e9cf422a", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('button', {
+    on: {
+      "click": _vm.addToCart
+    }
+  }, [_vm._t("default")], 2)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-e9cf422a", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

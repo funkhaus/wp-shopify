@@ -1,5 +1,9 @@
 <template>
-    <span class="wpshop-product-title">{{ title }}</span>
+    <span class="title-wrap">
+        <slot name="before"></slot>
+        <span class="wpshop-product-title">{{ title }}</span>
+        <slot></slot>
+    </span>
 </template>
 
 

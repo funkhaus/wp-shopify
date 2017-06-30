@@ -1,8 +1,12 @@
 <template>
-    <img
-        :class="[ 'wp-shopify-image', { loading } ]"
-        :src="url"
-    />
+    <div class="wps-image-wrap">
+        <slot name="before"></slot>
+        <img
+            :class="[ 'wp-shopify-image', { loading } ]"
+            :src="url"
+        />
+        <slot></slot>
+    </div>
 </template>
 
 <script>
