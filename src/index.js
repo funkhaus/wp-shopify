@@ -1,11 +1,7 @@
 import initProducts from 'src/products'
 //import initCarts from 'src/carts'
 
-const $ = window.jQuery
-
-$(document).ready(() => {
-
+document.addEventListener('DOMContentLoaded', () => {
     initProducts()
     //initCarts()
-
 })
