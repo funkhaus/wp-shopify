@@ -1,3 +1,10 @@
+## Start on:
+* Add To Cart button
+* Radio buttons
+* Select buttons
+
+## Readme below:
+
 wp-shopify integrates the [Shopify Buy Button](https://help.shopify.com/api/sdks/js-buy-sdk) and Wordpress for easy and powerful store construction.
 
 It consists of two parts:
@@ -119,7 +126,7 @@ There are a few things to note here:
 
 ## Reference
 
-All custom components contain two [slots](https://vuejs.org/v2/guide/components.html#Named-Slots), one named `before` and one fallback slot that is rendered below the component's content.
+All custom components contain two [slots](https://vuejs.org/v2/guide/components.html#Named-Slots), one named `before` and one fallback slot that is rendered after the component's content.
 
 * `product-add` - Creates a button that fires the `addToCart` event.
 
