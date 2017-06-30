@@ -65,9 +65,6 @@ export default (options) => {
             loading () {
                 return this.product === null
             },
-            product () {
-                return this.product
-            },
             selectedVariant () {
                 return _.get(this.product, 'selectedVariant')
             }

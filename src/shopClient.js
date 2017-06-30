@@ -1,7 +1,7 @@
 import ShopifyBuy from 'shopify-buy'
 
 export default ShopifyBuy.buildClient({
-    apiKey: wshopVars.apiKey,
+    accessToken: wshopVars.accessToken,
     domain: wshopVars.domain,
     appId: wshopVars.appId
 })

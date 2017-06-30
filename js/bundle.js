@@ -17298,7 +17298,7 @@ var _shopifyBuy2 = _interopRequireDefault(_shopifyBuy);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _shopifyBuy2.default.buildClient({
-    apiKey: wshopVars.apiKey,
+    accessToken: wshopVars.accessToken,
     domain: wshopVars.domain,
     appId: wshopVars.appId
 });
@@ -17897,9 +17897,6 @@ exports.default = function (options) {
             },
             loading: function loading() {
                 return this.product === null;
-            },
-            product: function product() {
-                return this.product;
             },
             selectedVariant: function selectedVariant() {
                 return _.get(this.product, 'selectedVariant');

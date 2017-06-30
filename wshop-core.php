@@ -92,7 +92,7 @@
 
         // Setup JS variables in scripts
         wp_localize_script('wshop-main', 'wshopVars', array(
-            'apiKey'            => get_option('wshop_api_key'),
+            'accessToken'       => get_option('wshop_api_key'),
             'domain'            => get_option('wshop_domain'),
             'appId'             => get_option('wshop_app_id')
         ));
