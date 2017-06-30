@@ -22,6 +22,7 @@
         $args = array(
             'labels'                => $labels,
             'public'                => true,
+            'has_archive'           => true,
             'publicly_queryable'    => true,
             'capability_type'       => 'page',
             'menu_icon'             => 'dashicons-cart',
