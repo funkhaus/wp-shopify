@@ -6,7 +6,7 @@
  *	Plugin URI: https://github.com/funkhaus/wp-shopify
  *	Description: Shopify + Wordpress
  *	Author: Funkhaus
- *	Version: 1.1
+ *	Version: 2.0
  *	Author URI: http://funkhaus.us
  *	Requires at least: 3.8
  *
@@ -30,6 +30,7 @@
     function set_wps_rewrite_slug(){
         if( get_option('wshop_rewrite_slug') == '' ){
             update_option( 'wshop_rewrite_slug', 'store' );
+            update_option( 'wshop_collections_slug', 'collections' );
             flush_rewrite_rules();
         }
     }
@@ -68,6 +69,9 @@
                 'post_name'     => sanitize_title( $title, strtolower($title) )
             );
             wp_update_post($args);
+
+            // Remove all terms from this product (we'll re-add them in wps_add_term below)
+            wp_set_object_terms( $target_post->ID, '', 'wps_collection' );
 
             $output = 'Updated existing Product ' . $title . '.';
 
@@ -151,5 +155,90 @@
     }
 
     add_action('wp_ajax_wps_remove_products', 'wps_remove_products');
+
+    function wps_process_term(){
+
+        $title = $_POST['title'];
+        $slug = $_POST['slug'];
+        $description = $_POST['description'];
+        $image = $_POST['image'];
+
+        $term = get_term_by('slug', $slug, 'wps_collection');
+
+        if( $term ){
+
+            wp_update_term( $term->ID, 'wps_collection', array(
+                'name'          => $title,
+                'slug'          => $slug,
+                'description'   => $description
+            ));
+
+            echo 'Updated collection ' . $title . '.';
+
+        } else {
+
+            $term = wp_insert_term(
+                $title,
+                'wps_collection',
+                array(
+                    'description'   => $description,
+                    'slug'          => $slug,
+                )
+            );
+
+
+
+            echo 'Created collection ' . $title . '.';
+        }
+
+        // Insert featured image meta
+        update_term_meta( $term->term_id, '_wps_collection_image', $image );
+
+        die();
+
+    }
+
+    add_action('wp_ajax_wps_process_term', 'wps_process_term');
+
+    // Add terms to specified products
+    function wps_add_term(){
+
+
+        // Product IDs
+        $ids = $_POST['ids'];
+        $slug = $_POST['slug'];
+        $title = $_POST['title'];
+
+        if( !$ids ){
+            echo '<li>No products in collection ' . $title . ' found, continuing...</li>';
+            die();
+        }
+
+        $ids = explode(',', $ids);
+        $term = get_term_by('slug', $slug, 'wps_collection');
+
+        foreach( $ids as $id ){
+
+            $args = array(
+            	'posts_per_page'    => 1,
+            	'post_type'         => 'wps-product',
+            	'meta_key'          => '_wshop_product_id',
+            	'meta_value'        => $id
+            );
+            $target_post = reset(get_posts( $args ));
+
+            wp_set_object_terms( $target_post->ID, $slug, 'wps_collection', true );
+
+            echo '<li>Added collection ' . $title . ' to product ' . $target_post->post_title . '...</li>';
+
+        }
+
+        die();
+
+    }
+
+    add_action('wp_ajax_wps_add_term', 'wps_add_term');
+
+
 
 ?>
