@@ -1,3 +1,4 @@
+/* global jQuery */
 import shopClient from 'src/shopClient'
 import bus from 'src/bus'
 
@@ -55,6 +56,20 @@ export default (options) => {
                 const index = _.findIndex(this.product.options, option => option.name == optName)
                 this.product.options[index].selected = value
                 this.$forceUpdate()
+
+                if( jQuery ){
+                    // TODO: Pass product info
+                    jQuery(this.$el).trigger('wps.optionChanged')
+                }
+            })
+
+            this.$on('product-added', () => {
+                console.log('product added!')
+
+                if( jQuery ){
+                    // TODO: Pass product info
+                    jQuery(this.$el).trigger('wps.productAdded')
+                }
             })
         },
         template: `

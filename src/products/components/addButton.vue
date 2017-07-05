@@ -1,26 +1,7 @@
 <template>
 
-    <button @click="addToCart">
+    <button @click="$root.$emit('product-added')">
         <slot></slot>
     </button>
 
 </template>
-
-<script>
-
-export default {
-    methods: {
-        addToCart(){
-
-            if( this.$root.productUnavailable ){
-                alert('unavailable')
-            } else {
-                alert('added')
-            }
-
-        }
-    }
-
-}
-
-</script>

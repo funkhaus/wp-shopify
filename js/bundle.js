@@ -17392,40 +17392,7 @@ exports.default = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-exports.default = {
-    methods: {
-        addToCart: function addToCart() {
-
-            if (this.$root.productUnavailable) {
-                alert('unavailable');
-            } else {
-                alert('added');
-            }
-        }
-    }
-
-};
-
-/***/ }),
+/* 14 */,
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -17901,6 +17868,7 @@ Vue.component('product-title', _title2.default);
 
 
 // Import product components
+/* global jQuery */
 
 Vue.component('product-price', _price2.default);
 Vue.component('product-description', _description2.default);
@@ -17949,6 +17917,20 @@ exports.default = function (options) {
                 });
                 _this.product.options[index].selected = value;
                 _this.$forceUpdate();
+
+                if (jQuery) {
+                    // TODO: Pass product info
+                    jQuery(_this.$el).trigger('wps.optionChanged');
+                }
+            });
+
+            this.$on('product-added', function () {
+                console.log('product added!');
+
+                if (jQuery) {
+                    // TODO: Pass product info
+                    jQuery(_this.$el).trigger('wps.productAdded');
+                }
             });
         },
 
@@ -23985,7 +23967,7 @@ module.exports = Shopify;
 
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(14),
+  null,
   /* template */
   __webpack_require__(83),
   /* scopeId */
@@ -24557,7 +24539,9 @@ if (false) {
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('button', {
     on: {
-      "click": _vm.addToCart
+      "click": function($event) {
+        _vm.$root.$emit('product-added')
+      }
     }
   }, [_vm._t("default")], 2)
 },staticRenderFns: []}
