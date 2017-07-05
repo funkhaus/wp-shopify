@@ -4,12 +4,14 @@ import singleImage from 'src/carts/components/singleImage.vue'
 import linePrice from 'src/carts/components/linePrice.vue'
 import removeButton from 'src/carts/components/removeButton.vue'
 import totalPrice from 'src/carts/components/totalPrice.vue'
+import checkoutLink from 'src/carts/components/checkoutLink.vue'
 
 //Vue.component('cart-items', cartItems)
 Vue.component('single-image', singleImage)
 Vue.component('line-price', linePrice)
 Vue.component('remove-button', removeButton)
 Vue.component('total-price', totalPrice)
+Vue.component('checkout-link', checkoutLink)
 
 export default options => {
 
