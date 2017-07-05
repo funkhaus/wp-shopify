@@ -125,7 +125,7 @@ There are a few things to note here:
 
 ## Product Component Reference
 
-Unless otherwise noted, all product components have two slots: one named `before` and the default slot, which comes after the rendered information.
+Unless otherwise noted, all product components have two [slots](https://vuejs.org/v2/guide/components.html#Content-Distribution-with-Slots): one named `before` and the default slot, which comes after the rendered information.
 
 * `product-add` Creates a button that adds 1 of the product to the cart. Fires `wshop.productAdded` event on product container if jQuery installed. No `before` slot - default slot renders the button content.
 * `product-description` The product description.
