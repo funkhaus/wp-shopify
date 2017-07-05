@@ -21,32 +21,32 @@ var wshop = {
 
     initCart: function(){
 
-        var setupCart;
-
-        // if there is a cart in local storage...
-        if(localStorage.getItem('lastCartId')) {
-
-            // get the cart, set globally
-            setupCart = wshop.shopClient.fetchCart(localStorage.getItem('lastCartId'));
-
-        // no cart in storage
-        } else {
-
-            // create new cart...
-            setupCart = wshop.shopClient.createCart();
-
-        }
-
-        // when cart is set up...
-        setupCart.then(function(cart){
-
-            // add globally, save in storage
-            wshop.cart = cart;
-            localStorage.setItem('lastCartId', wshop.cart.id);
-
-            wshop.renderCarts();
-
-        });
+        // var setupCart;
+        //
+        // // if there is a cart in local storage...
+        // if(localStorage.getItem('lastCartId')) {
+        //
+        //     // get the cart, set globally
+        //     setupCart = wshop.shopClient.fetchCart(localStorage.getItem('lastCartId'));
+        //
+        // // no cart in storage
+        // } else {
+        //
+        //     // create new cart...
+        //     setupCart = wshop.shopClient.createCart();
+        //
+        // }
+        //
+        // // when cart is set up...
+        // setupCart.then(function(cart){
+        //
+        //     // add globally, save in storage
+        //     wshop.cart = cart;
+        //     localStorage.setItem('lastCartId', wshop.cart.id);
+        //
+        //     wshop.renderCarts();
+        //
+        // });
 
         // Bind increment buttons
         jQuery(document).on('click', '*[data-cart="add"]', function(e){
@@ -386,12 +386,12 @@ var wshop = {
         if( jQuery(this).parents('.product-unavailable').length ){
 
             // We have a .product-unavailable parent, so trigger the relevant event
-            jQuery(this).parents('.product-unavailable').trigger('wshop.unavailableProductAdded');
+            // jQuery(this).parents('.product-unavailable').trigger('wshop.unavailableProductAdded');
 
         } else {
 
             // Find product parent
-            var product = jQuery(this).closest('*[data-product-id]').data('product');
+            //var product = jQuery(this).closest('*[data-product-id]').data('product');
 
             // Add selected variant and selected quantity to cart
             wshop.cart.addVariants({ variant: product.selectedVariant, quantity: quantity || 1 })

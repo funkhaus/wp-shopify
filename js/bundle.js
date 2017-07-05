@@ -17791,13 +17791,15 @@ var _products = __webpack_require__(13);
 
 var _products2 = _interopRequireDefault(_products);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _carts = __webpack_require__(87);
 
-//import initCarts from 'src/carts'
+var _carts2 = _interopRequireDefault(_carts);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 document.addEventListener('DOMContentLoaded', function () {
     (0, _products2.default)();
-    //initCarts()
+    (0, _carts2.default)();
 });
 
 /***/ }),
@@ -17924,13 +17926,21 @@ exports.default = function (options) {
                 }
             });
 
-            this.$on('product-added', function () {
-                console.log('product added!');
+            this.$on('product-added', function (quantity) {
 
-                if (jQuery) {
-                    // TODO: Pass product info
-                    jQuery(_this.$el).trigger('wps.productAdded');
+                if (_this.productUnavailable && jQuery) {
+                    jQuery(_this.$el).trigger('wps.unavailableProductAdded');
+                } else {
+
+                    _bus2.default.cart.createLineItemsFromVariants({
+                        variant: _this.selectedVariant,
+                        quantity: quantity || 1
+                    });
+
+                    console.log(_bus2.default.cart);
                 }
+
+                if (jQuery) {}
             });
         },
 
@@ -34278,6 +34288,165 @@ module.exports = function(module) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _shopClient = __webpack_require__(7);
+
+var _shopClient2 = _interopRequireDefault(_shopClient);
+
+var _cartCmp = __webpack_require__(88);
+
+var _cartCmp2 = _interopRequireDefault(_cartCmp);
+
+var _bus = __webpack_require__(24);
+
+var _bus2 = _interopRequireDefault(_bus);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+
+    var setupCart = false;
+
+    // if there is a cart in local storage...
+    if (localStorage.getItem('lastCartId')) {
+
+        // get the cart, set globally
+        setupCart = _shopClient2.default.fetchCart(localStorage.getItem('lastCartId'));
+
+        // no cart in storage
+    } else {
+
+        // create new cart...
+        setupCart = _shopClient2.default.createCart();
+    }
+
+    // when cart is set up...
+    setupCart.then(function (cart) {
+
+        // add globally, save in storage
+        _bus2.default.cart = cart;
+        localStorage.setItem('lastCartId', _bus2.default.cart.id);
+
+        // get all valid cart components
+        var cartEls = document.querySelectorAll('*[data-cart]');
+
+        _.each(cartEls, function (el) {
+            // init vue instance
+            new _cartCmp2.default({ el: el, template: el.innerHTML });
+        });
+
+        return _bus2.default.cart;
+    });
+
+    if (jQuery) {
+        jQuery(document).trigger('wshop.cartInitialized');
+    }
+}; /* global jQuery */
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 88 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Vue) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _cartItems = __webpack_require__(89);
+
+var _cartItems2 = _interopRequireDefault(_cartItems);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+Vue.component('cart-items', _cartItems2.default);
+
+exports.default = function (options) {
+    var el = options.el,
+        template = options.template;
+
+
+    var cartInner = {
+        name: 'cart-inner',
+        template: '<div class="cart-wrapper">' + template + '</div>'
+    };
+
+    return new Vue({
+        el: el,
+        components: {
+            'cart-inner': cartInner
+        },
+        mounted: function mounted() {
+            console.log(template);
+        },
+
+        template: '\n            <div :class="[\'wshop-cart-module\']">\n                <cart-inner></cart-inner>\n            </div>'.trim()
+
+    });
+};
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(84)))
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  null,
+  /* template */
+  __webpack_require__(90),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/carts/components/cartItems.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] cartItems.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-222c984d", Component.options)
+  } else {
+    hotAPI.reload("data-v-222c984d", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('h2', [_vm._v("Items here!")])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-222c984d", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

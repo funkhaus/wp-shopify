@@ -63,12 +63,23 @@ export default (options) => {
                 }
             })
 
-            this.$on('product-added', () => {
-                console.log('product added!')
+            this.$on('product-added', quantity => {
+
+                if( this.productUnavailable && jQuery){
+                    jQuery(this.$el).trigger('wps.unavailableProductAdded')
+                } else {
+
+                    bus.cart.createLineItemsFromVariants({
+                        variant: this.selectedVariant,
+                        quantity: quantity || 1
+                    })
+
+                    console.log(bus.cart)
+
+                }
 
                 if( jQuery ){
-                    // TODO: Pass product info
-                    jQuery(this.$el).trigger('wps.productAdded')
+
                 }
             })
         },
