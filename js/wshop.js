@@ -1,23 +1,23 @@
 var wshop = {
 
-    init: function() {
-
-        wshop.initShopify();
-        wshop.initCart();
-        wshop.initProducts();
-
-    },
-
-    initShopify: function(){
-
-        wshop.shopClient = ShopifyBuy.buildClient({
-            apiKey: wshopVars.apiKey,
-            // Strips out 'http' if user entered it in their options
-            domain: wshopVars.domain,
-            appId: wshopVars.appId
-        });
-
-    },
+    // init: function() {
+    //
+    //     wshop.initShopify();
+    //     wshop.initCart();
+    //     wshop.initProducts();
+    //
+    // },
+    //
+    // initShopify: function(){
+    //
+    //     wshop.shopClient = ShopifyBuy.buildClient({
+    //         apiKey: wshopVars.apiKey,
+    //         // Strips out 'http' if user entered it in their options
+    //         domain: wshopVars.domain,
+    //         appId: wshopVars.appId
+    //     });
+    //
+    // },
 
     initCart: function(){
 
@@ -63,11 +63,11 @@ var wshop = {
         });
 
         // Bind 'remove' buttons
-        jQuery(document).on('click', '*[data-cart="remove"]', function(e){
-            wshop.handleRemove.bind(
-                jQuery(this).closest('*[data-lineitem-id]')
-            )();
-        });
+        // jQuery(document).on('click', '*[data-cart="remove"]', function(e){
+        //     wshop.handleRemove.bind(
+        //         jQuery(this).closest('*[data-lineitem-id]')
+        //     )();
+        // });
 
         jQuery(document).trigger('wshop.cartInitialized');
 
@@ -240,19 +240,19 @@ var wshop = {
 
     },
 
-    handleRemove: function(e){
-
-        // get ID from data-attr
-        var lineitemId = jQuery(this).data('lineitemId');
-
-        // no ID? abort
-        if ( !lineitemId ) return;
-
-        // remove item and re-render cart
-        wshop.cart.updateLineItem(lineitemId, 0)
-            .then(wshop.renderCarts);
-
-    },
+    // handleRemove: function(e){
+    //
+    //     // get ID from data-attr
+    //     var lineitemId = jQuery(this).data('lineitemId');
+    //
+    //     // no ID? abort
+    //     if ( !lineitemId ) return;
+    //
+    //     // remove item and re-render cart
+    //     wshop.cart.updateLineItem(lineitemId, 0)
+    //         .then(wshop.renderCarts);
+    //
+    // },
 
     renderTemplate: function(templateName, data){
 

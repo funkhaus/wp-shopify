@@ -1,7 +1,7 @@
 <!-- BEGIN: Cart line item template (this template is looped in the cart) -->
-<script type="text/template" id="cart-line-item">
+<!-- <script type="text/template" id="cart-line-item">
 
-    <div class="line-item" data-lineitem-id="<%- data.id %>">
+    <div class="line-item" data-lineitem-id="<%- data.id %>"> -->
 
         <!-- <% if ( data.image ){ %>
             <div class="thumbnail">
@@ -9,15 +9,15 @@
             </div>
         <% } %> -->
 
-        <div class="meta">
+        <!-- <div class="meta">
             <div class="title"><%- data.title %></div>
             <div class="controls">
-<!--
+
                 <button class="add" data-cart="add">+</button>
                 <button class="subtract" data-cart="subtract">-</button>
--->
+
                 <button class="remove" data-cart="remove">X</button>
-            </div>
+            </div> -->
             <div class="price">
                 <span>Price:</span>
                 <span>$<%- data.price %></span>
@@ -26,14 +26,14 @@
                 <span>Size:</span>
                 <span><%- data.variant_title %></span>
             </div>
-            <div class="quantity">
+            <!-- <div class="quantity">
                 <span>QTY:</span>
                 <span><%- data.quantity %></span>
-            </div>
-            <div class="line-price">
+            </div> -->
+            <!-- <div class="line-price">
                 <span>Subtotal:</span>
                 <span>$<%- data.line_price %></span>
-            </div>
+            </div> -->
         </div>
 
     </div>

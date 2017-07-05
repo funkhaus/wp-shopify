@@ -1,5 +1,5 @@
 ## Start on:
-* Add To Cart button
+* Line-item price
 * Radio buttons
 * Select buttons
 
@@ -173,7 +173,7 @@ Replace `{{ item }}` with any custom templating you'd like to see for individual
     <h2>My Cart</h2>
 
     <div v-for="(item, index) in this.$root.cartItems">
-        <h3>Item #{{ index + 1 }}</h3>
+        <h3>Item number {{ index + 1 }}</h3>
         <single-image :item="item"/>
     </div>
 
@@ -182,6 +182,15 @@ Replace `{{ item }}` with any custom templating you'd like to see for individual
 ```
 
 Make sure you include the `item` prop on every custom component in the line-item loop.
+
+### Raw Line Item Data
+
+TODO: Continue or remove
+
+For most line item templating, it's easiest just to refer to the raw data. Here's a list of some of the most commonly used information:
+
+* `title` - The title of the product.
+* `quantity` - The quantity of this product in the cart.
 
 ## Cart Reference
 

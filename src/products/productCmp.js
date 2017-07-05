@@ -74,8 +74,6 @@ export default (options) => {
                         quantity: quantity || 1
                     })
 
-                    console.log(bus.cart)
-
                 }
 
                 if( jQuery ){

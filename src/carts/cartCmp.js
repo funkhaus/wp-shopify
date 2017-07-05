@@ -1,9 +1,15 @@
 import bus from 'src/bus'
 //import cartItems from 'src/carts/components/cartItems.vue'
 import singleImage from 'src/carts/components/singleImage.vue'
+import linePrice from 'src/carts/components/linePrice.vue'
+import removeButton from 'src/carts/components/removeButton.vue'
+import totalPrice from 'src/carts/components/totalPrice.vue'
 
 //Vue.component('cart-items', cartItems)
 Vue.component('single-image', singleImage)
+Vue.component('line-price', linePrice)
+Vue.component('remove-button', removeButton)
+Vue.component('total-price', totalPrice)
 
 export default options => {
 

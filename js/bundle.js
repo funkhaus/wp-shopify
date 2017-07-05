@@ -17304,6 +17304,23 @@ module.exports = function(exec){
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _events = __webpack_require__(54);
+
+var bus = new _events.EventEmitter();
+
+exports.default = bus;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
 /* WEBPACK VAR INJECTION */(function(global) {/*!
  * Vue.js v2.3.4
  * (c) 2014-2017 Evan You
@@ -26993,25 +27010,25 @@ return Vue$3;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 var core = module.exports = {version: '2.4.0'};
 if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = __webpack_require__(11)
-  , defined = __webpack_require__(12);
+var IObject = __webpack_require__(12)
+  , defined = __webpack_require__(13);
 module.exports = function(it){
   return IObject(defined(it));
 };
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
@@ -27021,7 +27038,7 @@ module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
 };
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 // 7.2.1 RequireObjectCoercible(argument)
@@ -27031,7 +27048,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 // 7.1.4 ToInteger
@@ -27040,23 +27057,6 @@ var ceil  = Math.ceil
 module.exports = function(it){
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _events = __webpack_require__(54);
-
-var bus = new _events.EventEmitter();
-
-exports.default = bus;
 
 /***/ }),
 /* 15 */
@@ -31922,7 +31922,7 @@ var _shopClient = __webpack_require__(3);
 
 var _shopClient2 = _interopRequireDefault(_shopClient);
 
-var _bus = __webpack_require__(14);
+var _bus = __webpack_require__(8);
 
 var _bus2 = _interopRequireDefault(_bus);
 
@@ -32037,8 +32037,6 @@ exports.default = function (options) {
                         variant: _this.selectedVariant,
                         quantity: quantity || 1
                     });
-
-                    console.log(_bus2.default.cart);
                 }
 
                 if (jQuery) {}
@@ -32062,7 +32060,7 @@ exports.default = function (options) {
         }
     });
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(0)))
 
 /***/ }),
 /* 25 */
@@ -32104,7 +32102,7 @@ module.exports = { "default": __webpack_require__(27), __esModule: true };
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(28);
-module.exports = __webpack_require__(9).Object.assign;
+module.exports = __webpack_require__(10).Object.assign;
 
 /***/ }),
 /* 28 */
@@ -32120,7 +32118,7 @@ $export($export.S + $export.F, 'Object', {assign: __webpack_require__(39)});
 /***/ (function(module, exports, __webpack_require__) {
 
 var global    = __webpack_require__(4)
-  , core      = __webpack_require__(9)
+  , core      = __webpack_require__(10)
   , ctx       = __webpack_require__(30)
   , hide      = __webpack_require__(32)
   , PROTOTYPE = 'prototype';
@@ -32320,7 +32318,7 @@ var getKeys  = __webpack_require__(40)
   , gOPS     = __webpack_require__(51)
   , pIE      = __webpack_require__(52)
   , toObject = __webpack_require__(53)
-  , IObject  = __webpack_require__(11)
+  , IObject  = __webpack_require__(12)
   , $assign  = Object.assign;
 
 // should work with symbols and should have deterministic property order (V8 bug)
@@ -32365,7 +32363,7 @@ module.exports = Object.keys || function keys(O){
 /***/ (function(module, exports, __webpack_require__) {
 
 var has          = __webpack_require__(42)
-  , toIObject    = __webpack_require__(10)
+  , toIObject    = __webpack_require__(11)
   , arrayIndexOf = __webpack_require__(44)(false)
   , IE_PROTO     = __webpack_require__(47)('IE_PROTO');
 
@@ -32407,7 +32405,7 @@ module.exports = function(it){
 
 // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject = __webpack_require__(10)
+var toIObject = __webpack_require__(11)
   , toLength  = __webpack_require__(45)
   , toIndex   = __webpack_require__(46);
 module.exports = function(IS_INCLUDES){
@@ -32432,7 +32430,7 @@ module.exports = function(IS_INCLUDES){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.15 ToLength
-var toInteger = __webpack_require__(13)
+var toInteger = __webpack_require__(14)
   , min       = Math.min;
 module.exports = function(it){
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
@@ -32442,7 +32440,7 @@ module.exports = function(it){
 /* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(13)
+var toInteger = __webpack_require__(14)
   , max       = Math.max
   , min       = Math.min;
 module.exports = function(index, length){
@@ -32507,7 +32505,7 @@ exports.f = {}.propertyIsEnumerable;
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.13 ToObject(argument)
-var defined = __webpack_require__(12);
+var defined = __webpack_require__(13);
 module.exports = function(it){
   return Object(defined(it));
 };
@@ -34304,7 +34302,7 @@ var _cartCmp = __webpack_require__(87);
 
 var _cartCmp2 = _interopRequireDefault(_cartCmp);
 
-var _bus = __webpack_require__(14);
+var _bus = __webpack_require__(8);
 
 var _bus2 = _interopRequireDefault(_bus);
 
@@ -34362,19 +34360,35 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _bus = __webpack_require__(14);
+var _bus = __webpack_require__(8);
 
 var _bus2 = _interopRequireDefault(_bus);
 
-var _singleImage = __webpack_require__(96);
+var _singleImage = __webpack_require__(88);
 
 var _singleImage2 = _interopRequireDefault(_singleImage);
+
+var _linePrice = __webpack_require__(91);
+
+var _linePrice2 = _interopRequireDefault(_linePrice);
+
+var _removeButton = __webpack_require__(94);
+
+var _removeButton2 = _interopRequireDefault(_removeButton);
+
+var _totalPrice = __webpack_require__(97);
+
+var _totalPrice2 = _interopRequireDefault(_totalPrice);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //Vue.component('cart-items', cartItems)
-Vue.component('single-image', _singleImage2.default);
+
 //import cartItems from 'src/carts/components/cartItems.vue'
+Vue.component('single-image', _singleImage2.default);
+Vue.component('line-price', _linePrice2.default);
+Vue.component('remove-button', _removeButton2.default);
+Vue.component('total-price', _totalPrice2.default);
 
 exports.default = function (options) {
     var el = options.el,
@@ -34406,25 +34420,17 @@ exports.default = function (options) {
 
     });
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 88 */,
-/* 89 */,
-/* 90 */,
-/* 91 */,
-/* 92 */,
-/* 93 */,
-/* 94 */,
-/* 95 */,
-/* 96 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Component = __webpack_require__(1)(
   /* script */
-  __webpack_require__(98),
+  __webpack_require__(89),
   /* template */
-  __webpack_require__(97),
+  __webpack_require__(90),
   /* scopeId */
   null,
   /* cssModules */
@@ -34451,28 +34457,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 97 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "thumbnail"
-  }, [_c('img', {
-    attrs: {
-      "src": _vm.item.attrs.image.src
-    }
-  })])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-537a5f00", module.exports)
-  }
-}
-
-/***/ }),
-/* 98 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34494,6 +34479,270 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = {
     props: ['item']
 };
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "thumbnail"
+  }, [_c('img', {
+    attrs: {
+      "src": _vm.item.attrs.image.src
+    }
+  })])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-537a5f00", module.exports)
+  }
+}
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(92),
+  /* template */
+  __webpack_require__(93),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/carts/components/linePrice.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] linePrice.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-1e546f02", Component.options)
+  } else {
+    hotAPI.reload("data-v-1e546f02", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+//
+//
+//
+//
+//
+//
+
+
+exports.default = {
+    props: ['item'],
+    computed: {
+        linePrice: function linePrice() {
+            return this.item.line_price;
+        }
+    }
+};
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', {
+    staticClass: "line-price"
+  }, [_vm._v(_vm._s(_vm.linePrice))])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-1e546f02", module.exports)
+  }
+}
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(96),
+  /* template */
+  __webpack_require__(95),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/carts/components/removeButton.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] removeButton.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-1ffb3319", Component.options)
+  } else {
+    hotAPI.reload("data-v-1ffb3319", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('button', {
+    on: {
+      "click": _vm.remove
+    }
+  }, [_vm._v("X")])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-1ffb3319", module.exports)
+  }
+}
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _bus = __webpack_require__(8);
+
+var _bus2 = _interopRequireDefault(_bus);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    props: ['item'],
+    methods: {
+        remove: function remove() {
+            _bus2.default.cart.updateLineItem(this.item.id, 0);
+        }
+    }
+}; //
+//
+//
+//
+//
+//
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(1)(
+  /* script */
+  __webpack_require__(99),
+  /* template */
+  __webpack_require__(98),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/Users/sander/Desktop/Local Flywheel Sites/wp-shopify/app/public/wp-content/plugins/wp-shopify/src/carts/components/totalPrice.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] totalPrice.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-178f39e8", Component.options)
+  } else {
+    hotAPI.reload("data-v-178f39e8", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', {
+    staticClass: "total-price"
+  }, [_vm._v(_vm._s(_vm.totalPrice))])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-178f39e8", module.exports)
+  }
+}
+
+/***/ }),
+/* 99 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _bus = __webpack_require__(8);
+
+var _bus2 = _interopRequireDefault(_bus);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    computed: {
+        totalPrice: function totalPrice() {
+            return _bus2.default.cart.subtotal;
+        }
+    }
+}; //
+//
+//
+//
+//
+//
 
 /***/ })
 /******/ ]);
