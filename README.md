@@ -1,11 +1,10 @@
 ## Start on:
-* Line-item price
 * Radio buttons
 * Select buttons
 
 ## Readme below:
 
-wp-shopify integrates the [Shopify Buy Button](https://help.shopify.com/api/sdks/js-buy-sdk) and Wordpress for easy and powerful store construction.
+wp-shopify (WPS) is a Wordpress plugin that integrates the [Shopify Buy Button](https://help.shopify.com/api/sdks/js-buy-sdk) API with Wordpress for easy and powerful store construction.
 
 It consists of two parts:
 
@@ -15,7 +14,12 @@ It consists of two parts:
 # Table of Contents
 1. [Installation](#installation)
 1. [Syncing](#syncing)
+    1. [Collections](#collections)
 1. [Templating Products](#templating-products)
+    1. [Example](#example)
+        1. [Single Products](#single-products)
+        1. [Product Archives](#product-archives)
+    1. [Product Component Reference](#product-component-reference)
 1. [Templating Carts](#templating-carts)
 
 
@@ -25,36 +29,31 @@ It consists of two parts:
     1. Create an __access token__ by going to the Buy Button Extensions page at `your-site.myshopify.com/admin/apps/private/extensions` and clicking `Create Extension` in the top right corner.
 1. Set up Wordpress:
     1. Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to `Settings > WP-Shopify`.
-    1. Put your __access token__, Shopify domain, and app ID in the WP-Shopify settings. More info on where to find those [here]( https://help.shopify.com/api/guides/api-credentials).
-    1. Go to `Tools > Shopify` in your WP backend and hit Refresh Products. Your products and collections will auto-populate from your Shopify store.
+    1. Put your __access token__, Shopify domain, and app ID in the WPS settings. More info on where to find those [here]( https://help.shopify.com/api/guides/api-credentials).
+    1. Save your changes, then click Refresh Products. Your products and collections will auto-populate from your Shopify store.
 
 
 # Syncing
-If you followed the steps in [Installation](#installation), your Wordpress site will now be synced to your Shopify Products and Collections.
+Your Wordpress site will now be synced to your Shopify Products and Collections. Products are stored as a custom post type called `wps-product`.
 
-## Products
+The product ID meta field (stored under the key `_wshop_product_id` on a `wps-product`) connects a product to its data on Shopify; that data is treated as the source of truth for all product information. Prices, images, variants, names, etc. - every piece of data except Collections - will make requests directly from the Shopify store, ensuring that all information is up-to-date.
 
-Products are stored as a custom post type called `wps-product`.
+The only times you need to manually refresh your store (Settings > WP-Shopify > Refresh Products) are when:
 
-The product ID meta field (stored under the key `_wshop_product_id` on a `wps-product`) connects a product to its data on Shopify.
+* You want to add or remove Products from your Wordpress site after setting them up on Shopify, or
+* You want to update your Collections information.
 
-The data on Shopify is treated as the source of truth for all product information except Collections.
+Basically, it's a good rule of thumb to refresh your store manually after making any significant changes on Shopify.
 
 ## Collections
 
-wp-shopify imports Collections as a custom taxonomy called `wps_collection`.
+WPS imports Collections as a custom taxonomy called `wps_collection`. Each Collection in Shopify becomes a term in the `wps_collection` taxonomy.
 
-Each Collection in Shopify becomes a term in the `wps_collection` taxonomy.
-
-### Collection Images
-
-Each term has a custom piece of metadata called `_wps_collection_image` that contains the URL to the image associated with a Collection. You can set this image on Shopify, then show the image on your site like this:   `<image src="<?php echo $your_term->_wps_collection_image; ?>">`
+Each of those terms has a custom piece of metadata called `_wps_collection_image` that contains the URL to the image associated with a Collection. You can set this image on Shopify, then show the image on your site like this:   `<image src="<?php echo $your_term->_wps_collection_image; ?>">`
 
 # Templating Products
 
-Once your Shopify data has been synced to your Wordpress site, you can start templating products and collections easily.
-
-The cardinal rule of wp-shopify templating is this:
+Once your Shopify data has been synced to your Wordpress site, you can start templating products and collections easily, following the cardinal rule of WPS products:
 
 __Any element with the `data-product-id` attribute set to a valid Product ID will turn into a product template.__
 
@@ -62,13 +61,13 @@ __Any element with the `data-product-id` attribute set to a valid Product ID wil
 
 ### Single Products
 
-Let's say your site, `example.com`, has wp-shopify set up and synced. Your store permalink is set to `store` and your first product, `Tofu`, is ready to be sold.
+Let's say your site, `example.com`, has WPS set up and synced. Your first product, Tofu, is ready to be sold.
 
-Since wp-shopify treats products as the custom post type `wps-product`, all you need to do is create a template for a single product called `single-wps-product.php` in your theme.
+Since WPS treats products as the custom post type `wps-product`, all you need to do is create a template for a single product called `single-wps-product.php` in your theme. (See the [Template Hierarchy](https://developer.wordpress.org/files/2014/10/template-hierarchy.png) if you need a refresher on custom hierarchies.)
 
 The contents of that file can look something like this:
 
-```php
+```
 <?php get_header(); ?>
 
     <div data-product-id="<?php the_product_id(); ?>">
@@ -78,22 +77,21 @@ The contents of that file can look something like this:
 <?php get_footer(); ?>
 ```
 
-When you go to `example.com/store/tofu`, you'll see the name of your `Tofu` product as an h2!
+When you go to `example.com/store/tofu` (assuming you have your store permalink set to 'store'), you'll see the name of your Tofu product in an h2 tag!
 
 There are a couple things going here:
 
-* First, we wrap the entire product in an element with the `data-product-id` attribute set. Nothing outside this element will receive the correct data or render the custom components!
-* Next, we set the value of `data-product-id` using the `the_product_id()` convenience function.
-    * wp-shopify includes `get_the_product_id()`, which returns the product ID attached to a page, and `the_product_id()`, which echoes that ID. See [Convenience Functions](#convenience-functions) below.
-* Finally, we included a custom component called `product-title`, which renders the product title. We'll cover more about wp-shopify templating components later.
+* First, we wrap the entire product in an element with the `data-product-id` attribute set. Nothing outside this element will receive the correct product data or render the custom components.
+* Next, we set the value of `data-product-id` using the `the_product_id()` [convenience function](#convenience-functions).
+* Finally, we included a custom component called `product-title`, which renders the product title. We'll cover more about WPS custom components later.
 
 ### Product Archives
 
-Let's say you've added a new product, `Seitan`, to your store, and you want to create an archive for products.
+Let's say you've added a new product, Seitan, to your store, and you want to create an archive for products.
 
 Just like with any other post type, you can create an `archive-wps-product.php` file and fill it with something like this:
 
-```php
+```
 <?php get_header(); ?>
 
     <ul>
@@ -121,13 +119,20 @@ Now, when you go to `example.com/store`, you see links for `Tofu` and `Seitan`, 
 There are a few things to note here:
 
 * We're setting up The Loop just like any other archive page.
-* `data-product-id` is again set to `the_product_id()`, but we wrapped each `data-product-id` container in an `<li>`.
-    * This is because the `data-product-id` container is replaced with a `<div>`, no matter what the original's type - an `<li data-product-id="...">` would become a `<div>`.
-* We can still use normal WP templating functions like `the_permalink()` in the Vue template.
+* `data-product-id` is again set to `the_product_id()`, but we have an extra `<li>` above the `data-product-id` div.
+    * This is because the `data-product-id` element is always replaced with a `<div>`, no matter what the original's type - an `<li data-product-id="...">` would become a `<div>`.
+* We can still use normal WP templating functions like `the_permalink()` in the template. Mixing PHP with Vue will work just fine.
 
-## Reference
+## Product Component Reference
 
-TODO: Document custom components
+| Element Name          | Example                                   | Info                  | Slots (Before, Default, After) |
+| --------------------- | ----------------------------------------- | --------------------- |
+| `product-add`         | `<product-add>Add to Cart</product-add>`  | Adds product, updates cart, prices, etc. Fires `wshop.productAdded` on product container if jQuery installed. | d |
+| `product-description` | `<product-description/>`                  |                   | b, d |
+| `product-title`       | `<product-title/>`                        | The name of the product. | b, d |
+| `product-price`       | `<product-price/>`                        | Cost of the product. | b, d
+
+* `<product-add>Add to Cart</product-add>` Will render a button that reads "Add to Cart."
 
 All custom components contain two [slots](https://vuejs.org/v2/guide/components.html#Named-Slots), one named `before` and one fallback slot that is rendered after the component's content.
 
@@ -227,7 +232,7 @@ There are also classes added to cart wrappers upon rendering:
 * `empty-cart` will be added to an empty cart.
 
 ### Convenience Functions
-wp-shopify comes with PHP convenience functions to check for, fetch, and display product IDs. Note that `$post` is optional in all of these functions and defaults to the current post.
+WPS comes with PHP convenience functions to check for, fetch, and display product IDs. Note that `$post` is optional in all of these functions and defaults to the current post.
 * `has_product( $post )` returns `true` if the page has a product ID set, `false` if not.
 * `get_the_product_id( $post )` is returns the product ID of a given page, as defined in the 'Product ID' metadata. If there is no product ID attached to a page, it returns a blank string.
 * `the_product_id( $post )` echoes the return value of `get_the_product_id()`.

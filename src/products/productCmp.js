@@ -77,7 +77,7 @@ export default (options) => {
                 }
 
                 if( jQuery ){
-
+                    jQuery(this.$el).trigger('wps.productAdded')
                 }
             })
         },
