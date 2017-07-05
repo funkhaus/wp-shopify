@@ -1,6 +1,9 @@
-import cartItems from 'src/carts/components/cartItems.vue'
+import bus from 'src/bus'
+//import cartItems from 'src/carts/components/cartItems.vue'
+import singleImage from 'src/carts/components/singleImage.vue'
 
-Vue.component('cart-items', cartItems)
+//Vue.component('cart-items', cartItems)
+Vue.component('single-image', singleImage)
 
 export default options => {
 
@@ -13,11 +16,18 @@ export default options => {
 
     return new Vue({
         el,
+        data(){
+            return {
+                bus
+            }
+        },
+        computed: {
+            cartItems(){
+                return this.bus.cart.lineItems
+            }
+        },
         components: {
             'cart-inner': cartInner
-        },
-        mounted(){
-            console.log(template)
         },
         template: `
             <div :class="['wshop-cart-module']">

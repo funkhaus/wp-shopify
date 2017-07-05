@@ -136,10 +136,10 @@ var wshop = {
     renderCarts: function(){
 
         // find any carts on page
-        var $carts = jQuery('*[data-cart-id]');
-
-        // no cart? abort
-        if ( ! $carts.length ) return;
+        // var $carts = jQuery('*[data-cart-id]');
+        //
+        // // no cart? abort
+        // if ( ! $carts.length ) return;
 
         // if we don't have any items, append 'cart empty' message
         if( ! wshop.cart.lineItems.length ){

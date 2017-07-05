@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "NODE_ENV=development webpack --progress --colors --watch",
-    "build": "NODE_ENV=production webpack --progress --compress --hide-modules"
+    "build": "NODE_ENV=production webpack --progress --hide-modules"
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,6 @@
     "vue": "^2.2.6",
     "vue-loader": "^11.3.4",
     "vue-template-compiler": "^2.2.6",
-    "webpack": "^2.3.2"
+    "webpack": "^2.6.1"
   }
 }

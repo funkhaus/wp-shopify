@@ -3,11 +3,11 @@
 
     <div class="line-item" data-lineitem-id="<%- data.id %>">
 
-        <% if ( data.image ){ %>
+        <!-- <% if ( data.image ){ %>
             <div class="thumbnail">
                 <img src="<%- data.image.src %>" alt="" />
             </div>
-        <% } %>
+        <% } %> -->
 
         <div class="meta">
             <div class="title"><%- data.title %></div>

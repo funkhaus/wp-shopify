@@ -16,6 +16,7 @@ It consists of two parts:
 1. [Installation](#installation)
 1. [Syncing](#syncing)
 1. [Templating Products](#templating-products)
+1. [Templating Carts](#templating-carts)
 
 
 # Installation
@@ -126,11 +127,65 @@ There are a few things to note here:
 
 ## Reference
 
+TODO: Document custom components
+
 All custom components contain two [slots](https://vuejs.org/v2/guide/components.html#Named-Slots), one named `before` and one fallback slot that is rendered after the component's content.
 
 * `product-add` - Creates a button that fires the `addToCart` event.
 
-## Cart Templates (TODO)
+# Templating Carts
+
+You can easily show the contents of a user's cart in much the same way as products.
+
+Just wrap the cart in a div with the `data-cart` attribute:
+
+```
+<div data-cart>
+
+    <h2>My Cart</h2>
+
+</div>
+```
+
+From here, you can access any of the custom components in the [reference](#cart-reference) below.
+
+## Line Items
+
+One notable difference is iterating through the items in a cart (referred to as "line items") - instead of the expected
+
+```
+<line-items></line-items>
+```
+
+you'll need to manually set up your line items:
+
+```
+<div v-for="item in this.$root.cartItems">
+    {{ item }}
+</div>
+```
+
+Replace `{{ item }}` with any custom templating you'd like to see for individual line items - for example:
+
+```
+<div data-cart>
+
+    <h2>My Cart</h2>
+
+    <div v-for="(item, index) in this.$root.cartItems">
+        <h3>Item #{{ index + 1 }}</h3>
+        <single-image :item="item"/>
+    </div>
+
+</div>
+
+```
+
+Make sure you include the `item` prop on every custom component in the line-item loop.
+
+## Cart Reference
+
+TODO: Document custom cart components
 
 ## Advanced
 
