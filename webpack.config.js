@@ -50,8 +50,7 @@ if (process.env.NODE_ENV === 'production') {
             compress: {
                 warnings: false
             }
-        }),
-        new webpack.optimize.OccurenceOrderPlugin()
+        })
     ])
 
     // use production version of vue
