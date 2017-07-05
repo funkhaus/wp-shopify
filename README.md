@@ -125,18 +125,18 @@ There are a few things to note here:
 
 ## Product Component Reference
 
-| Element Name          | Example                                   | Info                  | Slots (Before, Default, After) |
-| --------------------- | ----------------------------------------- | --------------------- |
-| `product-add`         | `<product-add>Add to Cart</product-add>`  | Adds product, updates cart, prices, etc. Fires `wshop.productAdded` on product container if jQuery installed. | d |
-| `product-description` | `<product-description/>`                  |                   | b, d |
-| `product-title`       | `<product-title/>`                        | The name of the product. | b, d |
-| `product-price`       | `<product-price/>`                        | Cost of the product. | b, d
+Unless otherwise noted, all product components have two slots: one named `before` and the default slot, which comes after the rendered information.
 
-* `<product-add>Add to Cart</product-add>` Will render a button that reads "Add to Cart."
+* `product-add` Creates a button that adds 1 of the product to the cart. Fires `wshop.productAdded` event on product container if jQuery installed. No `before` slot - default slot renders the button content.
+* `product-description` The product description.
+* `product-gallery` Renders a `product-image` for each image attached to the product.
+* `product-image` Renders an image for the product.
+    * Picks the first of the following available: manual image (set via `<product-image :image="{ src = \"manual-source.jpg\" }"`), selected variant image, or first image attached to product.
+* `product-price` Cost of the product.
+* `product-title` The name of the product.
+* `product-type` The product type.
 
-All custom components contain two [slots](https://vuejs.org/v2/guide/components.html#Named-Slots), one named `before` and one fallback slot that is rendered after the component's content.
-
-* `product-add` - Creates a button that fires the `addToCart` event.
+TODO: Document `product-select` and `product-radio`
 
 # Templating Carts
 
