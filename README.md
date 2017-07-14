@@ -17,7 +17,14 @@ It consists of two parts:
         1. [Product Archives](#product-archives)
     1. [Product Component Reference](#product-component-reference)
 1. [Templating Carts](#templating-carts)
-
+    1. [Line Items](#line-items)
+        1. [Raw Line Item Data](#raw-line-item-data)
+    1. [Cart Reference](#cart-reference)
+1. [Advanced](#advanced)
+    1. [Permalink Structure Slug](#permalink-structure-slug)
+    1. [Events](#events)
+    1. [Wrapper Classes](#wrapper-classes)
+    1. [Convenience Functions](#convenience-functions)
 
 # Installation
 1. Set up Shopify:
@@ -193,9 +200,8 @@ Make sure you include the `item` prop on every custom component in the line-item
 
 ### Raw Line Item Data
 
-For most line item templating, it's easiest just to refer to the raw data. Here's a list of some of the most commonly used information:
+For most line item templating, it's easiest just to refer to the raw data. Here's some of the most commonly used information:
 
-* `image.src` - A URL to the preview image for the item.
 * `price` - The price of the product.
 * `quantity` - The quantity of this product in the cart.
 * `title` - The title of the product.
@@ -208,7 +214,6 @@ You can also always render out the {{ item }} object to see all available inform
     <h2>My Cart</h2>
 
     <div v-for="item in this.$root.cartItems">
-        Image URL: {{ item.image.src }}<br/>
         Price: {{ item.price }}<br/>
         Quantity: {{ item.quantity }}<br/>
         Title: {{ item.title }}<br/>
@@ -221,20 +226,19 @@ You can also always render out the {{ item }} object to see all available inform
 </div>
 ```
 
-
 ## Cart Reference
 
-TODO: Document custom cart components
+Unless otherwise noted, all custom components should have their `item` prop [set](#line-items) to the appropriate line-item.
 
-## Advanced
+* `checkout-link` - Renders a link to check out in Shopify using the current cart. No `item` prop required.
+* `line-price` - Renders the price for a single line-item.
+* `remove-button` - Renders a button that removes all of a line-item from a cart when clicked.
+* `single-image` - Renders a preview image for a line-item.
+* `total-price` - Renders the total price of the line-items in the cart. No `item` prop required.
 
-### Updating Products
+# Advanced
 
-When you add new product(s) to your Shopify store, you'll need to refresh your products in Wordpress.
-
-From your WP backend, go to __Settings > WP-Shopify__, set your refresh preferences with the checkboxes, and hit 'Refresh Products.' This will automatically pull product data from your linked Shopify store into Wordpress.
-
-### Permalink Structure Slug
+## Permalink Structure Slug
 
 You'll see this option under __Settings > WP-Shopify__. Changing its value will rewrite the store's parent directory:
 
@@ -246,9 +250,9 @@ your-site.com/store/product-1
 your-site.com/xyz/product-1
 ```
 
-### Events (TODO)
+## Events (TODO)
 
-### Wrapper Classes
+## Wrapper Classes
 There are informational classes added to product wrappers upon rendering:
 * `hasVariants` will be added to any product that has variants on Shopify.
 * `productUnavailable` will be added to any product whose inventory is less than or equal to 0 (or is unavailable for any other reason).
@@ -256,14 +260,11 @@ There are informational classes added to product wrappers upon rendering:
 There are also classes added to cart wrappers upon rendering:
 * `empty-cart` will be added to an empty cart.
 
-### Convenience Functions
+## Convenience Functions
 WPS comes with PHP convenience functions to check for, fetch, and display product IDs. Note that `$post` is optional in all of these functions and defaults to the current post.
 * `has_product( $post )` returns `true` if the page has a product ID set, `false` if not.
 * `get_the_product_id( $post )` is returns the product ID of a given page, as defined in the 'Product ID' metadata. If there is no product ID attached to a page, it returns a blank string.
 * `the_product_id( $post )` echoes the return value of `get_the_product_id()`.
-
-
-## What's Going on Behind the Scenes (TODO)
 
 
 --------
@@ -272,6 +273,6 @@ __wp-shopify__
 
 http://funkhaus.us
 
-Version: 2.0
+Version: 2.1
 
 Requires at least WP 3.8
