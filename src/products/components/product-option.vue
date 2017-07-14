@@ -1,24 +1,27 @@
 <template>
     <div class="wpshop-option">
         <slot name="before"></slot>
+
         <select
             v-if="inputMode == 'select'"
-            @change="$root.$emit('optionChanged', option.name, $event.target.value)">
+            v-model="$root.product.options[index].selected"
+            >
 
-            <option disabled>{{ option.name }}</option>
+            <option disabled value="">{{ option.name }}</option>
 
-            <option
-                :selected="option.selected == value"
-                v-for="value in option.values"
-                :value="value">
-                {{ value }}
-            </option>
+            <option v-for="value in option.values">{{ value }}</option>
 
         </select>
 
-        <form v-else>
-            RADIO
-        </form>
+        <div v-else>
+            <div v-for="value in option.values">
+                <input type="radio" :id="value" :value="value" v-model="$root.product.options[index].selected">
+                <label :for="value">{{ value }}</label>
+            </div>
+        </div>
+
+    </input>
+
         <slot></slot>
     </div>
 </template>
@@ -26,7 +29,11 @@
 <script>
 
     export default {
-
+        computed: {
+            index(){
+                return _.findIndex(this.$root.product.options, option => option.name == this.option.attrs.name)
+            }
+        },
         props: {
             'input-mode': {
                 type: String,
@@ -36,11 +43,6 @@
                 type: Object,
                 default: null
             }
-        },
-        mounted () {
-            this.$root.$on('option-changed', () => {
-                this.$forceUpdate()
-            })
         }
 
     }

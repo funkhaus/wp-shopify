@@ -51,17 +51,16 @@ export default (options) => {
             shopClient.fetchProduct(this.propsData.productId)
                 .then(product => this.product = product)
 
-            this.$on('optionChanged', (optName, value) => {
-                console.log(optName, value)
-                const index = _.findIndex(this.product.options, option => option.name == optName)
-                this.product.options[index].selected = value
-                this.$forceUpdate()
-
-                if( jQuery ){
-                    // TODO: Pass product info
-                    jQuery(this.$el).trigger('wps.optionChanged')
-                }
-            })
+            // this.$on('optionChanged', (optName, value) => {
+            //     const index = _.findIndex(this.product.options, option => option.name == optName)
+            //     this.product.options[index].selected = value
+            //     this.$forceUpdate()
+            //
+            //     if( jQuery ){
+            //         // TODO: Pass product info
+            //         jQuery(this.$el).trigger('wps.optionChanged')
+            //     }
+            // })
 
             this.$on('product-added', quantity => {
 
@@ -70,7 +69,7 @@ export default (options) => {
                 } else {
 
                     bus.cart.createLineItemsFromVariants({
-                        variant: this.selectedVariant,
+                        variant: this.product.selectedVariant,
                         quantity: quantity || 1
                     })
 
