@@ -32,7 +32,9 @@ It consists of two parts:
 # Syncing
 Your Wordpress site will now be synced to your Shopify Products and Collections. Products are stored as a custom post type called `wps-product`.
 
-The product ID meta field (stored under the key `_wshop_product_id` on a `wps-product`) connects a product to its data on Shopify; that data is treated as the source of truth for all product information. Prices, images, variants, names, etc. - every piece of data except Collections - will make requests directly from the Shopify store, ensuring that all information is up-to-date.
+The product ID meta field (stored under the key `_wshop_product_id` on a `wps-product`) connects a product to its data on Shopify; that data is treated as the source of truth for all product information except Collections.
+
+This means that prices, images, variants, names, etc. - every piece of data except Collections - will pull their information directly from the Shopify store, ensuring that everything is up-to-date.
 
 The only times you need to manually refresh your store (Settings > WP-Shopify > Refresh Products) are when:
 
@@ -73,11 +75,11 @@ The contents of that file can look something like this:
 <?php get_footer(); ?>
 ```
 
-When you go to `example.com/store/tofu` (assuming you have your store permalink set to 'store'), you'll see the name of your Tofu product in an h2 tag!
+When you go to `example.com/store/tofu`, you'll see the name of your Tofu product in an h2 tag!
 
 There are a couple things going here:
 
-* First, we wrap the entire product in an element with the `data-product-id` attribute set. Nothing outside this element will receive the correct product data or render the custom components.
+* First, we wrap the product in an element with the `data-product-id` attribute set. Nothing outside this element will receive the correct product data or render the custom components.
 * Next, we set the value of `data-product-id` using the `the_product_id()` [convenience function](#convenience-functions).
 * Finally, we included a custom component called `product-title`, which renders the product title. We'll cover more about WPS custom components later.
 
@@ -121,18 +123,23 @@ There are a few things to note here:
 
 ## Product Component Reference
 
-Unless otherwise noted, all product components have two [slots](https://vuejs.org/v2/guide/components.html#Content-Distribution-with-Slots): one named `before` and the default slot, which comes after the rendered information.
+These are the custom components available to elements with the `data-product-id` attribute set correctly.
 
-* `product-add` Creates a button that adds 1 of the product to the cart. Fires `wshop.productAdded` event on product container if jQuery installed. No `before` slot - default slot renders the button content.
-* `product-description` The product description.
-* `product-gallery` Renders a `product-image` for each image attached to the product.
-* `product-image` Renders an image for the product.
-    * Picks the first of the following available: manual image (set via `<product-image :image="{ src = \"manual-source.jpg\" }"`), selected variant image, or first image attached to product.
-* `product-price` Cost of the product.
-* `product-title` The name of the product.
-* `product-type` The product type.
+Unless otherwise noted, all product components have two [slots](https://vuejs.org/v2/guide/components.html#Content-Distribution-with-Slots): one named `before`, which renders its contents before the component information, and the default slot, which renders after the component information.
 
-TODO: Document `product-select` and `product-radio`
+* `product-add` - Creates a button that adds 1 of the product to the cart. Fires `wshop.productAdded` event on product container if jQuery installed. No `before` slot - default slot renders the button content.
+* `product-description` - The product description.
+* `product-gallery` - Renders a `product-image` for each image attached to the product.
+* `product-image` - Renders an image for the product.
+    * Picks the first available value of the following:
+        * manual image (set via `<product-image :image="{ src = \"manual-source.jpg\" }"`)
+        * selected variant image
+        * first image attached to product
+* `product-radio` - Renders radio selectors for each product option available. Changing the selected option will automatically update the selected product.
+* `product-price` - Cost of the product.
+* `product-select` - Renders drop-down selection boxes for each product option available. Changing the selected option will automatically update the selected product.
+* `product-title` - The name of the product.
+* `product-type` - The product type.
 
 # Templating Carts
 
@@ -152,7 +159,7 @@ From here, you can access any of the custom components in the [reference](#cart-
 
 ## Line Items
 
-One notable difference is iterating through the items in a cart (referred to as "line items") - instead of the expected
+One notable difference is iterating through the items in a cart (referred to as "line items"). Instead of the expected
 
 ```
 <line-items></line-items>
@@ -186,12 +193,34 @@ Make sure you include the `item` prop on every custom component in the line-item
 
 ### Raw Line Item Data
 
-TODO: Continue or remove
-
 For most line item templating, it's easiest just to refer to the raw data. Here's a list of some of the most commonly used information:
 
-* `title` - The title of the product.
+* `image.src` - A URL to the preview image for the item.
+* `price` - The price of the product.
 * `quantity` - The quantity of this product in the cart.
+* `title` - The title of the product.
+
+You can also always render out the {{ item }} object to see all available information. For example:
+
+```
+<div data-cart>
+
+    <h2>My Cart</h2>
+
+    <div v-for="item in this.$root.cartItems">
+        Image URL: {{ item.image.src }}<br/>
+        Price: {{ item.price }}<br/>
+        Quantity: {{ item.quantity }}<br/>
+        Title: {{ item.title }}<br/>
+
+        <h3>All information:</h3>
+        {{ item }}
+
+    </div>
+
+</div>
+```
+
 
 ## Cart Reference
 
