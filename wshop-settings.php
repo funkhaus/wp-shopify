@@ -5,7 +5,6 @@
 	 */
 	function wshop_admin_style() {
         wp_register_style( 'wshop_css', pp() . '/css/wshop.admin.css' );
-        wp_register_script( 'wshop_js', pp() . '/js/wshop.admin.js' );
         wp_register_script('wshop-refresh', pp() . '/js/wshop.refresh.js');
         wp_register_script('shopify-sdk', 'http://sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
 
@@ -14,7 +13,6 @@
             wp_enqueue_script('jquery');
             wp_enqueue_script('shopify-sdk');
             wp_enqueue_style( 'wshop_css');
-            wp_enqueue_script( 'wshop_js', array('jquery', 'shopify-sdk'));
             wp_enqueue_script('wshop-refresh', array('jquery', 'shopify-sdk'));
 
             wp_localize_script('wshop-refresh', 'wshopVars', array(

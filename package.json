@@ -1,7 +1,7 @@
 {
   "name": "wp-shopify",
-  "version": "1.0.0",
-  "description": "Wordpress plugin to easily implement a Shopify store ",
+  "version": "2.0.0",
+  "description": "A WordPress plugin to easily integrate Shopify into any site.",
   "main": "index.js",
   "scripts": {
     "dev": "NODE_ENV=development webpack --progress --colors --watch",
