@@ -1,52 +1,52 @@
 var wshop = {
 
-    init: function() {
-
-        wshop.initShopify();
-        wshop.initCart();
-        wshop.initProducts();
-
-    },
-
-    initShopify: function(){
-
-        wshop.shopClient = ShopifyBuy.buildClient({
-            apiKey: wshopVars.apiKey,
-            // Strips out 'http' if user entered it in their options
-            domain: wshopVars.domain,
-            appId: wshopVars.appId
-        });
-
-    },
+    // init: function() {
+    //
+    //     wshop.initShopify();
+    //     wshop.initCart();
+    //     wshop.initProducts();
+    //
+    // },
+    //
+    // initShopify: function(){
+    //
+    //     wshop.shopClient = ShopifyBuy.buildClient({
+    //         apiKey: wshopVars.apiKey,
+    //         // Strips out 'http' if user entered it in their options
+    //         domain: wshopVars.domain,
+    //         appId: wshopVars.appId
+    //     });
+    //
+    // },
 
     initCart: function(){
 
-        var setupCart;
-
-        // if there is a cart in local storage...
-        if(localStorage.getItem('lastCartId')) {
-
-            // get the cart, set globally
-            setupCart = wshop.shopClient.fetchCart(localStorage.getItem('lastCartId'));
-
-        // no cart in storage
-        } else {
-
-            // create new cart...
-            setupCart = wshop.shopClient.createCart();
-
-        }
-
-        // when cart is set up...
-        setupCart.then(function(cart){
-
-            // add globally, save in storage
-            wshop.cart = cart;
-            localStorage.setItem('lastCartId', wshop.cart.id);
-
-            wshop.renderCarts();
-
-        });
+        // var setupCart;
+        //
+        // // if there is a cart in local storage...
+        // if(localStorage.getItem('lastCartId')) {
+        //
+        //     // get the cart, set globally
+        //     setupCart = wshop.shopClient.fetchCart(localStorage.getItem('lastCartId'));
+        //
+        // // no cart in storage
+        // } else {
+        //
+        //     // create new cart...
+        //     setupCart = wshop.shopClient.createCart();
+        //
+        // }
+        //
+        // // when cart is set up...
+        // setupCart.then(function(cart){
+        //
+        //     // add globally, save in storage
+        //     wshop.cart = cart;
+        //     localStorage.setItem('lastCartId', wshop.cart.id);
+        //
+        //     wshop.renderCarts();
+        //
+        // });
 
         // Bind increment buttons
         jQuery(document).on('click', '*[data-cart="add"]', function(e){
@@ -63,11 +63,11 @@ var wshop = {
         });
 
         // Bind 'remove' buttons
-        jQuery(document).on('click', '*[data-cart="remove"]', function(e){
-            wshop.handleRemove.bind(
-                jQuery(this).closest('*[data-lineitem-id]')
-            )();
-        });
+        // jQuery(document).on('click', '*[data-cart="remove"]', function(e){
+        //     wshop.handleRemove.bind(
+        //         jQuery(this).closest('*[data-lineitem-id]')
+        //     )();
+        // });
 
         jQuery(document).trigger('wshop.cartInitialized');
 
@@ -136,10 +136,10 @@ var wshop = {
     renderCarts: function(){
 
         // find any carts on page
-        var $carts = jQuery('*[data-cart-id]');
-
-        // no cart? abort
-        if ( ! $carts.length ) return;
+        // var $carts = jQuery('*[data-cart-id]');
+        //
+        // // no cart? abort
+        // if ( ! $carts.length ) return;
 
         // if we don't have any items, append 'cart empty' message
         if( ! wshop.cart.lineItems.length ){
@@ -240,19 +240,19 @@ var wshop = {
 
     },
 
-    handleRemove: function(e){
-
-        // get ID from data-attr
-        var lineitemId = jQuery(this).data('lineitemId');
-
-        // no ID? abort
-        if ( !lineitemId ) return;
-
-        // remove item and re-render cart
-        wshop.cart.updateLineItem(lineitemId, 0)
-            .then(wshop.renderCarts);
-
-    },
+    // handleRemove: function(e){
+    //
+    //     // get ID from data-attr
+    //     var lineitemId = jQuery(this).data('lineitemId');
+    //
+    //     // no ID? abort
+    //     if ( !lineitemId ) return;
+    //
+    //     // remove item and re-render cart
+    //     wshop.cart.updateLineItem(lineitemId, 0)
+    //         .then(wshop.renderCarts);
+    //
+    // },
 
     renderTemplate: function(templateName, data){
 
@@ -290,64 +290,11 @@ var wshop = {
  */
     renderProduct: function(){
 
-        // get elem
-        $productBlock = jQuery(this);
-
-        // get product object from data-att
-        var product = $productBlock.data('product');
-
-        // do nothing if no product
-        if ( ! product ) return;
-
-        // add classes if need be
-        if ( product.variants && product.variants.length > 1 ){
-            $productBlock.addClass('has-variants');
-        }
-        if ( ! product.attrs.available ){
-            $productBlock.addClass('product-unavailable');
-        }
-
         // track image index (products with multiple images)
         var currentImage = 0;
 
         // find all elems within by data-att
         $productBlock.find('*[data-product]').each(function(i){
-
-            // set title, price, description
-            if ( jQuery(this).attr('data-product') == 'title' ) jQuery(this).text( product.title );
-            if ( jQuery(this).attr('data-product') == 'price' ) jQuery(this).text( product.selectedVariant.price );
-            if ( jQuery(this).attr('data-product') == 'description' ) jQuery(this).html( product.description );
-            // set product type
-            if ( jQuery(this).attr('data-product') == 'type' ) jQuery(this).text( product.attrs.product_type );
-
-            // set images
-            if ( jQuery(this).attr('data-product') == 'image' ){
-
-                // if product has images
-                if ( product.images.length ){
-
-                    // get image from product object
-                    var img = new Image();
-                    img.onload = function() {
-                        var $image = jQuery(img);
-
-                        // add image into this element
-                        jQuery(this).append($image);
-
-                        // trigger image-loaded event
-                        jQuery(this).trigger('wshop.imageLoaded');
-
-                    }.bind(this);
-
-                    // Set src and load image
-                    var targetImage = product.images[currentImage].src;
-                    img.src = targetImage;
-
-                    // increment
-                    currentImage++;
-                }
-
-            }
 
             // set select
             if ( jQuery(this).attr('data-product') == 'select' && product.variants.length > 1 ){
@@ -439,12 +386,12 @@ var wshop = {
         if( jQuery(this).parents('.product-unavailable').length ){
 
             // We have a .product-unavailable parent, so trigger the relevant event
-            jQuery(this).parents('.product-unavailable').trigger('wshop.unavailableProductAdded');
+            // jQuery(this).parents('.product-unavailable').trigger('wshop.unavailableProductAdded');
 
         } else {
 
             // Find product parent
-            var product = jQuery(this).closest('*[data-product-id]').data('product');
+            //var product = jQuery(this).closest('*[data-product-id]').data('product');
 
             // Add selected variant and selected quantity to cart
             wshop.cart.addVariants({ variant: product.selectedVariant, quantity: quantity || 1 })

@@ -22,6 +22,7 @@
         $args = array(
             'labels'                => $labels,
             'public'                => true,
+            'has_archive'           => true,
             'publicly_queryable'    => true,
             'capability_type'       => 'page',
             'menu_icon'             => 'dashicons-cart',
@@ -83,16 +84,16 @@
  */
     function wshop_frontend_scripts() {
         wp_register_script('shopify-sdk', 'http://sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
-        wp_register_script('wshop-main', pp() . '/js/wshop.js', array('jquery', 'underscore'), '1.0');
+        wp_register_script('wshop-main', pp() . '/js/bundle.js', array('underscore'), '1.0');
 
         wp_enqueue_script('jquery');
         wp_enqueue_script('underscore');
         wp_enqueue_script('shopify-sdk', 'jquery');
-        wp_enqueue_script('wshop-main', false, array('jquery', 'shopify-sdk', 'underscore'));
+        wp_enqueue_script('wshop-main', false, array('shopify-sdk', 'underscore'));
 
         // Setup JS variables in scripts
         wp_localize_script('wshop-main', 'wshopVars', array(
-            'apiKey'            => get_option('wshop_api_key'),
+            'accessToken'       => get_option('wshop_api_key'),
             'domain'            => get_option('wshop_domain'),
             'appId'             => get_option('wshop_app_id')
         ));
