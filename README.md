@@ -29,8 +29,8 @@ It consists of two parts:
 # Installation
 1. Set up Shopify:
     1. Set up a Shopify store and enable the [Buy Button Channel](https://www.shopify.com/buy-button).
-        * [Screenshot of the Shopify Add Channel button](https://raw.githubusercontent.com/funkhaus/wp-shopify/master/docs/add-channel-button.png)
-        * [Screenshot of the "Add Buy Button Channel" dialog](https://raw.githubusercontent.com/funkhaus/wp-shopify/master/docs/add-buy-button.png)
+        * ![Screenshot of the Shopify Add Channel button](https://raw.githubusercontent.com/funkhaus/wp-shopify/master/docs/add-channel-button.png)
+        * ![Screenshot of the "Add Buy Button Channel" dialog](https://raw.githubusercontent.com/funkhaus/wp-shopify/master/docs/add-buy-button.png)
     1. Open your __access token__ and __app ID__ by going to the Buy Button Extensions page at `your-site.myshopify.com/admin/apps/private/extensions`.
 1. Set up Wordpress:
     1. Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to `Settings > WP-Shopify`.
