@@ -68,14 +68,17 @@ var wshopRefresh = {
         jQuery('.refresh-message').html('<li>Received ' + products.length + ' product(s) from Shopify...</li>');
 
         // Kick off processing loop
-        wshopRefresh.processNextProduct();
+        for( var i = 0; i < products.length; i++ ){
+            wshopRefresh.processNextProduct(i);
+        }
+
 
     },
 
-    processNextProduct: function(){
+    processNextProduct: function(index){
 
         // Get first product from remaining products
-        var data = wshopRefresh.products.shift();
+        var data = wshopRefresh.products[index]
 
         // Create the product page
         jQuery.ajax({
@@ -96,24 +99,16 @@ var wshopRefresh = {
 
             message = JSON.parse(message);
 
-            jQuery('.refresh-message').prepend('<li>(' + (wshopRefresh.totalProducts - wshopRefresh.products.length) + ' / ' + wshopRefresh.totalProducts + ') ' + message.message + '</li>');
-
             // Strip out the product ID and save it to a list of IDs we've processed
             var processedID = message.id;
             if( processedID.length ){
                 wshopRefresh.processedIDs.push( parseInt(processedID) );
             }
 
-            if( wshopRefresh.products.length > 0 ){
+            jQuery('.refresh-message').prepend('<li>(' + wshopRefresh.processedIDs.length + ' / ' + wshopRefresh.totalProducts + ') ' + message.message + '</li>');
 
-                // Do we have more products? If so, process the next one
-                wshopRefresh.processNextProduct();
-
-            } else {
-
-                // Start removing old products
+            if( wshopRefresh.processedIDs.length >= wshopRefresh.totalProducts ){
                 wshopRefresh.removeOldProducts();
-
             }
         });
 
