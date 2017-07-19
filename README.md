@@ -29,10 +29,12 @@ It consists of two parts:
 # Installation
 1. Set up Shopify:
     1. Set up a Shopify store and enable the [Buy Button Channel](https://www.shopify.com/buy-button).
-    1. Create an __access token__ by going to the Buy Button Extensions page at `your-site.myshopify.com/admin/apps/private/extensions` and clicking `Create Extension` in the top right corner.
+        * [Screenshot of the Shopify Add Channel button](https://raw.githubusercontent.com/funkhaus/wp-shopify/master/docs/add-channel-button.png)
+        * [Screenshot of the "Add Buy Button Channel" dialog](https://raw.githubusercontent.com/funkhaus/wp-shopify/master/docs/add-buy-button.png)
+    1. Open your __access token__ and __app ID__ by going to the Buy Button Extensions page at `your-site.myshopify.com/admin/apps/private/extensions`.
 1. Set up Wordpress:
     1. Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to `Settings > WP-Shopify`.
-    1. Put your __access token__, Shopify domain, and app ID in the WPS settings. More info on where to find those [here]( https://help.shopify.com/api/guides/api-credentials).
+    1. Put your __access token__, Shopify domain (ie `your-site.myshopify.com`), and __app ID__ from earlier into the WPS settings. If you can't find them, take a look [here](https://help.shopify.com/api/guides/api-credentials).
     1. Save your changes, then click Refresh Products. Your products and collections will auto-populate from your Shopify store.
 
 
