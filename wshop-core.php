@@ -84,12 +84,11 @@
  */
     function wshop_frontend_scripts() {
         wp_register_script('shopify-sdk', 'http://sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
-        wp_register_script('wshop-main', pp() . '/js/bundle.js', array('underscore'), '1.0');
+        wp_register_script('wshop-main', pp() . '/js/bundle.js', array(), '1.0');
 
         wp_enqueue_script('jquery');
-        wp_enqueue_script('underscore');
         wp_enqueue_script('shopify-sdk', 'jquery');
-        wp_enqueue_script('wshop-main', false, array('shopify-sdk', 'underscore'));
+        wp_enqueue_script('wshop-main', false, array('shopify-sdk'));
 
         // Setup JS variables in scripts
         wp_localize_script('wshop-main', 'wshopVars', array(
@@ -100,61 +99,6 @@
 
     }
     add_action('wp_enqueue_scripts', 'wshop_frontend_scripts', 10);
-
-/*
- * Add wshop underscore templates to
- * the footer of the theme
- */
-    function wshop_underscore_templates() {
-
-        // find all stock templates
-        $paths_to_include = glob(WP_PLUGIN_DIR . '/wp-shopify/wshop-templates/*.php');
-
-        // find all custom templates (defined in the current theme)
-        $user_template_paths = glob(get_stylesheet_directory() . '/wshop-templates/*.php');
-
-        // make sure there are some paths to find
-        if( count($user_template_paths > 0) ){
-
-            // loop through user-defined templates and replace any stock templates
-            foreach( $user_template_paths as $custom_template_path ){
-
-                // find the basename of the current custom template
-                $basename = basename($custom_template_path);
-
-                // create an array of just the stock template basenames
-                $standard_basenames = array_map( function ($v){
-                    return basename($v);
-                }, $paths_to_include);
-
-                // are we overriding a stock template?
-                if( in_array($basename, $standard_basenames) ){
-
-                    // find the stock template's index
-                    $index = array_search($basename, $standard_basenames);
-
-                    // replace the stock template with the custom one
-                    $paths_to_include[$index] = $custom_template_path;
-
-                } else {
-                    // we're not overriding a stock template
-                    // add the new custom template to the list of templates to include
-                    $paths_to_include[] = $custom_template_path;
-                }
-            }
-        }
-
-        if( count($paths_to_include) > 0 ){
-
-            // include each template file
-            foreach( $paths_to_include as $path ){
-                include($path);
-            }
-
-        }
-
-    }
-    add_action( 'wp_footer', 'wshop_underscore_templates', 100 );
 
 /*
  *  Convenience functions for getting and echoing product ID
