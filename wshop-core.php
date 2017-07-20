@@ -80,6 +80,21 @@
     add_action('init', 'wshop_create_custom_taxonomy', 10);
 
 /*
+ * Make sure products are sorted by menu order */
+     function sort_wps_products($q) {
+         if(!$q->is_main_query() || is_admin())
+             return;
+
+         if(
+             !is_post_type_archive('wps-product') &&
+             !is_tax(array('wps_collection'))
+         ) return;
+         $q->set('orderby', 'menu_order');
+         $q->set('order', 'ASC');
+     }
+     add_action('parse_query', 'sort_wps_products');
+
+/*
  * Enqueue Custom Scripts
  */
     function wshop_frontend_scripts() {
