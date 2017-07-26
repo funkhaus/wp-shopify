@@ -3,8 +3,7 @@
 	/*
 	 * admin Scripts and styles for plugin
 	 */
-	function wshop_admin_style() {
-        wp_register_style( 'wshop_css', pp() . '/css/wshop.admin.css' );
+	function wshop_admin_setup() {
         wp_register_script('wshop-refresh', pp() . '/js/wshop.refresh.js');
         wp_register_script('shopify-sdk', 'http://sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
 
@@ -27,7 +26,7 @@
             ));
         }
     }
-    add_action( 'admin_init', 'wshop_admin_style' );
+    add_action( 'admin_init', 'wshop_admin_setup' );
 
 
     /* Call Settings Page */
