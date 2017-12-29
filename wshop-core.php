@@ -98,7 +98,7 @@
  * Enqueue Custom Scripts
  */
     function wshop_frontend_scripts() {
-        wp_register_script('shopify-sdk', 'http://sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
+        wp_register_script('shopify-sdk', '//sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
         wp_register_script('wshop-main', pp() . '/js/bundle.js', array(), '1.0');
 
         wp_enqueue_script('jquery');

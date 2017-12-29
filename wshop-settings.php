@@ -5,7 +5,7 @@
 	 */
 	function wshop_admin_setup() {
         wp_register_script('wshop-refresh', pp() . '/js/wshop.refresh.js');
-        wp_register_script('shopify-sdk', 'http://sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
+        wp_register_script('shopify-sdk', '//sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
 
 
         if ( is_admin() ) {
