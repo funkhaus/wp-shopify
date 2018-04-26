@@ -95,27 +95,6 @@
      add_action('parse_query', 'sort_wps_products');
 
 /*
- * Enqueue Custom Scripts
- */
-    function wshop_frontend_scripts() {
-        wp_register_script('shopify-sdk', '//sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
-        wp_register_script('wshop-main', pp() . '/js/bundle.js', array(), '1.0');
-
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('shopify-sdk', 'jquery');
-        wp_enqueue_script('wshop-main', false, array('shopify-sdk'));
-
-        // Setup JS variables in scripts
-        wp_localize_script('wshop-main', 'wshopVars', array(
-            'accessToken'       => get_option('wshop_api_key'),
-            'domain'            => get_option('wshop_domain'),
-            'appId'             => get_option('wshop_app_id')
-        ));
-
-    }
-    add_action('wp_enqueue_scripts', 'wshop_frontend_scripts', 10);
-
-/*
  *  Convenience functions for getting and echoing product ID
  */
     function get_the_product_id($post = 0){

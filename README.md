@@ -31,18 +31,19 @@ It consists of two parts:
 
 1.  Set up Shopify:
 
-    1.  Set up a Shopify store and enable the [Buy Button Channel](https://www.shopify.com/buy-button).
+    1.  Set up a Shopify store and create a new private app.
 
-        ![Screenshot of the Shopify Add Channel button](https://raw.githubusercontent.com/funkhaus/wp-shopify/master/docs/add-channel-button.png)
+        1.  Go to your Shopify admin panel (`your-store.myshopify.com/admin`).
+        1.  Click "Manage Private Apps" at the bottom of the screen. You'll end up `on your-store.myshopify.com/admin/apps/private`.
+        1.  Click "Create a new private app."
+        1.  Enter any information you'd like on the next screen - whatever helps you keep track of the current app - and keep the default API permissions.
+        1.  Make sure `Allow this app to access your storefront data using the Storefront API` at the bottom of the screen is checked and hit Save.
 
-        ![Screenshot of the "Add Buy Button Channel" dialog](https://raw.githubusercontent.com/funkhaus/wp-shopify/master/docs/add-buy-button.png)
-
-    1.  Find your access token by going to the Buy Button Extensions page at `your-site.myshopify.com/admin/apps/private/extensions`.
+    1.  Note the access token on the bottom of the next page (NOT the API key at the top of the page). This page is accessible any time from `your-store.myshopify.com/admin/apps/private`.
 
 1.  Set up Wordpress:
     1.  Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to `Settings > WP-Shopify`.
-    1.  Put your access token and Shopify domain (ie `your-site.myshopify.com`) from earlier into the WPS settings. If you can't find them, take a look [here](https://help.shopify.com/api/guides/api-credentials).
-    1.  Add any number for your app ID. (This used to be required for Buy Button, but can now be any arbitrary number for identifying the source of your requests.)
+    1.  Put your access token and Shopify domain (ie `your-site.myshopify.com`) from earlier into the WPS settings.
     1.  Save your changes, then click Refresh Products. Your products and collections will auto-populate from your Shopify store.
 
 # Syncing

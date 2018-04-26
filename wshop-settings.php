@@ -54,12 +54,12 @@
 								<input name="wshop_domain" type="text" title="" id="wshop_domain" value="<?php echo get_option('wshop_domain'); ?>">
 							</td>
                         </tr>
-						<tr valign="top">
+						<!-- <tr valign="top">
 							<th scope="row"><label for="wshop_app_id">App ID:</label></th>
 							<td>
 								<input name="wshop_app_id" type="text" title="" id="wshop_app_id" value="<?php echo get_option('wshop_app_id'); ?>">
 							</td>
-                        </tr>
+                        </tr> -->
                         <tr valign="top">
 							<th scope="row"><label for="wshop_rename_slug">Store permalink:</label></th>
 							<td>
@@ -121,7 +121,7 @@
     function wshop_settings_init(){
         register_setting('wshop_settings', 'wshop_api_key');
         register_setting('wshop_settings', 'wshop_domain', 'remove_protocol');
-        register_setting('wshop_settings', 'wshop_app_id');
+        // register_setting('wshop_settings', 'wshop_app_id');
         register_setting('wshop_settings', 'wshop_rewrite_slug');
         register_setting('wshop_settings', 'wshop_collections_slug');
     }
