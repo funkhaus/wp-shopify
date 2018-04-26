@@ -3,30 +3,30 @@
 	/*
 	 * admin Scripts and styles for plugin
 	 */
-	function wshop_admin_setup() {
-        wp_register_script('wshop-refresh', pp() . '/js/wshop.refresh.js');
-        wp_register_script('shopify-sdk', '//sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
-
-
-        if ( is_admin() ) {
-            wp_enqueue_script('jquery');
-            wp_enqueue_script('shopify-sdk');
-            wp_enqueue_style( 'wshop_css');
-            wp_enqueue_script('wshop-refresh', array('jquery', 'shopify-sdk'));
-
-            wp_localize_script('wshop-refresh', 'wshopVars', array(
-                'apiKey'                    => get_option('wshop_api_key'),
-                'domain'                    => get_option('wshop_domain'),
-                'appId'                     => get_option('wshop_app_id'),
-                'processLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
-                'getAllProductsLink'        => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
-                'removeOldProductsLink'     => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products'),
-                'processTermLink'           => get_admin_url(null, '/admin-ajax.php?action=wps_process_term'),
-                'addTermLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_add_term')
-            ));
-        }
-    }
-    add_action( 'admin_init', 'wshop_admin_setup' );
+	// function wshop_admin_setup() {
+    //     wp_register_script('wshop-refresh', pp() . '/js/wshop.refresh.js');
+    //     wp_register_script('shopify-sdk', '//sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
+	//
+	//
+    //     if ( is_admin() ) {
+    //         wp_enqueue_script('jquery');
+    //         wp_enqueue_script('shopify-sdk');
+    //         wp_enqueue_style( 'wshop_css');
+    //         wp_enqueue_script('wshop-refresh', array('jquery', 'shopify-sdk'));
+	//
+    //         wp_localize_script('wshop-refresh', 'wshopVars', array(
+    //             'apiKey'                    => get_option('wshop_api_key'),
+    //             'domain'                    => get_option('wshop_domain'),
+    //             'appId'                     => get_option('wshop_app_id'),
+    //             'processLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
+    //             'getAllProductsLink'        => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
+    //             'removeOldProductsLink'     => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products'),
+    //             'processTermLink'           => get_admin_url(null, '/admin-ajax.php?action=wps_process_term'),
+    //             'addTermLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_add_term')
+    //         ));
+    //     }
+    // }
+    //add_action( 'admin_init', 'wshop_admin_setup' );
 
 
     /* Call Settings Page */

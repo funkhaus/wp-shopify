@@ -25,6 +25,11 @@
             'has_archive'           => true,
             'publicly_queryable'    => true,
             'capability_type'       => 'page',
+            'capabilities' => array(
+                // Removes support for the "Add New" function
+                'create_posts'      => false,
+            ),
+            'map_meta_cap'          => true,
             'menu_icon'             => 'dashicons-cart',
             'menu_position'         => 22,
             'hierarchical'          => true,
