@@ -3,30 +3,30 @@
 	/*
 	 * admin Scripts and styles for plugin
 	 */
-	// function wshop_admin_setup() {
-    //     wp_register_script('wshop-refresh', pp() . '/js/wshop.refresh.js');
-    //     wp_register_script('shopify-sdk', '//sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
-	//
-	//
-    //     if ( is_admin() ) {
-    //         wp_enqueue_script('jquery');
-    //         wp_enqueue_script('shopify-sdk');
-    //         wp_enqueue_style( 'wshop_css');
-    //         wp_enqueue_script('wshop-refresh', array('jquery', 'shopify-sdk'));
-	//
-    //         wp_localize_script('wshop-refresh', 'wshopVars', array(
-    //             'apiKey'                    => get_option('wshop_api_key'),
-    //             'domain'                    => get_option('wshop_domain'),
-    //             'appId'                     => get_option('wshop_app_id'),
-    //             'processLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
-    //             'getAllProductsLink'        => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
-    //             'removeOldProductsLink'     => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products'),
-    //             'processTermLink'           => get_admin_url(null, '/admin-ajax.php?action=wps_process_term'),
-    //             'addTermLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_add_term')
-    //         ));
-    //     }
-    // }
-    //add_action( 'admin_init', 'wshop_admin_setup' );
+	function wshop_admin_setup() {
+        wp_register_script('wshop-js', pp() . '/js/bundle.js');
+        //wp_register_script('shopify-sdk', '//sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
+
+
+        if ( is_admin() ) {
+            wp_enqueue_script('jquery');
+            // wp_enqueue_script('shopify-sdk');
+            // wp_enqueue_style( 'wshop_css');
+            wp_enqueue_script('wshop-js', array('jquery'));
+
+            wp_localize_script('wshop-js', 'wshopVars', array(
+                'apiKey'                    => get_option('wshop_api_key'),
+                'domain'                    => get_option('wshop_domain'),
+                // 'appId'                     => get_option('wshop_app_id'),
+                'processLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
+                'getAllProductsLink'        => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
+                'removeOldProductsLink'     => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products'),
+                'processTermLink'           => get_admin_url(null, '/admin-ajax.php?action=wps_process_term'),
+                'addTermLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_add_term')
+            ));
+        }
+    }
+    add_action( 'admin_init', 'wshop_admin_setup' );
 
 
     /* Call Settings Page */
@@ -43,13 +43,13 @@
 				<table class="form-table">
 					<tbody>
 						<tr valign="top">
-							<th scope="row"><label for="wshop_api_key">API Key:</label></th>
+							<th scope="row"><label for="wshop_api_key">Storefront Access Token:</label></th>
 							<td>
 								<input name="wshop_api_key" type="text" title="" id="wshop_api_key" value="<?php echo get_option('wshop_api_key'); ?>">
 							</td>
                         </tr>
 						<tr valign="top">
-							<th scope="row"><label for="wshop_domain">Custom Shopify Domain:</label></th>
+							<th scope="row"><label for="wshop_domain">Shopify Domain:</label></th>
 							<td>
 								<input name="wshop_domain" type="text" title="" id="wshop_domain" value="<?php echo get_option('wshop_domain'); ?>">
 							</td>
