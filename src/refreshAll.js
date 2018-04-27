@@ -5,6 +5,15 @@ async function fetchProducts(cursor = '', productsPerPage = 250) {
     const cursorString = cursor ? `after: "${cursor}"` : ''
     const query = `{
   shop {
+    collections(first: 250) {
+        edges {
+            node {
+                id
+                title
+                descriptionHtml
+            }
+        }
+    }
     products(first: ${productsPerPage} ${cursorString}) {
       edges {
         node {
@@ -60,6 +69,7 @@ async function fetchProducts(cursor = '', productsPerPage = 250) {
 export default async function(evt) {
     let hasNextPage = true
     let products = []
+    let collections = []
     let cursor = ''
     let i = 0
 
@@ -67,8 +77,15 @@ export default async function(evt) {
         const res = await fetchProducts(cursor)
 
         let edges = _get(res, 'data.shop.products.edges', [])
-        // get first round of results
+
+        // get next round of product results
         products = products.concat(edges.map(n => n.node))
+
+        // this will only get the first 250 collections, which seems like a safe bet!
+        if (collections.length == 0) {
+            const collectionEdges = _get(res, 'data.shop.collections.edges', [])
+            collections = collectionEdges.map(e => e.node)
+        }
 
         hasNextPage = _get(
             res,
@@ -79,5 +96,5 @@ export default async function(evt) {
         cursor = edges.length ? edges[edges.length - 1].cursor : ''
     }
 
-    return products
+    return { products, collections }
 }

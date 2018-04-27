@@ -41,11 +41,11 @@
     function wps_process_product(){
 
         // Get the ID of the current Product
-        $id = $_POST['product_id'];
+        $id = $_REQUEST['product_id'];
         // Get the title of the current Product
-        $title = $_POST['product_title'];
+        $title = $_REQUEST['product_title'];
         // Get refresh options
-        $auto_publish = $_POST['auto_publish'] == 'true';
+        $auto_publish = $_REQUEST['auto_publish'] == 'true';
 
         $output = 'Error processing Product ' . $title . '!';
 
