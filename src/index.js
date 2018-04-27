@@ -92,6 +92,8 @@ class WpsRefresh {
 
         this.addMessage('All products updated!')
 
+        // TODO: update collections
+
         // Reenable the button
         jQuery('#wpshopify-refresh-button').prop('disabled', false)
     }
