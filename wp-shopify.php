@@ -141,13 +141,13 @@
 
     function wps_remove_products(){
 
-        $posts_to_remove = explode(',', $_POST['to_remove']);
+        $posts_to_remove = explode(',', $_REQUEST['to_remove']);
 
         // Remove a list of Products
         foreach( $posts_to_remove as $id_to_remove ){
             echo $id_to_remove;
 
-            wp_delete_post( $id_to_remove );
+            wp_trash_post( $id_to_remove );
         }
 
         die();

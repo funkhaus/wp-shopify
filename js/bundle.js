@@ -1781,7 +1781,7 @@ var WpsRefresh = function () {
             var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(evt) {
                 var _this2 = this;
 
-                var shopData, result;
+                var shopData, result, wpProducts, wpProductIds, shopifyProducts, toRemove, url;
                 return _regenerator2.default.wrap(function _callee$(_context) {
                     while (1) {
                         switch (_context.prev = _context.next) {
@@ -1827,10 +1827,69 @@ var WpsRefresh = function () {
                                     return _this2.addMessage(res.message);
                                 });
 
+                                this.addMessage('New products processed! Cleaning up products removed from Shopify...');
+
+                                // Find product IDs without corresponding Shopify products
+                                _context.next = 16;
+                                return fetch(wshopVars.getAllProductsLink, {
+                                    method: 'POST',
+                                    credentials: 'same-origin'
+                                }).then(function (res) {
+                                    return res.json();
+                                });
+
+                            case 16:
+                                wpProducts = _context.sent;
+
+
+                                // build two lists with Shopify IDs - store WP IDs on one so we can remove posts easily later
+                                wpProductIds = wpProducts.map(function (p) {
+                                    return { shopifyId: p.product_id, wpId: p.wp_id };
+                                });
+                                shopifyProducts = shopData.products.map(function (p) {
+                                    return p.id;
+                                });
+                                toRemove = [];
+
+                                // compare the two lists - find the posts on WP that are no longer on Shopify
+
+                                wpProductIds.map(function (p) {
+                                    if (!shopifyProducts.includes(p.shopifyId)) {
+                                        toRemove.push(p.wpId);
+                                    }
+                                });
+
+                                // remove old products
+
+                                if (!toRemove.length) {
+                                    _context.next = 28;
+                                    break;
+                                }
+
+                                url = wshopVars.removeOldProductsLink + '&to_remove=' + toRemove.join(',');
+                                _context.next = 25;
+                                return fetch(url, {
+                                    method: 'POST',
+                                    credentials: 'same-origin'
+                                });
+
+                            case 25:
+
+                                this.addMessage('Removed ' + toRemove.length + ' product(s) no longer on Shopify.');
+                                _context.next = 29;
+                                break;
+
+                            case 28:
+                                this.addMessage('Nothing to clean up!');
+
+                            case 29:
+
+                                this.addMessage('All products updated!');
+
                                 // Reenable the button
                                 jQuery('#wpshopify-refresh-button').prop('disabled', false);
 
-                            case 14:
+                            case 31:
                             case 'end':
                                 return _context.stop();
                         }
