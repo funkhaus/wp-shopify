@@ -44,8 +44,7 @@ class WpsRefresh {
         )
 
         // process all products
-        const productsResult = await processProducts(shopData.products)
-        productsResult.map(res => this.addMessage(res.message))
+        await processProducts(shopData.products, this.addMessage)
 
         this.addMessage(
             'New products processed! Cleaning up products removed from Shopify...'
@@ -77,7 +76,7 @@ class WpsRefresh {
             }
         })
 
-        // remove old products
+        // Remove old products
         if (toRemove.length) {
             const url =
                 wshopVars.removeOldProductsLink +
@@ -98,10 +97,11 @@ class WpsRefresh {
 
         this.addMessage('All products updated!')
 
+        // Update collections
         this.addMessage('Updating collections...')
 
         if (shopData.collections.length) {
-            await processCollections(shopData.collections)
+            await processCollections(shopData.collections, this.addMessage)
         } else {
             this.addMessage('No collections to update!')
         }

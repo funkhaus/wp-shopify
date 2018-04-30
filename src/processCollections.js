@@ -1,7 +1,7 @@
 import { jsonToQueryString } from './utils'
 import _get from 'lodash.get'
 
-export default async function(data) {
+export default async function(data, callback = () => {}) {
     const promises = data.map(async collection => {
         // build URL of collection creator
         const url =
@@ -15,16 +15,15 @@ export default async function(data) {
             })
 
         // post to url, creating or updating the desired Collection
-        await fetch(url, {
+        const collectionResult = await fetch(url, {
             method: 'POST',
             credentials: 'same-origin'
-        }).then(res => console.log(res.text()))
+        }).then(res => res.text())
 
         // build URL of item updater
         const itemIds = _get(collection, 'products.edges', []).map(
             edge => edge.node.id
         )
-        console.log(itemIds.join(','))
         const itemAdderUrl =
             wshopVars.addTermLink +
             '&' +
@@ -35,10 +34,12 @@ export default async function(data) {
             })
 
         // post to url, adding items to the desired Collection
-        return await fetch(itemAdderUrl, {
+        const itemsResult = await fetch(itemAdderUrl, {
             method: 'POST',
             credentials: 'same-origin'
-        }).then(res => console.log(res.text()))
+        })
+
+        return itemsResult
     })
 
     return await Promise.all(promises)

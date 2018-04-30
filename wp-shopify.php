@@ -205,9 +205,9 @@
 
 
         // Product IDs
-        $ids = $_POST['ids'];
-        $slug = $_POST['slug'];
-        $title = $_POST['title'];
+        $ids = $_REQUEST['ids'];
+        $slug = $_REQUEST['slug'];
+        $title = $_REQUEST['title'];
 
         if( !$ids ){
             echo '<li>No products in collection ' . $title . ' found, continuing...</li>';
