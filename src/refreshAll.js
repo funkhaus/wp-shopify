@@ -6,15 +6,23 @@ async function fetchProducts(cursor = '', productsPerPage = 250) {
     const query = `{
   shop {
     collections(first: 250) {
-        edges {
-            node {
+      edges {
+        node {
+          id
+          title
+          handle
+          descriptionHtml
+          products(first: 250) {
+            edges {
+              node {
                 id
-                title
-                descriptionHtml
+              }
             }
+          }
         }
+      }
     }
-    products(first: ${productsPerPage} ${cursorString}) {
+    products(first: 250) {
       edges {
         node {
           title
@@ -44,7 +52,6 @@ async function fetchProducts(cursor = '', productsPerPage = 250) {
     }
   }
 }
-
 `
 
     const res = await fetch(`https://${wshopVars.domain}/api/graphql`, {

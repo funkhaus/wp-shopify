@@ -1,13 +1,7 @@
-function jsonToQueryString(json) {
-    return Object.keys(json)
-        .map(function(key) {
-            return encodeURIComponent(key) + '=' + encodeURIComponent(json[key])
-        })
-        .join('&')
-}
+import { jsonToQueryString } from './utils'
 
-export default async function(data, callback = null) {
-    const promises = data.products.map(async product => {
+export default async function(data) {
+    const promises = data.map(async product => {
         // build url of programmatic product creator
         const url =
             wshopVars.processLink +

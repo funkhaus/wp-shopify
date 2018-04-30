@@ -1,6 +1,7 @@
 /* global jQuery */
 import refreshAll from './refreshAll'
-import processAll from './processAll'
+import processProducts from './processProducts'
+import processCollections from './processCollections'
 import _get from 'lodash.get'
 
 class WpsRefresh {
@@ -43,28 +44,33 @@ class WpsRefresh {
         )
 
         // process all products
-        const result = await processAll(shopData)
-        result.map(res => this.addMessage(res.message))
+        const productsResult = await processProducts(shopData.products)
+        productsResult.map(res => this.addMessage(res.message))
 
         this.addMessage(
             'New products processed! Cleaning up products removed from Shopify...'
         )
 
-        // Find product IDs without corresponding Shopify products
+        // Find product IDs without corresponding Shopify products:
+
+        // First, get a list of all wps-products on the WordPress site
         const wpProducts = await fetch(wshopVars.getAllProductsLink, {
             method: 'POST',
             credentials: 'same-origin'
         }).then(res => res.json())
 
-        // build two lists with Shopify IDs - store WP IDs on one so we can remove posts easily later
+        // Save just the Shopify ID and WP ID for these wps-products
         const wpProductIds = wpProducts.map(p => {
             return { shopifyId: p.product_id, wpId: p.wp_id }
         })
+
+        // Save a list of products that are live on Shopify
         const shopifyProducts = shopData.products.map(p => p.id)
 
+        // Prep list of WP IDs to remove
         const toRemove = []
 
-        // compare the two lists - find the posts on WP that are no longer on Shopify
+        // Find the wps-products that are no longer on Shopify
         wpProductIds.map(p => {
             if (!shopifyProducts.includes(p.shopifyId)) {
                 toRemove.push(p.wpId)
@@ -92,7 +98,15 @@ class WpsRefresh {
 
         this.addMessage('All products updated!')
 
-        // TODO: update collections
+        this.addMessage('Updating collections...')
+
+        if (shopData.collections.length) {
+            await processCollections(shopData.collections)
+        } else {
+            this.addMessage('No collections to update!')
+        }
+
+        this.addMessage('All products and collections updated!')
 
         // Reenable the button
         jQuery('#wpshopify-refresh-button').prop('disabled', false)
