@@ -36,7 +36,7 @@ wp-shopify (WPS) is a [Vuepress](https://github.com/funkhaus/vuepress) plugin th
 
     1.  Note the Storefront Token on the bottom of the next page:
 
-    ![Screenshot showing a visual reference for the storefront token](docs/add-channel-button.png)
+    ![Screenshot showing a visual reference for the storefront token](docs/storefront-access-token.png)
 
     This page is accessible any time from `your-store.myshopify.com/admin/apps/private`.
 
