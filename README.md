@@ -72,13 +72,9 @@ Basically, it's a good rule of thumb to refresh your store manually after making
 
 ## Collections
 
-**TL;DR** Collections are a custom taxonomy for products that are managed automatically when syncing products.
-
-**More detail:**
+Collections are a custom taxonomy for products that are managed automatically when syncing products.
 
 WPS imports Collections as a custom taxonomy called `wps_collection`. Each Collection in Shopify becomes a term in the `wps_collection` taxonomy.
-
-Each of those terms has a custom piece of metadata called `_wps_collection_image` that contains the URL to the image associated with a Collection. You can set this image on Shopify, then show the image on your site like this: `<image src="<?php echo $your_term->_wps_collection_image; ?>">`
 
 # Front-End
 
