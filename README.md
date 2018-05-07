@@ -1,11 +1,6 @@
 ## Readme below:
 
-wp-shopify (WPS) is a Wordpress plugin that integrates the [Shopify Buy Button](https://help.shopify.com/api/sdks/js-buy-sdk) API with Wordpress for easy and powerful store construction.
-
-It consists of two parts:
-
-*   A **syncing** tool to keep your Wordpress site connected to your Shopify store, and
-*   A set of **templating** functions to make building a store and a shopping cart easier.
+wp-shopify (WPS) is a [Vuepress](https://github.com/funkhaus/vuepress) plugin that integrates the [Shopify Storefront API](https://help.shopify.com/api/custom-storefronts/storefront-api) with Vuepress for fast and powerful store construction.
 
 # Table of Contents
 
@@ -34,14 +29,19 @@ It consists of two parts:
     1.  Set up a Shopify store and create a new private app.
 
         1.  Go to your Shopify admin panel (`your-store.myshopify.com/admin`).
-        1.  Click "Manage Private Apps" at the bottom of the screen. You'll end up `on your-store.myshopify.com/admin/apps/private`.
+        1.  Click "Manage Private Apps" at the bottom of the screen. You'll end up on `your-store.myshopify.com/admin/apps/private`.
         1.  Click "Create a new private app."
         1.  Enter any information you'd like on the next screen - whatever helps you keep track of the current app - and keep the default API permissions.
         1.  Make sure `Allow this app to access your storefront data using the Storefront API` at the bottom of the screen is checked and hit Save.
 
-    1.  Note the access token on the bottom of the next page (NOT the API key at the top of the page). This page is accessible any time from `your-store.myshopify.com/admin/apps/private`.
+    1.  Note the Storefront Token on the bottom of the next page:
 
-1.  Set up Wordpress:
+    ![Screenshot showing a visual reference for the storefront token](docs/add-channel-button.png)
+
+    This page is accessible any time from `your-store.myshopify.com/admin/apps/private`.
+
+1.  Set up Vuepress:
+    1.  [Install Vuepress](https://github.com/funkhaus/vuepress/wiki).
     1.  Download this repo and drop it into your plugins folder. Enable it through your plugin settings and then navigate to `Settings > WP-Shopify`.
     1.  Put your access token and Shopify domain (ie `your-site.myshopify.com`) from earlier into the WPS settings.
     1.  Save your changes, then click Refresh Products. Your products and collections will auto-populate from your Shopify store.
