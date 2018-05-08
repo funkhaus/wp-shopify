@@ -119,3 +119,30 @@
         $post = get_post($post);
         return isset( $post->_wshop_product_id ) and strlen( $post->_wshop_product_id );
     }
+
+/*
+ * Ajax endpoint for finding WP ID from product ID
+ */
+    function wps_get_wp_id_from_product_id(){
+        $product_id = $_REQUEST['product_id'];
+
+        $args = array(
+        	'posts_per_page'   => 1,
+        	'orderby'          => 'menu_order',
+        	'order'            => 'ASC',
+        	'meta_key'         => '_wshop_product_id',
+        	'meta_value'       => $product_id,
+        	'post_type'        => 'wps-product'
+        );
+        $result = get_posts($args);
+
+        if( !empty($result) ){
+            echo reset($result)->ID;
+        } else {
+            echo -1;
+        }
+
+        wp_die();
+    }
+    add_action( 'wp_ajax_wp_id_from_product_id', 'wps_get_wp_id_from_product_id' );
+    add_action( 'wp_ajax_nopriv_wp_id_from_product_id', 'wps_get_wp_id_from_product_id' );
