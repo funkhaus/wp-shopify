@@ -123,7 +123,7 @@
 /*
  * Ajax endpoint for finding WP ID from product ID
  */
-    function wps_get_wp_id_from_product_id(){
+    function wps_get_wp_url_from_product_id(){
         $product_id = $_REQUEST['product_id'];
 
         $args = array(
@@ -137,12 +137,12 @@
         $result = get_posts($args);
 
         if( !empty($result) ){
-            echo reset($result)->ID;
+            echo get_the_permalink(reset($result));
         } else {
             echo -1;
         }
 
         wp_die();
     }
-    add_action( 'wp_ajax_wp_id_from_product_id', 'wps_get_wp_id_from_product_id' );
-    add_action( 'wp_ajax_nopriv_wp_id_from_product_id', 'wps_get_wp_id_from_product_id' );
+    add_action( 'wp_ajax_wp_url_from_product_id', 'wps_get_wp_url_from_product_id' );
+    add_action( 'wp_ajax_nopriv_wp_url_from_product_id', 'wps_get_wp_url_from_product_id' );
