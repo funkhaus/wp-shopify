@@ -123,7 +123,7 @@
 /*
  * Ajax endpoint for finding WP ID from product ID
  */
-    function wps_get_wp_url_from_product_id(){
+    function wps_get_wp_info_from_product_id(){
         $product_id = $_REQUEST['product_id'];
 
         $args = array(
@@ -134,15 +134,19 @@
         	'meta_value'       => $product_id,
         	'post_type'        => 'wps-product'
         );
-        $result = get_posts($args);
+        $target = get_posts($args);
 
-        if( !empty($result) ){
-            echo get_the_permalink(reset($result));
+        $result = array();
+
+        if( empty($target) ){
+            $result['status'] = 'Error! Product not found.';
         } else {
-            echo -1;
+            $result = apply_filters('rez_serialize_object', reset($target));
         }
+
+        echo json_encode($result);
 
         wp_die();
     }
-    add_action( 'wp_ajax_wp_url_from_product_id', 'wps_get_wp_url_from_product_id' );
-    add_action( 'wp_ajax_nopriv_wp_url_from_product_id', 'wps_get_wp_url_from_product_id' );
+    add_action( 'wp_ajax_wp_url_from_product_id', 'wps_get_wp_info_from_product_id' );
+    add_action( 'wp_ajax_nopriv_wp_url_from_product_id', 'wps_get_wp_info_from_product_id' );
