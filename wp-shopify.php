@@ -6,7 +6,7 @@
  *	Plugin URI: https://github.com/funkhaus/wp-shopify
  *	Description: Shopify + Wordpress
  *	Author: Funkhaus
- *	Version: 2.1
+ *	Version: 3.0
  *	Author URI: http://funkhaus.us
  *	Requires at least: 3.8
  *
@@ -41,11 +41,11 @@
     function wps_process_product(){
 
         // Get the ID of the current Product
-        $id = $_POST['product_id'];
+        $id = $_REQUEST['product_id'];
         // Get the title of the current Product
-        $title = $_POST['product_title'];
+        $title = $_REQUEST['product_title'];
         // Get refresh options
-        $auto_publish = $_POST['auto_publish'] == 'true';
+        $auto_publish = $_REQUEST['auto_publish'] == 'true';
 
         $output = 'Error processing Product ' . $title . '!';
 
@@ -141,13 +141,13 @@
 
     function wps_remove_products(){
 
-        $posts_to_remove = explode(',', $_POST['to_remove']);
+        $posts_to_remove = explode(',', $_REQUEST['to_remove']);
 
         // Remove a list of Products
         foreach( $posts_to_remove as $id_to_remove ){
             echo $id_to_remove;
 
-            wp_delete_post( $id_to_remove );
+            wp_trash_post( $id_to_remove );
         }
 
         die();
@@ -205,9 +205,9 @@
 
 
         // Product IDs
-        $ids = $_POST['ids'];
-        $slug = $_POST['slug'];
-        $title = $_POST['title'];
+        $ids = $_REQUEST['ids'];
+        $slug = $_REQUEST['slug'];
+        $title = $_REQUEST['title'];
 
         if( !$ids ){
             echo '<li>No products in collection ' . $title . ' found, continuing...</li>';

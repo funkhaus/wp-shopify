@@ -13,8 +13,8 @@
         global $post;
         ?>
             <div class="custom-meta">
-                <label for="product-id">Enter the product ID for this page:</label>
-                <input id="product-id" class="short" title="This is needed for all product pages" name="_wshop_product_id" type="text" value="<?php echo $post->_wshop_product_id; ?>">
+                <label for="product-id">Product ID:</label>
+                <input disabled id="product-id" class="short" title="This is needed for all product pages" name="_wshop_product_id" type="text" value="<?php echo $post->_wshop_product_id; ?>">
                 <br/>
 
             </div>

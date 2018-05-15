@@ -25,6 +25,11 @@
             'has_archive'           => true,
             'publicly_queryable'    => true,
             'capability_type'       => 'page',
+            'capabilities' => array(
+                // Removes support for the "Add New" function
+                'create_posts'      => false,
+            ),
+            'map_meta_cap'          => true,
             'menu_icon'             => 'dashicons-cart',
             'menu_position'         => 22,
             'hierarchical'          => true,
@@ -95,27 +100,6 @@
      add_action('parse_query', 'sort_wps_products');
 
 /*
- * Enqueue Custom Scripts
- */
-    function wshop_frontend_scripts() {
-        wp_register_script('shopify-sdk', '//sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
-        wp_register_script('wshop-main', pp() . '/js/bundle.js', array(), '1.0');
-
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('shopify-sdk', 'jquery');
-        wp_enqueue_script('wshop-main', false, array('shopify-sdk'));
-
-        // Setup JS variables in scripts
-        wp_localize_script('wshop-main', 'wshopVars', array(
-            'accessToken'       => get_option('wshop_api_key'),
-            'domain'            => get_option('wshop_domain'),
-            'appId'             => get_option('wshop_app_id')
-        ));
-
-    }
-    add_action('wp_enqueue_scripts', 'wshop_frontend_scripts', 10);
-
-/*
  *  Convenience functions for getting and echoing product ID
  */
     function get_the_product_id($post = 0){
@@ -135,3 +119,34 @@
         $post = get_post($post);
         return isset( $post->_wshop_product_id ) and strlen( $post->_wshop_product_id );
     }
+
+/*
+ * Ajax endpoint for finding WP ID from product ID
+ */
+    function wps_get_wp_info_from_product_id(){
+        $product_id = $_REQUEST['product_id'];
+
+        $args = array(
+        	'posts_per_page'   => 1,
+        	'orderby'          => 'menu_order',
+        	'order'            => 'ASC',
+        	'meta_key'         => '_wshop_product_id',
+        	'meta_value'       => $product_id,
+        	'post_type'        => 'wps-product'
+        );
+        $target = get_posts($args);
+
+        $result = array();
+
+        if( empty($target) ){
+            $result['status'] = 'Error! Product not found.';
+        } else {
+            $result = apply_filters('rez_serialize_object', reset($target));
+        }
+
+        echo json_encode($result);
+
+        wp_die();
+    }
+    add_action( 'wp_ajax_wp_url_from_product_id', 'wps_get_wp_info_from_product_id' );
+    add_action( 'wp_ajax_nopriv_wp_url_from_product_id', 'wps_get_wp_info_from_product_id' );

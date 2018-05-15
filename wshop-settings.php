@@ -4,20 +4,20 @@
 	 * admin Scripts and styles for plugin
 	 */
 	function wshop_admin_setup() {
-        wp_register_script('wshop-refresh', pp() . '/js/wshop.refresh.js');
-        wp_register_script('shopify-sdk', '//sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
+        wp_register_script('wshop-js', pp() . '/js/bundle.js');
+        //wp_register_script('shopify-sdk', '//sdks.shopifycdn.com/js-buy-sdk/latest/shopify-buy.polyfilled.globals.min.js', 'jquery', '1.0');
 
 
         if ( is_admin() ) {
             wp_enqueue_script('jquery');
-            wp_enqueue_script('shopify-sdk');
-            wp_enqueue_style( 'wshop_css');
-            wp_enqueue_script('wshop-refresh', array('jquery', 'shopify-sdk'));
+            // wp_enqueue_script('shopify-sdk');
+            // wp_enqueue_style( 'wshop_css');
+            wp_enqueue_script('wshop-js', array('jquery'));
 
-            wp_localize_script('wshop-refresh', 'wshopVars', array(
+            wp_localize_script('wshop-js', 'wshopVars', array(
                 'apiKey'                    => get_option('wshop_api_key'),
                 'domain'                    => get_option('wshop_domain'),
-                'appId'                     => get_option('wshop_app_id'),
+                // 'appId'                     => get_option('wshop_app_id'),
                 'processLink'               => get_admin_url(null, '/admin-ajax.php?action=wps_process_product'),
                 'getAllProductsLink'        => get_admin_url(null, '/admin-ajax.php?action=wps_get_all_products'),
                 'removeOldProductsLink'     => get_admin_url(null, '/admin-ajax.php?action=wps_remove_products'),
@@ -43,23 +43,23 @@
 				<table class="form-table">
 					<tbody>
 						<tr valign="top">
-							<th scope="row"><label for="wshop_api_key">API Key:</label></th>
+							<th scope="row"><label for="wshop_api_key">Storefront Access Token:</label></th>
 							<td>
 								<input name="wshop_api_key" type="text" title="" id="wshop_api_key" value="<?php echo get_option('wshop_api_key'); ?>">
 							</td>
                         </tr>
 						<tr valign="top">
-							<th scope="row"><label for="wshop_domain">Custom Shopify Domain:</label></th>
+							<th scope="row"><label for="wshop_domain">Shopify Domain:</label></th>
 							<td>
 								<input name="wshop_domain" type="text" title="" id="wshop_domain" value="<?php echo get_option('wshop_domain'); ?>">
 							</td>
                         </tr>
-						<tr valign="top">
+						<!-- <tr valign="top">
 							<th scope="row"><label for="wshop_app_id">App ID:</label></th>
 							<td>
 								<input name="wshop_app_id" type="text" title="" id="wshop_app_id" value="<?php echo get_option('wshop_app_id'); ?>">
 							</td>
-                        </tr>
+                        </tr> -->
                         <tr valign="top">
 							<th scope="row"><label for="wshop_rename_slug">Store permalink:</label></th>
 							<td>
@@ -121,7 +121,7 @@
     function wshop_settings_init(){
         register_setting('wshop_settings', 'wshop_api_key');
         register_setting('wshop_settings', 'wshop_domain', 'remove_protocol');
-        register_setting('wshop_settings', 'wshop_app_id');
+        // register_setting('wshop_settings', 'wshop_app_id');
         register_setting('wshop_settings', 'wshop_rewrite_slug');
         register_setting('wshop_settings', 'wshop_collections_slug');
     }
