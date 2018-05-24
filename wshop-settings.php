@@ -80,7 +80,7 @@
 			</form>
 		</div>
 
-		<?php /* Only draw 'refresh' section if plugin is linked to Shopify store */ if( !empty(get_option('wshop_api_key')) and !empty(get_option('wshop_domain')) and !empty(get_option('wshop_app_id')) ) : ?>
+		<?php /* Only draw 'refresh' section if plugin is linked to Shopify store */ if( !empty(get_option('wshop_api_key')) and !empty(get_option('wshop_domain')) ) : ?>
 
     		<div class="refresh-wrap">
         		<h2>Refresh Products</h2>
