@@ -121,6 +121,22 @@
     }
 
 /*
+ * Convenience function for getting permalinks
+ */
+    function get_wshop_collections_slug(){
+        return get_option('wshop_collections_slug');
+    }
+    function get_wshop_shop_slug(){
+        return get_option('wshop_rewrite_slug');
+    }
+    function get_wshop_domain(){
+        return get_option('wshop_domain');
+    }
+    function get_wshop_api_key(){
+        return get_option('wshop_api_key');
+    }
+
+/*
  * Ajax endpoint for finding WP ID from product ID
  */
     function wps_get_wp_info_from_product_id(){

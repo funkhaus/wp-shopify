@@ -12,6 +12,8 @@ You'll need both this and the [Vue plugin](https://github.com/funkhaus/wp-shopif
 1.  [Advanced](#advanced)
     1.  [Permalink Structure Slug](#permalink-structure-slug)
     1.  [Convenience Functions](#convenience-functions)
+        1.  [General](#general)
+        1.  [Single WPS-Product](#single-wps-product)
 
 # Installation
 
@@ -41,17 +43,17 @@ You'll need both this and the [Vue plugin](https://github.com/funkhaus/wp-shopif
 
 WP-Shopify assumes that you'll be splitting up your shop's responsibilities.
 
-*   Shopify will be the source of truth for:
-    *   Product names
-    *   Variants
-    *   Prices
-    *   Availability
-    *   Collections
-*   WordPress will be the source of truth for:
+-   Shopify will be the source of truth for:
+    -   Product names
+    -   Variants
+    -   Prices
+    -   Availability
+    -   Collections
+-   WordPress will be the source of truth for:
 
-    *   Product descriptions
-    *   Images
-    *   Other metadata
+    -   Product descriptions
+    -   Images
+    -   Other metadata
 
 ## Syncing
 
@@ -65,8 +67,8 @@ The product ID meta field (stored under the key `_wshop_product_id` on a `wps-pr
 
 The only times you need to manually refresh your store (Settings > WP-Shopify > Refresh Products) are when:
 
-*   You want to add or remove Products from your Wordpress site after setting them up on Shopify, or
-*   You want to update your Collections information.
+-   You want to add or remove Products from your Wordpress site after setting them up on Shopify, or
+-   You want to update your Collections information.
 
 Basically, it's a good rule of thumb to refresh your store manually after making any significant changes on Shopify.
 
@@ -96,11 +98,22 @@ your-site.com/xyz/product-1
 
 ## Convenience Functions
 
+### General
+
+WPS comes with some convenience functions:
+
+-   `get_wshop_collections_slug()` - Get the slug of the Collections archive page
+-   `get_wshop_shop_slug()` - Get the slug of the wps-product archive page
+-   `get_wshop_domain()` - Get the Shopify domain
+-   `get_wshop_api_key()` - Get the Shopify API key
+
+### Single `wps-product`
+
 WPS comes with PHP convenience functions to check for, fetch, and display product IDs. Note that `$post` is optional in all of these functions and defaults to the current post.
 
-*   `has_product( $post )` returns `true` if the page has a product ID set, `false` if not.
-*   `get_the_product_id( $post )` is returns the product ID of a given page, as defined in the 'Product ID' metadata. If there is no product ID attached to a page, it returns a blank string.
-*   `the_product_id( $post )` echoes the return value of `get_the_product_id()`.
+-   `has_product( $post )` returns `true` if the page has a product ID set, `false` if not.
+-   `get_the_product_id( $post )` is returns the product ID of a given page, as defined in the 'Product ID' metadata. If there is no product ID attached to a page, it returns a blank string.
+-   `the_product_id( $post )` echoes the return value of `get_the_product_id()`.
 
 ---
 
