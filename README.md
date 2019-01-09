@@ -21,8 +21,7 @@ You'll need both this and the [Vue plugin](https://github.com/funkhaus/wp-shopif
 
     1.  Set up a Shopify store and create a new private app.
 
-        1.  Go to your Shopify admin panel (`your-store.myshopify.com/admin`).
-        1.  Click "Manage Private Apps" at the bottom of the screen. You'll end up on `your-store.myshopify.com/admin/apps/private`.
+        1.  Go to your Shopify apps admin section (`your-store.myshopify.com/admin/apps/private`).
         1.  Click "Create a new private app."
         1.  Keep the default API permissions and make sure `Allow this app to access your storefront data using the Storefront API` at the bottom of the screen is checked.
         1.  Hit Save to continue.
