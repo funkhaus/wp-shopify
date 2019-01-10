@@ -51,6 +51,37 @@
     }
     add_action('init', 'wshop_create_custom_post', 10);
 
+    // Set up custom metabox for product vendor
+
+    function add_custom_product_metaboxes($post_type, $post) {
+        add_meta_box('custom_product_vendor', 'Product Vendor', 'custom_product_vendor', 'wps-product', 'normal', 'low');
+    }
+    add_action('add_meta_boxes', 'add_custom_product_metaboxes', 10, 2);
+
+    function custom_product_vendor() {
+        global $post;
+
+        ?>
+            <div class="custom-meta">
+                <label for="link-url">Enter The Product Vendor:</label>
+                <input id="link-url" class="long" name="_custom_product_vendor" type="text" value="<?php echo $post->_custom_product_vendor; ?>">
+            </div>
+
+        <?php
+    }
+
+    function custom_save_product_metabox($post_id) {
+
+        if( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
+            return $post_id;
+        }
+
+        if( isset($_POST["_custom_product_vendor"]) ) {
+	        update_post_meta($post_id, "_custom_product_vendor", trim($_POST["_custom_product_vendor"]));
+        }
+    }
+    add_action('save_post', 'custom_save_product_metabox');
+
 /*
  * Add custom taxonomy
  */

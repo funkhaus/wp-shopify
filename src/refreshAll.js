@@ -27,6 +27,7 @@ async function fetchProducts(cursor = '', productsPerPage = 250) {
         node {
           title
           id
+          vendor
           options(first: 250) {
             name
             values

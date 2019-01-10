@@ -39,11 +39,12 @@
 
     // Define AJAX functions
     function wps_process_product(){
-
         // Get the ID of the current Product
         $id = $_REQUEST['product_id'];
         // Get the title of the current Product
         $title = $_REQUEST['product_title'];
+        // Get the vendor of the current product
+        $vendor = $_REQUEST['product_vendor'];
         // Get refresh options
         $auto_publish = $_REQUEST['auto_publish'] == 'true';
 
@@ -66,7 +67,10 @@
             $args = array(
                 'ID'            => $target_post->ID,
                 'post_title'    => $title,
-                'post_name'     => sanitize_title( $title, strtolower($title) )
+                'post_name'     => sanitize_title( $title, strtolower($title) ),
+                'meta_input'    => array(
+                    '_custom_product_vendor'    =>      $vendor
+                )
             );
             wp_update_post($args);
 
@@ -83,7 +87,8 @@
                 'post_type'     => 'wps-product',
                 'post_status'   => $auto_publish ? 'publish' : 'pending',
                 'meta_input'    => array(
-                    '_wshop_product_id' => $id
+                    '_wshop_product_id'         =>      $id,
+                    '_custom_product_vendor'    =>      $vendor
                 )
             );
             $post_id = wp_insert_post($args);
