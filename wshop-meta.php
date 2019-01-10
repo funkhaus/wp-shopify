@@ -16,7 +16,8 @@
                 <label for="product-id">Product ID:</label>
                 <input disabled id="product-id" class="short" title="This is needed for all product pages" name="_wshop_product_id" type="text" value="<?php echo $post->_wshop_product_id; ?>">
                 <br/>
-
+                <label for="link-url">Enter The Product Vendor:</label>
+                <input id="link-url" class="long" name="_custom_product_vendor" type="text" value="<?php echo $post->_custom_product_vendor; ?>">
             </div>
 
         <?php
@@ -32,6 +33,9 @@
         }
         if( isset($_POST['_wshop_product_id']) ) {
             update_post_meta($post_id, '_wshop_product_id', $_POST['_wshop_product_id']);
+        }
+        if( isset($_POST["_custom_product_vendor"]) ) {
+	        update_post_meta($post_id, "_custom_product_vendor", trim($_POST["_custom_product_vendor"]));
         }
     }
     add_action('save_post', 'wshop_save_metabox');
