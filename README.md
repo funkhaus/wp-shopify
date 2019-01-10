@@ -49,6 +49,7 @@ WP-Shopify assumes that you'll be splitting up your shop's responsibilities.
     -   Prices
     -   Availability
     -   Collections
+    -   Vendors
 -   WordPress will be the source of truth for:
 
     -   Product descriptions
