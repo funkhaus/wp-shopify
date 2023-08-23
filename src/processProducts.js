@@ -3,7 +3,6 @@ import { jsonToQueryString } from './utils'
 export default async function(data, callback = () => {}) {
     const promises = data.map(async product => {
         // build url of programmatic product creator
-        console.log(product)
         const url =
             wshopVars.processLink +
             '&' +

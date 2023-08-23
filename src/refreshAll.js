@@ -4,7 +4,6 @@ import _get from 'lodash.get'
 async function fetchProducts(cursor = '', productsPerPage = 250) {
     const cursorString = cursor ? `after: "${cursor}"` : ''
     const query = `{
-  shop {
     collections(first: 250) {
       edges {
         node {
@@ -37,7 +36,9 @@ async function fetchProducts(cursor = '', productsPerPage = 250) {
               node {
                 id
                 title
-                price
+                price {
+                  amount
+                }
               }
             }
             pageInfo {
@@ -51,11 +52,10 @@ async function fetchProducts(cursor = '', productsPerPage = 250) {
         hasNextPage
       }
     }
-  }
 }
 `
 
-    const res = await fetch(`https://${wshopVars.domain}/api/graphql`, {
+    const res = await fetch(`https://${wshopVars.domain}/api/2022-10/graphql.json`, {
         method: 'POST',
         headers: new Headers({
             'Content-Type': 'application/graphql',
@@ -84,20 +84,20 @@ export default async function(evt) {
     while (hasNextPage) {
         const res = await fetchProducts(cursor)
 
-        let edges = _get(res, 'data.shop.products.edges', [])
+        let edges = _get(res, 'data.products.edges', [])
 
         // get next round of product results
         products = products.concat(edges.map(n => n.node))
 
         // this will only get the first 250 collections, which seems like a safe bet!
         if (collections.length == 0) {
-            const collectionEdges = _get(res, 'data.shop.collections.edges', [])
+            const collectionEdges = _get(res, 'data.collections.edges', [])
             collections = collectionEdges.map(e => e.node)
         }
 
         hasNextPage = _get(
             res,
-            'data.shop.products.pageInfo.hasNextPage',
+            'data.products.pageInfo.hasNextPage',
             false
         )
 

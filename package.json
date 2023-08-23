@@ -1,6 +1,9 @@
 {
     "name": "wp-shopify",
     "version": "2.1.0",
+    "engines": {
+        "node": "11.x"
+    },
     "description": "A WordPress plugin to easily integrate Shopify into any site.",
     "main": "index.js",
     "scripts": {
